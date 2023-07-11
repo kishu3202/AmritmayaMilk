@@ -364,6 +364,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
               padding: const EdgeInsets.all(10.0),
               child: ElevatedButton(
                 onPressed: () {
+                  print(
+                      "submit successful selectedProduct: ${selectedProduct}");
+                  print("submit successful selectedProduct: ${unit}");
+                  print("submit successful selectedProduct: ${rate}");
+                  print("submit successful selectedProduct: ${quantity}");
                   print('submit successful');
                 },
                 child: Container(

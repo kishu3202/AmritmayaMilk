@@ -1,7 +1,8 @@
-import 'package:amritmaya_milk/screens/dashboard_screen.dart';
+import 'package:amritmaya_milk/provider/auth_Provider.dart';
 import 'package:amritmaya_milk/screens/forget_password_screen.dart';
 import 'package:amritmaya_milk/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,6 +10,32 @@ class LoginScreen extends StatefulWidget {
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
+
+// main() async {
+//   var headers = {
+//     'Content-Type': 'application/json',
+//     'X-API-KEY': 'amritmayamilk050512',
+//   };
+//   var http;
+//   var request = http.Request(
+//       'POST',
+//       Uri.parse(
+//           'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/login'));
+//   request.body = {
+//     'email': 'sahu@gmail.com',
+//     'password': '1234',
+//     // 'token': 'b6c6cb50a0149f4b',
+//   };
+//   request.headers.addAll(headers);
+//
+//   StreamedResponse response = await request.send();
+//
+//   if (response.statusCode == 200) {
+//     print(await response.stream.bytesToString());
+//   } else {
+//     print(response.reasonPhrase);
+//   }
+// }
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formfield = GlobalKey<FormState>();
@@ -18,6 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
   late String email;
   late String password;
   bool validateEmail = false, validatePassword = false;
+  bool validateEmailIdFormat = false, validatePasswordIdFormat = false;
   String patternEmail =
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
   RegExp? regExpEmail;
@@ -32,6 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -64,19 +93,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       emailController.text.isEmpty
                           ? validateEmail = true
                           : validateEmail = false;
-                      validateEmail != emailController.text.isEmpty;
+                      !regExpEmail!.hasMatch(emailController.text)
+                          ? validateEmailIdFormat = true
+                          : validateEmailIdFormat = false;
+                      validateEmail ? ThemeHelper().buildErrorContainer(validateEmail, "Please enter email id", context) :
+                      ThemeHelper().buildErrorContainer(validateEmailIdFormat, "Please enter email format: test@gmail.com", context),
                     });
                   },
-                  validator: (value) {
-                    validateEmail = RegExp(
-                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                        .hasMatch(value!);
-                    if (value.isEmpty) {
-                      return ("Please Enter your email");
-                    } else if (validateEmail == false) {
-                      return "Enter valid email";
-                    }
-                  },
+                  // validator: (value) {
+                  //   validateEmail = RegExp(
+                  //           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                  //       .hasMatch(value!);
+                  //   if (value.isEmpty) {
+                  //     return ("Please Enter your email");
+                  //   } else if (validateEmail == false) {
+                  //     return "Enter valid email";
+                  //   }
+                  // },
                 ),
                 const SizedBox(
                   height: 30,
@@ -92,6 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     prefixIcon: const Icon(Icons.lock),
+
                     suffixIcon: InkWell(
                       onTap: () {
                         setState(() {
@@ -102,15 +136,24 @@ class _LoginScreenState extends State<LoginScreen> {
                           passToggle ? Icons.visibility : Icons.visibility_off),
                     ),
                   ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return "Please enter your password";
-                    }
-                    return null;
+                  onChanged: (value) {
+                    setState(() {
+                      passwordController.text.isEmpty
+                          ? validatePassword = true
+                          : validatePassword = false;
+                      validatePassword != validatePassword.text.isEmpty;
+                    });
                   },
-                  onSaved: (value) {
-                    password = value!;
-                  },
+
+                  // validator: (value) {
+                  //   if (value!.isEmpty) {
+                  //     return "Please enter your password";
+                  //   }
+                  //   return null;
+                  // },
+                  // onSaved: (value) {
+                  //   password = value!;
+                  // },
                 ),
                 // SizedBox(
                 //   height: 5,
@@ -156,19 +199,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 InkWell(
                   onTap: () {
                     setState(() {
-                      if (_formfield.currentState!.validate()) {
-                        // if (emailController.text.isEmpty ||
-                        //     validateEmail == || passwordController.text.isEmpty) {
-                        print("object");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const DashboardScreen()),
-                        );
+                      if (emailController.text.isEmpty &&
+                          passwordController.text.isEmpty) {
+                        print('Enter your Email and Password.');
                       } else {
-                        print("Successful");
-                        // String email = emailController.text;
-                        // String password = passwordController.text;
+                        authProvider.login(
+                            context,
+                            emailController.text.toString(),
+                            passwordController.text.toString());
                       }
                     });
                   },
@@ -178,15 +216,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.blue,
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    child: const Center(
-                      child: Text(
-                        "Log In",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                    child: Center(
+                      child: authProvider.loading
+                          ? CircularProgressIndicator()
+                          : Text(
+                              "Log In",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 ),
@@ -202,19 +242,32 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     TextButton(
-                        onPressed: () {
-                          setState(() {
-                            if (_formfield.currentState!.validate()) {
-                              print("failed");
+                        onPressed: ()async {
+                          final email = emailController.text;
+                          final password = passwordController.text;
+                          if (email.isNotEmpty && password.isNotEmpty) {
+                            final apiProvider = Provider.of<authProvider>(context, listen: false);
+                            final response = await apiProvider.login(email, password);
+                            if (response.statusCode == 200) {
+                              print('Login Successful');
                             } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const RegistrationScreen()),
-                              );
+                              print('Login Failed');
                             }
-                          });
+                          } else {
+                            print('Enter Email and Password');
+                          }
+                          // setState(() {
+                          //   if (_formfield.currentState!.validate()) {
+                          //     print("failed");
+                          //   } else {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //           builder: (context) =>
+                          //               const RegistrationScreen()),
+                          //     );
+                          //   }
+                          // });
                         },
                         child: const Text(
                           "Sign Up",

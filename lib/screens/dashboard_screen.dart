@@ -173,7 +173,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ScanScreen()),
+                                builder: (context) => const ScanScreen()),
                           );
                         },
                         child: const Text(
