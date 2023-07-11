@@ -17,40 +17,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   QRViewController? controller;
   bool scanEnabled = false;
 
-  // var getResult = 'QR Code Result';
-
-  // final List<Customer> customers = [
-  //   Customer(
-  //     name: 'Kishori',
-  //     number: 8379813263,
-  //     fromDate: DateTime(11, 06, 2023),
-  //     toDate: DateTime(12, 7, 2023),
-  //   ),
-  //   Customer(
-  //     name: 'Kishori',
-  //     number: 8379813263,
-  //     fromDate: DateTime(11, 06, 2023),
-  //     toDate: DateTime(12, 7, 2023),
-  //   ),
-  //   Customer(
-  //     name: 'Kishori',
-  //     number: 8379813263,
-  //     fromDate: DateTime(11, 06, 2023),
-  //     toDate: DateTime(12, 7, 2023),
-  //   ),
-  //   Customer(
-  //     name: 'Kishori',
-  //     number: 8379813263,
-  //     fromDate: DateTime(11, 06, 2023),
-  //     toDate: DateTime(12, 7, 2023),
-  //   ),
-  //   Customer(
-  //     name: 'Kishori',
-  //     number: 8379813263,
-  //     fromDate: DateTime(11, 06, 2023),
-  //     toDate: DateTime(12, 7, 2023),
-  //   ),
-  // ];
   final List customers = [
     {
       'name': 'Kishori',
@@ -540,7 +506,7 @@ class Customer {
     required this.toDate,
   });
 }
-// oid onQRViewCreated(QRViewController controller) {
+// void onQRViewCreated(QRViewController controller) {
 //   this.controller = controller;
 //   controller.scannedDataStream.listen((scanData) {
 //     if(scanData.code == "" || scanData.code == null){
