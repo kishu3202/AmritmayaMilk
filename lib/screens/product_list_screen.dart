@@ -23,13 +23,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Add Daily Need Products"),
+        title: const Text("Add Daily Need Products"),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
+            const Padding(
+              padding: EdgeInsets.all(10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -51,14 +51,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     color: Colors.black,
                   )),
               child: Padding(
-                padding: EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Column(
                   children: [
                     Align(
                       alignment: Alignment.topLeft,
                       child: DropdownButtonFormField<String>(
                         value: selectedProduct,
-                        hint: Text(
+                        hint: const Text(
                           'Product Name',
                           style: TextStyle(fontSize: 15, color: Colors.black),
                         ),
@@ -74,13 +74,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         dropdownColor: Colors.deepPurple.shade50,
                         decoration: InputDecoration(
                           labelText: "Product Name",
-                          prefixIcon: Icon(
+                          prefixIcon: const Icon(
                             Icons.production_quantity_limits,
                             color: Colors.blue,
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Colors.black87,
                             ),
                           ),
@@ -104,7 +104,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         }).toList(),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 6,
                     ),
                     Align(
@@ -117,10 +117,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10)),
                             labelText: 'Unit'),
-                        style: TextStyle(fontSize: 15, color: Colors.black),
+                        style:
+                            const TextStyle(fontSize: 15, color: Colors.black),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Align(
@@ -133,10 +134,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10)),
                             labelText: 'Quantity'),
-                        style: TextStyle(fontSize: 15, color: Colors.black),
+                        style:
+                            const TextStyle(fontSize: 15, color: Colors.black),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Align(
@@ -149,14 +151,15 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10)),
                             labelText: 'Rate'),
-                        style: TextStyle(fontSize: 15, color: Colors.black),
+                        style:
+                            const TextStyle(fontSize: 15, color: Colors.black),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 16,
             ),
             Card(
@@ -166,18 +169,18 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     color: Colors.black,
                   )),
               child: Padding(
-                padding: EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Other Charges",
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.black),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 16,
                     ),
                     Row(
@@ -193,13 +196,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                             child: Transform.translate(
-                              offset: Offset(-10, 0),
+                              offset: const Offset(-10, 0),
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 1),
                                 child: CheckboxListTile(
                                   tristate: true,
-                                  title: Text(
+                                  title: const Text(
                                     'Polythene charges (Small)',
                                     style: TextStyle(
                                         color: Colors.black87, fontSize: 15),
@@ -221,7 +224,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Expanded(
@@ -235,13 +238,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                             child: Transform.translate(
-                              offset: Offset(-10, 0),
+                              offset: const Offset(-10, 0),
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 1),
                                 child: CheckboxListTile(
                                   tristate: true,
-                                  title: Text(
+                                  title: const Text(
                                     'Polythene charges (Big)',
                                     style: TextStyle(
                                         color: Colors.black87, fontSize: 15),
@@ -265,7 +268,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     Row(
@@ -281,13 +284,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                             child: Transform.translate(
-                              offset: Offset(-10, 0),
+                              offset: const Offset(-10, 0),
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 1),
                                 child: CheckboxListTile(
                                   tristate: true,
-                                  title: Text(
+                                  title: const Text(
                                     'Delivery charges',
                                     style: TextStyle(
                                         color: Colors.black87, fontSize: 15),
@@ -309,7 +312,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Expanded(
@@ -323,13 +326,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                             child: Transform.translate(
-                              offset: Offset(-10, 0),
+                              offset: const Offset(-10, 0),
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 1),
                                 child: CheckboxListTile(
                                   tristate: true,
-                                  title: Text(
+                                  title: const Text(
                                     'Maintenance charges',
                                     style: TextStyle(
                                         color: Colors.black87, fontSize: 15),
@@ -357,7 +360,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
             Padding(

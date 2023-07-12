@@ -46,9 +46,15 @@ class _LoginScreenState extends State<LoginScreen> {
   late String password;
   bool validateEmail = false, validatePassword = false;
   bool validateEmailIdFormat = false, validatePasswordIdFormat = false;
+  RegExp? regExpEmail;
+  AuthProvider? authProvider;
+
+  bool _validateEmailIdFormat(String email) => RegExp(
+          r'^[\w-]+(\.[\w-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})$')
+      .hasMatch(email);
+
   String patternEmail =
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
-  RegExp? regExpEmail;
 
   @override
   void initState() {
@@ -77,6 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: 300,
                 ),
                 const SizedBox(height: 30),
+                // EmailValidator(),
                 TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   controller: emailController,
@@ -96,25 +103,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       !regExpEmail!.hasMatch(emailController.text)
                           ? validateEmailIdFormat = true
                           : validateEmailIdFormat = false;
-                      // validateEmail
-                      //     ? ThemeHelper().buildErrorContainer(
-                      //         validateEmail, "Please enter email id", context)
-                      //     : ThemeHelper().buildErrorContainer(
-                      //         validateEmailIdFormat,
-                      //         "Please enter email format: test@gmail.com",
-                      //         context);
                     });
                   },
-                  // validator: (value) {
-                  //   validateEmail = RegExp(
-                  //           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                  //       .hasMatch(value!);
-                  //   if (value.isEmpty) {
-                  //     return ("Please Enter your email");
-                  //   } else if (validateEmail == false) {
-                  //     return "Enter valid email";
-                  //   }
-                  // },
                 ),
                 const SizedBox(
                   height: 30,
@@ -150,20 +140,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       validatePassword != passwordController.text.isEmpty;
                     });
                   },
-
-                  // validator: (value) {
-                  //   if (value!.isEmpty) {
-                  //     return "Please enter your password";
-                  //   }
-                  //   return null;
-                  // },
-                  // onSaved: (value) {
-                  //   password = value!;
-                  // },
                 ),
-                // SizedBox(
-                //   height: 5,
-                // ),
+                SizedBox(
+                  height: 4,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -198,17 +178,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       final email = emailController.text;
                       final password = passwordController.text;
                       if (email.isNotEmpty && password.isNotEmpty) {
-                        // final apiProvider =
-                        //     Provider.of<AuthProvider>(context, listen: false);
-                        // final response =
-                        //     await apiProvider.login(email, password);
-                        // if (response.statusCode == 200) {
-                        //   print('Login Successful');
-                        // } else {
-                        //   print('Login Failed');
-                        // }
-                      } else {
-                        print('Enter Email and Password');
+                        authProvider.login(context, email, password);
+                      } else if (!_formfield.currentState!.validate()) {
+                        print('false.');
                       }
                     });
                   },
@@ -220,7 +192,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: Center(
                       child: authProvider.loading
-                          ? CircularProgressIndicator()
+                          ? CircularProgressIndicator(
+                              color: Colors.white,
+                            )
                           : Text(
                               "Log In",
                               style: TextStyle(
@@ -246,16 +220,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextButton(
                         onPressed: () {
                           setState(() {
-                            if (_formfield.currentState!.validate()) {
-                              print("failed");
-                            } else {
-                              Navigator.push(
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const RegistrationScreen()),
-                              );
-                            }
+                                        RegistrationScreen()));
                           });
                         },
                         child: const Text(

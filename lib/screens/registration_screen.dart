@@ -1,4 +1,6 @@
+import 'package:amritmaya_milk/provider/user_Provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -10,13 +12,23 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   late String name;
   late String email;
   late String phone;
   late String address;
+  late String password;
+
+  UserProvider? userProvider;
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -32,6 +44,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     });
                   },
                   keyboardType: TextInputType.text,
+                  controller: nameController,
                   decoration: InputDecoration(
                     hintText: 'Name',
                     border: OutlineInputBorder(
@@ -52,10 +65,35 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 TextFormField(
                   onChanged: (value) {
                     setState(() {
+                      address = value;
+                    });
+                  },
+                  keyboardType: TextInputType.text,
+                  controller: addressController,
+                  decoration: InputDecoration(
+                    hintText: 'Address',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0)),
+                    prefixIcon: const Icon(Icons.location_city),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter a Address';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 30.0,
+                ),
+                TextFormField(
+                  onChanged: (value) {
+                    setState(() {
                       email = value;
                     });
                   },
                   keyboardType: TextInputType.emailAddress,
+                  controller: emailController,
                   decoration: InputDecoration(
                     hintText: 'Email',
                     border: OutlineInputBorder(
@@ -80,6 +118,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     });
                   },
                   keyboardType: TextInputType.number,
+                  controller: phoneController,
                   decoration: InputDecoration(
                     hintText: 'Phone No',
                     border: OutlineInputBorder(
@@ -103,19 +142,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 TextFormField(
                   onChanged: (value) {
                     setState(() {
-                      address = value;
+                      password = value;
                     });
                   },
                   keyboardType: TextInputType.text,
+                  controller: passwordController,
                   decoration: InputDecoration(
-                    hintText: 'Address',
+                    hintText: 'Password',
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0)),
-                    prefixIcon: const Icon(Icons.location_city),
+                    prefixIcon: const Icon(Icons.lock),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter a Address';
+                      return 'Please enter a Password';
                     }
                     return null;
                   },
@@ -126,11 +166,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 InkWell(
                   onTap: () {
                     setState(() {
-                      if (formKey.currentState!.validate()) {
+                      final name = nameController.text;
+                      final phone = phoneController.text;
+                      final email = emailController.text;
+                      final address = addressController.text;
+                      if (name.isNotEmpty &&
+                          phone.isNotEmpty &&
+                          email.isNotEmpty &&
+                          address.isNotEmpty) {
+                        userProvider.register(
+                            context, name, phone, email, address, password);
+                        // if (formKey.currentState!.validate()) {
+                        //   print('false');
+                        //   Navigator.pop(context);
+                      } else if (formKey.currentState!.validate()) {
                         print('false');
-                        Navigator.pop(context);
-                      } else {
-                        print('true');
                       }
                     });
                   },

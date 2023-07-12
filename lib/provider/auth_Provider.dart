@@ -17,7 +17,8 @@ class AuthProvider extends ChangeNotifier {
     try {
       Response response = await post(
           Uri.parse(
-              " https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/login"),
+              "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/login"),
+          headers: {'X-API-KEY': 'amritmayamilk050512'},
           body: {email: email, password: password});
       if (response.statusCode == 200) {
         print("Succssful");

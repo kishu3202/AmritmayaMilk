@@ -18,6 +18,7 @@ class _ScanScreenState extends State<ScanScreen> {
 
   QRViewController? controller;
 
+  // ignore: override_on_non_overriding_member
   @override
   void onQRViewCreated(QRViewController controller) {
     this.controller = controller;
@@ -67,6 +68,7 @@ class _ScanScreenState extends State<ScanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // ignore: prefer_const_constructors
         title: Text('QR Code Scanner'),
       ),
       body: Column(
@@ -84,7 +86,7 @@ class _ScanScreenState extends State<ScanScreen> {
           Expanded(
             flex: 1,
             child: Center(
-              child: Text('Scanned Barcode: ${scanBarcode!}'),
+              child: Text('Scanned Barcode: ${scanBarcode}'),
             ),
           ),
           ElevatedButton(

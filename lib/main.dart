@@ -1,4 +1,5 @@
 import 'package:amritmaya_milk/provider/auth_Provider.dart';
+import 'package:amritmaya_milk/provider/user_Provider.dart';
 import 'package:amritmaya_milk/screens/login_screen.dart';
 import 'package:amritmaya_milk/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class AmritmayaMilk extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
