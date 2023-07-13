@@ -38,17 +38,16 @@ class _CustomerListState extends State<CustomerList> {
   //   }
   // ];
 
-  CustomerProvider? customerProvider;
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   final customerProvider = Provider.of(context, listen: false);
-  //   customerProvider.getPostData();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    final customerModel = Provider.of<CustomerProvider>(context, listen: false);
+    customerModel.getPostData();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final customerProvider = Provider.of<CustomerProvider>(context);
+    final customerModel = Provider.of<CustomerProvider>(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -57,7 +56,7 @@ class _CustomerListState extends State<CustomerList> {
       ),
       body: Container(
         child: ListView.builder(
-          // itemCount: customers.length,
+          itemCount: 10,
           itemBuilder: (context, index) => Padding(
             padding: const EdgeInsets.all(5.5),
             child: Card(
@@ -85,7 +84,7 @@ class _CustomerListState extends State<CustomerList> {
                           width: 10,
                         ),
                         Text(
-                          customerProvider.post?.name ?? "",
+                          customerModel.post?.name ?? "",
                           // customers[index]['name'],
                           style: const TextStyle(
                             fontSize: 17,
@@ -108,7 +107,7 @@ class _CustomerListState extends State<CustomerList> {
                           width: 10,
                         ),
                         Text(
-                          customerProvider.post?.email ?? "",
+                          customerModel.post?.email ?? "",
                           //customers[index]['email'],
                           style: const TextStyle(
                               fontSize: 16,
@@ -134,7 +133,7 @@ class _CustomerListState extends State<CustomerList> {
                             // callNumber('8379813263');
                           },
                           child: Text(
-                            customerProvider.post?.contact ?? "",
+                            customerModel.post?.contact ?? "",
                             // customers[index]['contact'],
                             style: const TextStyle(
                                 fontSize: 17,
@@ -157,7 +156,8 @@ class _CustomerListState extends State<CustomerList> {
                           width: 10,
                         ),
                         Text(
-                          customerProvider.post?.address ?? "",
+                          customerModel.post?.address ?? "",
+                          // dataProvider.dat?.name ?? "",
                           // customers[index]['address'],
                           style: const TextStyle(
                               fontSize: 17,
@@ -200,12 +200,12 @@ class Customer {
       required this.contact,
       required this.address});
 
-  factory Customer.fromJson(Map<String, dynamic> json) {
-    return Customer(
-      name: json['name'] ?? "",
-      email: json['email'] ?? "",
-      contact: json['phone'] ?? "",
-      address: json['address'] ?? "",
-    );
-  }
+  // factory Customer.fromJson(Map<String, dynamic> json) {
+  //   return Customer(
+  //     name: json['name'] ?? "",
+  //     email: json['email'] ?? "",
+  //     contact: json['phone'] ?? "",
+  //     address: json['address'] ?? "",
+  //   );
+  // }
 }
