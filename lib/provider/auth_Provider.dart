@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -15,12 +17,19 @@ class AuthProvider extends ChangeNotifier {
   void login(BuildContext context, String email, String password) async {
     setLoading(true);
     try {
+      var map = new Map<String, dynamic>();
+      map['email'] = email;
+      map['password'] = password;
+      map['token'] = 'testing';
+      map['type'] = 'delivery_boy';
       Response response = await post(
           Uri.parse(
               "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/login"),
           headers: {'X-API-KEY': 'amritmayamilk050512'},
-          body: {email: email, password: password});
-      if (response.statusCode == 200) {
+          body: map);
+      Map<String, dynamic> res = json.decode(response.body);
+      print(res['Success']);
+      if (res['Success'] == true) {
         print("Succssful");
         Navigator.push(
           context,

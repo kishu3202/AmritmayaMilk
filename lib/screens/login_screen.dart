@@ -48,21 +48,23 @@ class _LoginScreenState extends State<LoginScreen> {
   bool validateEmailIdFormat = false, validatePasswordIdFormat = false;
   RegExp? regExpEmail;
   AuthProvider? authProvider;
-
-  bool _validateEmailIdFormat(String email) => RegExp(
-          r'^[\w-]+(\.[\w-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})$')
-      .hasMatch(email);
-
-  String patternEmail =
-      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      regExpEmail = RegExp(patternEmail);
-    });
+  bool _validateEmail(String value) {
+    String pattern =
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
+    RegExp regex = RegExp(pattern);
+    return regex.hasMatch(value);
   }
+
+  // String patternEmail =
+  //     r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   setState(() {
+  //     regExpEmail = RegExp(patternEmail);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: emailController,
                   decoration: InputDecoration(
                     hintText: "Email",
+                    // errorText: validateEmail ? null : 'Invalid email format',
                     // labelText: "Email",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -96,15 +99,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: const Icon(Icons.email),
                   ),
                   onChanged: (value) {
+                    final emailRegExp = RegExp(
+                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+                    final isValid = emailRegExp.hasMatch(value);
+
                     setState(() {
-                      emailController.text.isEmpty
-                          ? validateEmail = true
-                          : validateEmail = false;
-                      !regExpEmail!.hasMatch(emailController.text)
-                          ? validateEmailIdFormat = true
-                          : validateEmailIdFormat = false;
+                      validateEmail = value.isEmpty || isValid;
                     });
                   },
+                  // onChanged: (value) {
+                  //   setState(() {
+                  //     //  validateEmail = _validateEmail(value);
+                  //     emailController.text.isEmpty
+                  //         ? validateEmail = true
+                  //         : validateEmail = false;
+                  //     !regExpEmail!.hasMatch(emailController.text)
+                  //         ? validateEmailIdFormat = true
+                  //         : validateEmailIdFormat = false;
+                  //   });
+                  // },
                 ),
                 const SizedBox(
                   height: 30,
@@ -218,23 +231,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     TextButton(
-                        onPressed: () {
-                          setState(() {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        RegistrationScreen()));
-                          });
-                        },
-                        child: const Text(
-                          "Sign Up",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ))
+                      onPressed: () {
+                        setState(() {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RegistrationScreen()));
+                        });
+                      },
+                      child: const Text(
+                        "Sign Up",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ],

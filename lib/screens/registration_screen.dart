@@ -23,7 +23,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   late String phone;
   late String address;
   late String password;
-
   UserProvider? userProvider;
 
   @override
@@ -170,16 +169,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       final phone = phoneController.text;
                       final email = emailController.text;
                       final address = addressController.text;
+                      final password = passwordController.text;
                       if (name.isNotEmpty &&
                           phone.isNotEmpty &&
                           email.isNotEmpty &&
-                          address.isNotEmpty) {
+                          address.isNotEmpty &&
+                          password.isNotEmpty) {
                         userProvider.register(
                             context, name, phone, email, address, password);
-                        // if (formKey.currentState!.validate()) {
-                        //   print('false');
-                        //   Navigator.pop(context);
                       } else if (formKey.currentState!.validate()) {
+                        Navigator.pop(context);
                         print('false');
                       }
                     });

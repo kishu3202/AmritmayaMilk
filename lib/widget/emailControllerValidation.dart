@@ -53,3 +53,27 @@ class EmailValidator extends StatelessWidget {
 // onSaved: (value) {
 //   password = value!;
 // },
+// void callNumber(String phoneNumber) async {
+//   final url = 'tel:$phoneNumber';
+//   if (await canLaunch(url)) {
+//     await launch(url);
+//   } else {
+//     showDialog(
+//       context: context,
+//       builder: (context) {
+//         return AlertDialog(
+//           title: Text('Error'),
+//           content: Text('Could not make the call.'),
+//           actions: [
+//             TextButton(
+//               onPressed: () {
+//                 Navigator.pop(context);
+//               },
+//               child: Text('OK'),
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+// }

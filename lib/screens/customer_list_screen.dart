@@ -1,4 +1,6 @@
+import 'package:amritmaya_milk/provider/customer_Provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CustomerList extends StatefulWidget {
   const CustomerList({super.key});
@@ -9,59 +11,44 @@ class CustomerList extends StatefulWidget {
 
 class _CustomerListState extends State<CustomerList> {
   bool isEditing = false;
-  final List customers = [
-    {
-      'name': 'Kishori',
-      'email': 'kishori@gmail.com',
-      'phoneNo': '8379813263',
-      'address': 'Pune'
-    },
-    {
-      'name': 'Dipti',
-      'email': 'dipti@gmail.com',
-      'phoneNo': '8894561223',
-      'address': 'Satara',
-    },
-    {
-      'name': 'Rahul',
-      'email': 'rahul@gmail.com',
-      'phoneNo': '9689998016',
-      'address': 'Sangli',
-    },
-    {
-      'name': 'Sayali',
-      'email': 'sayali@gmail.com',
-      'phoneNo': '8975599697',
-      'address': 'Mumbai',
-    }
-  ];
-  // void callNumber(String phoneNumber) async {
-  //   final url = 'tel:$phoneNumber';
-  //   if (await canLaunch(url)) {
-  //     await launch(url);
-  //   } else {
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return AlertDialog(
-  //           title: Text('Error'),
-  //           content: Text('Could not make the call.'),
-  //           actions: [
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.pop(context);
-  //               },
-  //               child: Text('OK'),
-  //             ),
-  //           ],
-  //         );
-  //       },
-  //     );
+  // final List customers = [
+  //   {
+  //     'name': 'Kishori',
+  //     'email': 'kishori@gmail.com',
+  //     'phoneNo': '8379813263',
+  //     'address': 'Pune'
+  //   },
+  //   {
+  //     'name': 'Dipti',
+  //     'email': 'dipti@gmail.com',
+  //     'phoneNo': '8894561223',
+  //     'address': 'Satara',
+  //   },
+  //   {
+  //     'name': 'Rahul',
+  //     'email': 'rahul@gmail.com',
+  //     'phoneNo': '9689998016',
+  //     'address': 'Sangli',
+  //   },
+  //   {
+  //     'name': 'Sayali',
+  //     'email': 'sayali@gmail.com',
+  //     'phoneNo': '8975599697',
+  //     'address': 'Mumbai',
   //   }
+  // ];
+
+  CustomerProvider? customerProvider;
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   final customerProvider = Provider.of(context, listen: false);
+  //   customerProvider.getPostData();
   // }
 
   @override
   Widget build(BuildContext context) {
+    final customerProvider = Provider.of<CustomerProvider>(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -70,7 +57,7 @@ class _CustomerListState extends State<CustomerList> {
       ),
       body: Container(
         child: ListView.builder(
-          itemCount: customers.length,
+          // itemCount: customers.length,
           itemBuilder: (context, index) => Padding(
             padding: const EdgeInsets.all(5.5),
             child: Card(
@@ -98,7 +85,8 @@ class _CustomerListState extends State<CustomerList> {
                           width: 10,
                         ),
                         Text(
-                          customers[index]['name'],
+                          customerProvider.post?.name ?? "",
+                          // customers[index]['name'],
                           style: const TextStyle(
                             fontSize: 17,
                             fontStyle: FontStyle.normal,
@@ -120,7 +108,8 @@ class _CustomerListState extends State<CustomerList> {
                           width: 10,
                         ),
                         Text(
-                          customers[index]['email'],
+                          customerProvider.post?.email ?? "",
+                          //customers[index]['email'],
                           style: const TextStyle(
                               fontSize: 16,
                               fontStyle: FontStyle.normal,
@@ -145,7 +134,8 @@ class _CustomerListState extends State<CustomerList> {
                             // callNumber('8379813263');
                           },
                           child: Text(
-                            customers[index]['phoneNo'],
+                            customerProvider.post?.contact ?? "",
+                            // customers[index]['contact'],
                             style: const TextStyle(
                                 fontSize: 17,
                                 fontStyle: FontStyle.normal,
@@ -167,7 +157,8 @@ class _CustomerListState extends State<CustomerList> {
                           width: 10,
                         ),
                         Text(
-                          customers[index]['address'],
+                          customerProvider.post?.address ?? "",
+                          // customers[index]['address'],
                           style: const TextStyle(
                               fontSize: 17,
                               fontStyle: FontStyle.normal,
@@ -200,12 +191,21 @@ class _CustomerListState extends State<CustomerList> {
 class Customer {
   late final String name;
   late final String email;
-  late final String phoneNo;
+  late final String contact;
   late final String address;
 
   Customer(
       {required this.name,
       required this.email,
-      required this.phoneNo,
+      required this.contact,
       required this.address});
+
+  factory Customer.fromJson(Map<String, dynamic> json) {
+    return Customer(
+      name: json['name'] ?? "",
+      email: json['email'] ?? "",
+      contact: json['phone'] ?? "",
+      address: json['address'] ?? "",
+    );
+  }
 }
