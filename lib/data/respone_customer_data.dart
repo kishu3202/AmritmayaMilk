@@ -21,10 +21,10 @@ class CustomerData {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['Message'] = this.message;
-    data['Success'] = this.success;
-    if (this.customerList != null) {
-      data['customerList'] = this.customerList!.map((v) => v.toJson()).toList();
+    data['Message'] = message;
+    data['Success'] = success;
+    if (customerList != null) {
+      data['customerList'] = customerList!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -78,19 +78,19 @@ class CustomerList {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['contact'] = this.contact;
-    data['email'] = this.email;
-    data['address'] = this.address;
-    data['barcode'] = this.barcode;
-    data['password'] = this.password;
-    data['status'] = this.status;
-    data['type'] = this.type;
-    data['token'] = this.token;
-    data['term_condition'] = this.termCondition;
-    data['created_at'] = this.createdAt;
-    data['update_at'] = this.updateAt;
+    data['id'] = id;
+    data['name'] = name;
+    data['contact'] = contact;
+    data['email'] = email;
+    data['address'] = address;
+    data['barcode'] = barcode;
+    data['password'] = password;
+    data['status'] = status;
+    data['type'] = type;
+    data['token'] = token;
+    data['term_condition'] = termCondition;
+    data['created_at'] = createdAt;
+    data['update_at'] = updateAt;
     return data;
   }
 }

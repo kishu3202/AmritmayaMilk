@@ -8,10 +8,11 @@ class ProductListScreen extends StatefulWidget {
 }
 
 class _ProductListScreenState extends State<ProductListScreen> {
+  final formKey = GlobalKey<FormState>();
   String? selectedProduct = "Product 1";
-  String? unit;
-  String? quantity;
-  String? rate;
+  String? unit = 'Unit';
+  String? quantity = "Quantity";
+  String? rate = 'Rate';
 
   bool? polytheneSmallChecked = false;
   bool? polytheneBigChecked = false;
@@ -105,56 +106,183 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       ),
                     ),
                     const SizedBox(
-                      height: 6,
-                    ),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: TextField(
-                        onChanged: (value) {
-                          unit = value;
-                        },
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            labelText: 'Unit'),
-                        style:
-                            const TextStyle(fontSize: 15, color: Colors.black),
-                      ),
-                    ),
-                    const SizedBox(
                       height: 10,
                     ),
                     Align(
                       alignment: Alignment.topLeft,
-                      child: TextField(
-                        onChanged: (value) {
-                          quantity = value;
+                      child: DropdownButtonFormField<String>(
+                        value: unit,
+                        hint: const Text(
+                          'Unit',
+                          style: TextStyle(fontSize: 15, color: Colors.black),
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            unit = newValue;
+                          });
                         },
+                        icon: const Icon(
+                          Icons.arrow_drop_down_circle,
+                          color: Colors.blue,
+                        ),
+                        dropdownColor: Colors.deepPurple.shade50,
                         decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            labelText: 'Quantity'),
-                        style:
-                            const TextStyle(fontSize: 15, color: Colors.black),
+                          labelText: "Unit",
+                          prefixIcon: const Icon(
+                            Icons.ad_units,
+                            color: Colors.blue,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                        items: <String>['1', '2', '3', '4', '5']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
                       ),
                     ),
-                    const SizedBox(
+                    SizedBox(
                       height: 10,
                     ),
                     Align(
                       alignment: Alignment.topLeft,
-                      child: TextField(
-                        onChanged: (value) {
-                          rate = value;
+                      child: DropdownButtonFormField<String>(
+                        value: quantity,
+                        hint: const Text(
+                          'Quantity',
+                          style: TextStyle(fontSize: 15, color: Colors.black),
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            quantity = newValue;
+                          });
                         },
+                        icon: const Icon(
+                          Icons.arrow_drop_down_circle,
+                          color: Colors.blue,
+                        ),
+                        dropdownColor: Colors.deepPurple.shade50,
                         decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            labelText: 'Rate'),
-                        style:
-                            const TextStyle(fontSize: 15, color: Colors.black),
+                          labelText: "Quantity",
+                          prefixIcon: const Icon(
+                            Icons.storage,
+                            color: Colors.blue,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                        items: <String>['1', '2', '3', '4', '5']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
                       ),
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: DropdownButtonFormField<String>(
+                        value: rate,
+                        hint: const Text(
+                          'Rate',
+                          style: TextStyle(fontSize: 15, color: Colors.black),
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            rate = newValue;
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.arrow_drop_down_circle,
+                          color: Colors.blue,
+                        ),
+                        dropdownColor: Colors.deepPurple.shade50,
+                        decoration: InputDecoration(
+                          labelText: "Rate",
+                          prefixIcon: const Icon(
+                            Icons.price_change,
+                            color: Colors.blue,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                        items: <String>['1', '2', '3', '4', '5']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+
+                    // Align(
+                    //   alignment: Alignment.topLeft,
+                    //   child: TextField(
+                    //     onChanged: (value) {
+                    //       unit = value;
+                    //     },
+                    //     decoration: InputDecoration(
+                    //         border: OutlineInputBorder(
+                    //             borderRadius: BorderRadius.circular(10)),
+                    //         labelText: 'Unit'),
+                    //     style:
+                    //         const TextStyle(fontSize: 15, color: Colors.black),
+                    //   ),
+                    // ),
+                    // const SizedBox(
+                    //   height: 10,
+                    // ),
+                    // Align(
+                    //   alignment: Alignment.topLeft,
+                    //   child: TextField(
+                    //     onChanged: (value) {
+                    //       quantity = value;
+                    //     },
+                    //     decoration: InputDecoration(
+                    //         border: OutlineInputBorder(
+                    //             borderRadius: BorderRadius.circular(10)),
+                    //         labelText: 'Quantity'),
+                    //     style:
+                    //         const TextStyle(fontSize: 15, color: Colors.black),
+                    //   ),
+                    // ),
+                    // const SizedBox(
+                    //   height: 10,
+                    // ),
+                    // Align(
+                    //   alignment: Alignment.topLeft,
+                    //   child: TextField(
+                    //     onChanged: (value) {
+                    //       rate = value;
+                    //     },
+                    //     decoration: InputDecoration(
+                    //         border: OutlineInputBorder(
+                    //             borderRadius: BorderRadius.circular(10)),
+                    //         labelText: 'Rate'),
+                    //     style:
+                    //         const TextStyle(fontSize: 15, color: Colors.black),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -201,7 +329,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 1),
                                 child: CheckboxListTile(
-                                  tristate: true,
+                                  // tristate: true,
                                   title: const Text(
                                     'Polythene charges (Small)',
                                     style: TextStyle(
@@ -243,7 +371,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 1),
                                 child: CheckboxListTile(
-                                  tristate: true,
+                                  // tristate: true,
                                   title: const Text(
                                     'Polythene charges (Big)',
                                     style: TextStyle(
@@ -289,7 +417,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 1),
                                 child: CheckboxListTile(
-                                  tristate: true,
+                                  // tristate: true,
                                   title: const Text(
                                     'Delivery charges',
                                     style: TextStyle(
@@ -331,7 +459,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 1),
                                 child: CheckboxListTile(
-                                  tristate: true,
+                                  // tristate: true,
                                   title: const Text(
                                     'Maintenance charges',
                                     style: TextStyle(

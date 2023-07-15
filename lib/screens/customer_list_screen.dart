@@ -84,7 +84,7 @@ class _CustomerListState extends State<CustomerList> {
                           width: 10,
                         ),
                         Text(
-                          customerModel.post?.name ?? "",
+                          customerModel.post?[index].name ?? "",
                           // customers[index]['name'],
                           style: const TextStyle(
                             fontSize: 17,
@@ -107,7 +107,7 @@ class _CustomerListState extends State<CustomerList> {
                           width: 10,
                         ),
                         Text(
-                          customerModel.post?.email ?? "",
+                          customerModel.post?[index].email ?? "",
                           //customers[index]['email'],
                           style: const TextStyle(
                               fontSize: 16,
@@ -133,7 +133,7 @@ class _CustomerListState extends State<CustomerList> {
                             // callNumber('8379813263');
                           },
                           child: Text(
-                            customerModel.post?.contact ?? "",
+                            customerModel.post?[index].contact ?? "",
                             // customers[index]['contact'],
                             style: const TextStyle(
                                 fontSize: 17,
@@ -156,7 +156,7 @@ class _CustomerListState extends State<CustomerList> {
                           width: 10,
                         ),
                         Text(
-                          customerModel.post?.address ?? "",
+                          customerModel.post?[index].address ?? "",
                           // dataProvider.dat?.name ?? "",
                           // customers[index]['address'],
                           style: const TextStyle(
@@ -199,13 +199,4 @@ class Customer {
       required this.email,
       required this.contact,
       required this.address});
-
-  // factory Customer.fromJson(Map<String, dynamic> json) {
-  //   return Customer(
-  //     name: json['name'] ?? "",
-  //     email: json['email'] ?? "",
-  //     contact: json['phone'] ?? "",
-  //     address: json['address'] ?? "",
-  //   );
-  // }
 }

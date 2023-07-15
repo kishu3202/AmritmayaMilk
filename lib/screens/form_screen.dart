@@ -18,8 +18,8 @@ class _FormScreenState extends State<FormScreen> {
       ),
       body: Center(),
       floatingActionButton: Container(
-        height: 100,
-        width: 100,
+        height: 60,
+        width: 220,
         child: FloatingActionButton(
           onPressed: () {
             Navigator.push(
@@ -27,15 +27,12 @@ class _FormScreenState extends State<FormScreen> {
               MaterialPageRoute(builder: (context) => ProductListScreen()),
             );
           },
-          child: Align(
-              alignment: Alignment.center,
-              child: Container(
-                height: 70,
-                width: 70,
-                child: Center(
-                  child: Text('Add Daily Need Products'),
-                ),
-              )),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+          child: Text(
+            'Add Daily Need Products',
+            style: TextStyle(fontSize: 15),
+          ),
         ),
       ),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

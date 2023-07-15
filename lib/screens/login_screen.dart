@@ -48,23 +48,12 @@ class _LoginScreenState extends State<LoginScreen> {
   bool validateEmailIdFormat = false, validatePasswordIdFormat = false;
   RegExp? regExpEmail;
   AuthProvider? authProvider;
-  bool _validateEmail(String value) {
+  bool _validateEmail(String email) {
     String pattern =
         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
     RegExp regex = RegExp(pattern);
-    return regex.hasMatch(value);
+    return regex.hasMatch(email);
   }
-
-  // String patternEmail =
-  //     r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   setState(() {
-  //     regExpEmail = RegExp(patternEmail);
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -98,14 +87,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     prefixIcon: const Icon(Icons.email),
                   ),
+                  // validator: (email) {
+                  //   if (email!.isEmpty) {
+                  //     return 'Please enter an email address';
+                  //   } else if (!_validateEmail(email)) {
+                  //     return 'Please enter a valid email address';
+                  //   }
+                  //   return null;
+                  // },
                   onChanged: (value) {
                     final emailRegExp = RegExp(
                         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-                    final isValid = emailRegExp.hasMatch(value);
+                    validateEmail = emailRegExp.hasMatch(value);
+                    print(validateEmail);
 
-                    setState(() {
-                      validateEmail = value.isEmpty || isValid;
-                    });
+                    // setState(() {
+                    //   validateEmail = value.isEmpty || validateEmail;
+                    // });
                   },
                   // onChanged: (value) {
                   //   setState(() {
@@ -119,6 +117,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   //   });
                   // },
                 ),
+                SizedBox(
+                  height: 5,
+                ),
+                validateEmail
+                    ? Opacity(opacity: 0.0)
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text("Please enter valid Email address",
+                              style:
+                                  TextStyle(color: Colors.red, fontSize: 13)),
+                        ],
+                      ),
+
                 const SizedBox(
                   height: 30,
                 ),
@@ -142,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         });
                       },
                       child: Icon(
-                          passToggle ? Icons.visibility : Icons.visibility_off),
+                          passToggle ? Icons.visibility_off : Icons.visibility),
                     ),
                   ),
                   onChanged: (value) {
@@ -154,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     });
                   },
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 4,
                 ),
                 Row(
@@ -192,9 +204,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       final password = passwordController.text;
                       if (email.isNotEmpty && password.isNotEmpty) {
                         authProvider.login(context, email, password);
-                      } else if (!_formfield.currentState!.validate()) {
-                        print('false.');
+                      } else if (email.isEmpty && password.isEmpty) {
+                        print("Please enter email");
                       }
+                      // } else if (!_formfield.currentState!.validate()) {
+                      //   print('Login Failed.');
+                      // }
                     });
                   },
                   child: Container(
@@ -205,10 +220,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: Center(
                       child: authProvider.loading
-                          ? CircularProgressIndicator(
+                          ? const CircularProgressIndicator(
                               color: Colors.white,
                             )
-                          : Text(
+                          : const Text(
                               "Log In",
                               style: TextStyle(
                                 color: Colors.white,
@@ -236,7 +251,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => RegistrationScreen()));
+                                  builder: (context) =>
+                                      const RegistrationScreen()));
                         });
                       },
                       child: const Text(

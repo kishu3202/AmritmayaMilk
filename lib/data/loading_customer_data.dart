@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 
 import 'data_model.dart';
 
-Future<DataModel?> getData() async {
-  DataModel? result;
+Future<List<DataModel>> getData() async {
+  List<DataModel> result = [];
   try {
     final response = await http.get(
       Uri.parse(
@@ -14,8 +14,11 @@ Future<DataModel?> getData() async {
       headers: {'X-API-KEY': 'amritmayamilk050512'},
     );
     if (response.statusCode == 200) {
-      final item = json.decode(response.body);
-      result = DataModel.fromJson(item);
+      final item = await json.decode(response.body);
+      for (var customer in item['customerList']) {
+        result.add(DataModel.fromJson(customer));
+      }
+      print("customer list is here ${result}");
     } else {
       print("Error");
     }

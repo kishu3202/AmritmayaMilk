@@ -18,6 +18,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   TextEditingController addressController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+  String responseMessage = '';
+
   late String name;
   late String email;
   late String phone;

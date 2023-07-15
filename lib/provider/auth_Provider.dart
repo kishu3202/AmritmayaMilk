@@ -21,7 +21,7 @@ class AuthProvider extends ChangeNotifier {
       map['email'] = email;
       map['password'] = password;
       map['token'] = 'testing';
-      map['type'] = 'delivery_boy';
+      map['type'] = 'user';
       Response response = await post(
           Uri.parse(
               "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/login"),
@@ -38,7 +38,7 @@ class AuthProvider extends ChangeNotifier {
         setLoading(false);
       } else {
         setLoading(false);
-        print("Failed");
+        print("Login Failed");
       }
     } catch (e) {
       print(e.toString());
