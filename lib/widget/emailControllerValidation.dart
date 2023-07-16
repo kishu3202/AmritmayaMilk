@@ -77,3 +77,42 @@ class EmailValidator extends StatelessWidget {
 //     );
 //   }
 // }
+
+// validateEmail
+//     ? Opacity(opacity: 0.0)
+//     : Row(
+//         mainAxisAlignment: MainAxisAlignment.end,
+//         children: [
+//           Text("Please enter valid Email address",
+//               style:
+//                   TextStyle(color: Colors.red, fontSize: 13)),
+//         ],
+//       ),
+// validator: (email) {
+//   if (email!.isEmpty) {
+//     return 'Please enter an email address';
+//   } else if (!_validateEmail(email)) {
+//     return 'Please enter a valid email address';
+//   }
+//   return null;
+// },
+// onChanged: (value) {
+//   final emailRegExp = RegExp(
+//       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+//   validateEmail = emailRegExp.hasMatch(value);
+//   print(validateEmail);
+//
+//   // setState(() {
+//   //   validateEmail = value.isEmpty || validateEmail;
+//   // });
+// },
+// onChanged: (value) {
+//   setState(() {
+//     //  validateEmail = _validateEmail(value);
+//     emailController.text.isEmpty
+//         ? validateEmail = true
+//         : validateEmail = false;
+//     !regExpEmail!.hasMatch(emailController.text)
+//         ? validateEmailIdFormat = true
+//         : validateEmailIdFormat = false;
+//   });
