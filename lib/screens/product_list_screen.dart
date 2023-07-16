@@ -8,11 +8,10 @@ class ProductListScreen extends StatefulWidget {
 }
 
 class _ProductListScreenState extends State<ProductListScreen> {
-  final formKey = GlobalKey<FormState>();
-  String? selectedProduct = "Product 1";
-  String? unit = 'Unit';
-  String? quantity = "Quantity";
-  String? rate = 'Rate';
+  String? selectedProduct = "Product";
+  String? selectedUnit = "Unit";
+  String? selectedQuantity = "Quantity";
+  String? selectedRate = 'Rate';
 
   bool? polytheneSmallChecked = false;
   bool? polytheneBigChecked = false;
@@ -76,7 +75,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         decoration: InputDecoration(
                           labelText: "Product Name",
                           prefixIcon: const Icon(
-                            Icons.production_quantity_limits,
+                            Icons.shopping_cart,
                             color: Colors.blue,
                           ),
                           border: OutlineInputBorder(
@@ -111,14 +110,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     Align(
                       alignment: Alignment.topLeft,
                       child: DropdownButtonFormField<String>(
-                        value: unit,
+                        value: selectedUnit,
                         hint: const Text(
                           'Unit',
                           style: TextStyle(fontSize: 15, color: Colors.black),
                         ),
                         onChanged: (String? newValue) {
                           setState(() {
-                            unit = newValue;
+                            selectedUnit = newValue;
                           });
                         },
                         icon: const Icon(
@@ -129,7 +128,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         decoration: InputDecoration(
                           labelText: "Unit",
                           prefixIcon: const Icon(
-                            Icons.ad_units,
+                            Icons.production_quantity_limits,
                             color: Colors.blue,
                           ),
                           border: OutlineInputBorder(
@@ -148,20 +147,21 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         }).toList(),
                       ),
                     ),
+
                     SizedBox(
                       height: 10,
                     ),
                     Align(
                       alignment: Alignment.topLeft,
                       child: DropdownButtonFormField<String>(
-                        value: quantity,
+                        value: selectedQuantity,
                         hint: const Text(
                           'Quantity',
                           style: TextStyle(fontSize: 15, color: Colors.black),
                         ),
                         onChanged: (String? newValue) {
                           setState(() {
-                            quantity = newValue;
+                            selectedQuantity = newValue;
                           });
                         },
                         icon: const Icon(
@@ -172,7 +172,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         decoration: InputDecoration(
                           labelText: "Quantity",
                           prefixIcon: const Icon(
-                            Icons.storage,
+                            Icons.production_quantity_limits,
                             color: Colors.blue,
                           ),
                           border: OutlineInputBorder(
@@ -191,20 +191,21 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         }).toList(),
                       ),
                     ),
+
                     SizedBox(
                       height: 10,
                     ),
                     Align(
                       alignment: Alignment.topLeft,
                       child: DropdownButtonFormField<String>(
-                        value: rate,
+                        value: selectedRate,
                         hint: const Text(
                           'Rate',
                           style: TextStyle(fontSize: 15, color: Colors.black),
                         ),
                         onChanged: (String? newValue) {
                           setState(() {
-                            rate = newValue;
+                            selectedRate = newValue;
                           });
                         },
                         icon: const Icon(
@@ -215,7 +216,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         decoration: InputDecoration(
                           labelText: "Rate",
                           prefixIcon: const Icon(
-                            Icons.price_change,
+                            Icons.price_change_outlined,
                             color: Colors.blue,
                           ),
                           border: OutlineInputBorder(
@@ -497,9 +498,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 onPressed: () {
                   print(
                       "submit successful selectedProduct: ${selectedProduct}");
-                  print("submit successful selectedProduct: ${unit}");
-                  print("submit successful selectedProduct: ${rate}");
-                  print("submit successful selectedProduct: ${quantity}");
+                  print("submit successful selectedProduct: ${selectedUnit}");
+                  print(
+                      "submit successful selectedProduct: ${selectedQuantity}");
+                  print("submit successful selectedProduct: ${selectedRate}");
                   print('submit successful');
                 },
                 child: Container(
