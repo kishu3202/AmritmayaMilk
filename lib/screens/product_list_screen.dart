@@ -9,10 +9,10 @@ class ProductListScreen extends StatefulWidget {
 
 class _ProductListScreenState extends State<ProductListScreen> {
   final formKey = GlobalKey<FormState>();
-  String? selectedProduct = "Product";
-  String? selectedUnit = "Unit";
-  String? selectedQuantity = "Quantity";
-  String? selectedRate = 'Rate';
+  String? selectedProduct;
+  String? selectedUnit;
+  String? selectedQuantity;
+  String? selectedRate;
 
   bool? polytheneSmallChecked = false;
   bool? polytheneBigChecked = false;
@@ -518,19 +518,25 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 ),
               ),
               const SizedBox(
-                height: 50,
+                height: 30,
               ),
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    print(
-                        "submit successful selectedProduct: ${selectedProduct}");
-                    print("submit successful selectedProduct: ${selectedUnit}");
-                    print(
-                        "submit successful selectedProduct: ${selectedQuantity}");
-                    print("submit successful selectedProduct: ${selectedRate}");
-                    print('submit successful');
+                    if (!formKey.currentState!.validate()) {
+                      print(
+                          "submit successful selectedProduct: ${selectedProduct}");
+                      print(
+                          "submit successful selectedProduct: ${selectedUnit}");
+                      print(
+                          "submit successful selectedProduct: ${selectedQuantity}");
+                      print(
+                          "submit successful selectedProduct: ${selectedRate}");
+                      print('submit successful');
+                    } else {
+                      print("failed");
+                    }
                   },
                   child: Container(
                     height: 50,

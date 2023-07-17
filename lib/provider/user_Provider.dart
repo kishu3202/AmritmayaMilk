@@ -30,33 +30,35 @@ class UserProvider extends ChangeNotifier {
           });
       if (response.statusCode == 200) {
         Fluttertoast.showToast(
-            msg: 'User registration successful',
+            msg: 'User Registration successfully',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
-            textColor: Colors.black,
-            backgroundColor: Colors.white);
+            textColor: Colors.white,
+            backgroundColor: Colors.green);
         print("Succssful");
         Navigator.pop(context);
 
         setLoading(false);
-      } else if (response.statusCode == 403) {
+      } else if (response.statusCode == 200) {
         var reponseData = response.body;
-        if (reponseData.contains('This email is already exists.')) {
+        if (reponseData.contains("This email is already exists.")) {
           Fluttertoast.showToast(
             msg: 'This email is already exists.',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
+            textColor: Colors.red,
           );
         }
         setLoading(false);
         print("Failed");
       } else {
         var reponseData = response.body;
-        if (reponseData.contains('This contact is already exists.')) {
+        if (reponseData.contains("This contact is already exists.")) {
           Fluttertoast.showToast(
             msg: 'This contact is already exists.',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
+            textColor: Colors.red,
           );
         }
         setLoading(false);

@@ -32,7 +32,7 @@ class AuthProvider extends ChangeNotifier {
       print(res['Success']);
       if (res['Success'] == true) {
         Fluttertoast.showToast(
-            msg: 'Login Successful',
+            msg: 'User Login Successfully',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 2,
@@ -46,14 +46,14 @@ class AuthProvider extends ChangeNotifier {
         setLoading(false);
       } else {
         var responseData = response.body;
-        if (responseData.contains('The password is wrong')) {
+        if (responseData.contains('Invalid credentials.')) {
           Fluttertoast.showToast(
               msg: 'Wrong password',
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 2,
-              backgroundColor: Colors.grey,
-              textColor: Colors.black);
+              backgroundColor: Colors.white,
+              textColor: Colors.red);
         }
         setLoading(false);
         print("Login Failed");
@@ -62,14 +62,4 @@ class AuthProvider extends ChangeNotifier {
       print(e.toString());
     }
   }
-}
-
-void showToast(String message) {
-  Fluttertoast.showToast(
-    msg: message,
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-    textColor: Colors.white,
-    timeInSecForIosWeb: 2,
-  );
 }

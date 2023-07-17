@@ -27,21 +27,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   late String password;
   UserProvider? userProvider;
 
-  void showToast(String message) {
-    setState(() {
-      toastMessage = message;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: TextStyle(color: Colors.red),
-        ),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
