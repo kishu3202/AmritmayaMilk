@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 
 class UserProvider extends ChangeNotifier {
@@ -28,11 +29,36 @@ class UserProvider extends ChangeNotifier {
             password: password
           });
       if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: 'User registration successful',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            textColor: Colors.black,
+            backgroundColor: Colors.white);
         print("Succssful");
         Navigator.pop(context);
 
         setLoading(false);
+      } else if (response.statusCode == 403) {
+        var reponseData = response.body;
+        if (reponseData.contains('This email is already exists.')) {
+          Fluttertoast.showToast(
+            msg: 'This email is already exists.',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+          );
+        }
+        setLoading(false);
+        print("Failed");
       } else {
+        var reponseData = response.body;
+        if (reponseData.contains('This contact is already exists.')) {
+          Fluttertoast.showToast(
+            msg: 'This contact is already exists.',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+          );
+        }
         setLoading(false);
         print("Failed");
       }

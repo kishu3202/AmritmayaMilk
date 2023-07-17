@@ -30,19 +30,14 @@ class AuthProvider extends ChangeNotifier {
           body: map);
       Map<String, dynamic> res = json.decode(response.body);
       print(res['Success']);
-      // if (response.statusCode == 200) {
-      //   final data = json.decode(response.body);
-      //   if (data['success'] == true) {
-      //     showToast('Login Successfully');
-      //     Navigator.push(
-      //       context,
-      //       MaterialPageRoute(builder: (context) => const DashboardScreen()),
-      //     );
-      //   } else {
-      //     showToast('Wrong password');
-      //   }
-      // }
       if (res['Success'] == true) {
+        Fluttertoast.showToast(
+            msg: 'Login Successful',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.green,
+            textColor: Colors.white);
         print("Succssful");
         Navigator.push(
           context,
@@ -50,6 +45,16 @@ class AuthProvider extends ChangeNotifier {
         );
         setLoading(false);
       } else {
+        var responseData = response.body;
+        if (responseData.contains('The password is wrong')) {
+          Fluttertoast.showToast(
+              msg: 'Wrong password',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 2,
+              backgroundColor: Colors.grey,
+              textColor: Colors.black);
+        }
         setLoading(false);
         print("Login Failed");
       }
