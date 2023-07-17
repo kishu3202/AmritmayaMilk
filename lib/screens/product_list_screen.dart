@@ -143,7 +143,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           decoration: InputDecoration(
                             labelText: "Unit",
                             prefixIcon: const Icon(
-                              Icons.production_quantity_limits,
+                              Icons.ad_units_outlined,
                               color: Colors.blue,
                             ),
                             border: OutlineInputBorder(
@@ -525,6 +525,19 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (!formKey.currentState!.validate()) {
+                      print('Validation Error');
+                    } else {
+                      if (!(polytheneSmallChecked! ||
+                          polytheneBigChecked! ||
+                          deliveryChecked! ||
+                          maintenanceChecked!)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text(
+                                'Please select at least one checkbox'),
+                          ),
+                        );
+                      }
                       print(
                           "submit successful selectedProduct: ${selectedProduct}");
                       print(
@@ -533,9 +546,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           "submit successful selectedProduct: ${selectedQuantity}");
                       print(
                           "submit successful selectedProduct: ${selectedRate}");
-                      print('submit successful');
-                    } else {
-                      print("failed");
                     }
                   },
                   child: Container(

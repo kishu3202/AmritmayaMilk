@@ -1,8 +1,8 @@
 import 'package:amritmaya_milk/screens/customer_list_screen.dart';
 import 'package:amritmaya_milk/screens/login_screen.dart';
+import 'package:amritmaya_milk/screens/personalDetails_screen.dart';
 import 'package:amritmaya_milk/screens/scan_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -84,16 +84,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
       'toDate': '27/05/2023'
     },
   ];
-  Future<bool> exitApp(BuildContext context) async {
-    SystemNavigator.pop();
-    return true;
-  }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return await exitApp(context);
+        return await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text('Close App'),
+                  content: Text('Do you want close an app?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: Text('Yes'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: Text('No'),
+                    ),
+                  ],
+                ));
       },
       child: Scaffold(
         appBar: AppBar(
@@ -101,6 +112,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
           title: const Text('Dashboard'),
           automaticallyImplyLeading: false,
           actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => PersonalDetails()));
+              },
+              icon: const Icon(Icons.person),
+              color: Colors.white,
+            ),
             IconButton(
               onPressed: () {
                 showMessage(context, 'Are you sure to logout!');
@@ -119,23 +138,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Expanded(
-                    //   child: QRView(
-                    //     key: qrKey,
-                    //     onQRViewCreated: onQRViewcreated,
-                    //   ),
-                    // ),
                     Flexible(
                       child: SizedBox(
                         height: 60,
                         width: MediaQuery.of(context).size.width,
                         child: ElevatedButton(
                           onPressed: () {
-                            // scanQRCode();
-                            // setState(() {
-                            //   scanEnabled = !scanEnabled;
-                            //   controller?.toggleFlash();
-                            // });
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -190,55 +198,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                // Container(
-                //     child: ListView.builder(
-                //         shrinkWrap: true,
-                //         physics: NeverScrollableScrollPhysics(),
-                //         itemCount: customers.length,
-                //         itemBuilder: (context, index) {
-                //           final customer = customers[index];
-                //           return Padding(
-                //             padding: const EdgeInsets.all(5),
-                //             child: Container(
-                //               decoration: ShapeDecoration(
-                //                 shape: OutlineInputBorder(
-                //                   borderRadius: BorderRadius.circular(10),
-                //                   borderSide: BorderSide(color: Colors.grey),
-                //                 ),
-                //               ),
-                //               child: ListTile(
-                //                 title: Text(customers[index]['name']),
-                //                 subtitle: Column(
-                //                   crossAxisAlignment: CrossAxisAlignment.start,
-                //                   children: [
-                //                     Row(
-                //                       children: [
-                //                         Text(
-                //                             'Contact Number: ${customers[index]['number']}'),
-                //                         SizedBox(
-                //                           width: 15,
-                //                         ),
-                //                         CircleAvatar(
-                //                           radius: 10,
-                //                           backgroundColor: Colors.blue,
-                //                           child: Icon(
-                //                             Icons.phone,
-                //                             color: Colors.white,
-                //                             size: 15,
-                //                           ),
-                //                         ),
-                //                       ],
-                //                     ),
-                //                     Text(
-                //                         'From Date: ${customers[index]['fromDate']}'),
-                //                     Text(
-                //                         'To Date: ${customers[index]['toDate']}'),
-                //                   ],
-                //                 ),
-                //               ),
-                //             ),
-                //           );
-                //         })),
                 Container(
                     child: ListView.builder(
                         shrinkWrap: true,
@@ -339,99 +298,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                           );
                         })),
-                // Container(
-                //     child: ListView.builder(
-                //         shrinkWrap: true,
-                //         physics: const NeverScrollableScrollPhysics(),
-                //         itemCount: customers.length,
-                //         itemBuilder: (context, index) {
-                //           final customer = customers[index];
-                //           return Padding(
-                //             padding: const EdgeInsets.all(5),
-                //             child: Container(
-                //               decoration: ShapeDecoration(
-                //                 shape: OutlineInputBorder(
-                //                   borderRadius: BorderRadius.circular(10),
-                //                   borderSide:
-                //                       const BorderSide(color: Colors.grey),
-                //                 ),
-                //               ),
-                //               child: ListTile(
-                //                 title: Row(
-                //                   children: [
-                //                     RichText(
-                //                       text: TextSpan(
-                //                         style: DefaultTextStyle.of(context).style,
-                //                         children: [
-                //                           TextSpan(
-                //                               text: customers[index]['name'],
-                //                               style: const TextStyle(
-                //                                   fontSize: 16,
-                //                                   fontWeight: FontWeight.bold,
-                //                                   color: Colors.black)),
-                //                           const TextSpan(text: '\n'),
-                //                           const TextSpan(
-                //                             text: 'Contact Number: ',
-                //                             style: TextStyle(
-                //                                 fontSize: 15, color: Colors.black),
-                //                           ),
-                //                           TextSpan(
-                //                             text: customers[index]['number'],
-                //                             style: const TextStyle(
-                //                                 fontSize: 15, color: Colors.black),
-                //                           ),
-                //                           const TextSpan(text: '\n'),
-                //                           const TextSpan(
-                //                             text: 'From Date: ',
-                //                             style: TextStyle(
-                //                                 fontSize: 15, color: Colors.black),
-                //                           ),
-                //                           TextSpan(
-                //                             text: customers[index]['fromDate'],
-                //                             style: const TextStyle(
-                //                                 fontSize: 15, color: Colors.black87),
-                //                           ),
-                //                           const TextSpan(text: '\n'),
-                //                           const TextSpan(
-                //                             text: 'To Date: ',
-                //                             style: TextStyle(
-                //                                 fontSize: 15, color: Colors.black),
-                //                           ),
-                //                           TextSpan(
-                //                             text: customers[index]['toDate'],
-                //                             style: const TextStyle(
-                //                                 fontSize: 15, color: Colors.black87),
-                //                           ),
-                //                         ],
-                //                       ),
-                //                     ),
-                //                   ],
-                //                 ),
-                //               ),
-                //             ),
-                //           );
-                //         })),
-
-                // Container(
-                //   child: ListView(
-                //     physics: NeverScrollableScrollPhysics(),
-                //     shrinkWrap: true,
-                //     children: [
-                //       ListTile(
-                //         title: Text('Customer Name'),
-                //       ),
-                //       ListTile(
-                //         title: Text('Contact Number'),
-                //       ),
-                //       ListTile(
-                //         title: Text('From Date'),
-                //       ),
-                //       ListTile(
-                //         title: Text('To Date'),
-                //       ),
-                //     ],
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -447,13 +313,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     } else {
       throw 'Could not launch $url';
     }
-
-    // const phoneNumber = 'tel:';
-    // if (await canLaunch(phoneNumber)) {
-    //   await launch(phoneNumber);
-    // } else {
-    //   throw 'Could not launch $phoneNumber';
-    // }
   }
 }
 
@@ -486,6 +345,28 @@ void showMessage(BuildContext context, String message) {
   );
 }
 
+Future<Future<bool?>> _showExitConfirmationDialog(BuildContext context) async {
+  return showDialog<bool>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Close App'),
+        content: Text('Are you sure you want to close the app?'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('No'),
+            onPressed: () => Navigator.of(context).pop(false),
+          ),
+          TextButton(
+            child: Text('Yes'),
+            onPressed: () => Navigator.of(context).pop(true),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 class Customer {
   final String name;
   final int number;
@@ -501,23 +382,3 @@ class Customer {
     required this.toDate,
   });
 }
-// void onQRViewCreated(QRViewController controller) {
-//   this.controller = controller;
-//   controller.scannedDataStream.listen((scanData) {
-//     if(scanData.code == "" || scanData.code == null){
-//
-//     }
-//     else{
-//       controller.pauseCamera();
-//       controller.stopCamera();
-//       result = scanData;
-//       scanBarcode = result!.code!;
-//       print("result!.code");
-//       print(result!.code);
-//     }
-//
-//     update();
-//   });
-// }
-
-// void onPermissionSet(BuildContext context, QRViewCont

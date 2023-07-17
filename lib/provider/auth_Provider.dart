@@ -52,8 +52,8 @@ class AuthProvider extends ChangeNotifier {
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 2,
-              backgroundColor: Colors.white,
-              textColor: Colors.red);
+              backgroundColor: Colors.red,
+              textColor: Colors.white);
         }
         setLoading(false);
         print("Login Failed");

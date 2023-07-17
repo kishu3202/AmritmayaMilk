@@ -116,3 +116,147 @@ class EmailValidator extends StatelessWidget {
 //         ? validateEmailIdFormat = true
 //         : validateEmailIdFormat = false;
 //   });
+
+// Container(
+//     child: ListView.builder(
+//         shrinkWrap: true,
+//         physics: NeverScrollableScrollPhysics(),
+//         itemCount: customers.length,
+//         itemBuilder: (context, index) {
+//           final customer = customers[index];
+//           return Padding(
+//             padding: const EdgeInsets.all(5),
+//             child: Container(
+//               decoration: ShapeDecoration(
+//                 shape: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(10),
+//                   borderSide: BorderSide(color: Colors.grey),
+//                 ),
+//               ),
+//               child: ListTile(
+//                 title: Text(customers[index]['name']),
+//                 subtitle: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Row(
+//                       children: [
+//                         Text(
+//                             'Contact Number: ${customers[index]['number']}'),
+//                         SizedBox(
+//                           width: 15,
+//                         ),
+//                         CircleAvatar(
+//                           radius: 10,
+//                           backgroundColor: Colors.blue,
+//                           child: Icon(
+//                             Icons.phone,
+//                             color: Colors.white,
+//                             size: 15,
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                     Text(
+//                         'From Date: ${customers[index]['fromDate']}'),
+//                     Text(
+//                         'To Date: ${customers[index]['toDate']}'),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           );
+//         })),
+
+// Container(
+//     child: ListView.builder(
+//         shrinkWrap: true,
+//         physics: const NeverScrollableScrollPhysics(),
+//         itemCount: customers.length,
+//         itemBuilder: (context, index) {
+//           final customer = customers[index];
+//           return Padding(
+//             padding: const EdgeInsets.all(5),
+//             child: Container(
+//               decoration: ShapeDecoration(
+//                 shape: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(10),
+//                   borderSide:
+//                       const BorderSide(color: Colors.grey),
+//                 ),
+//               ),
+//               child: ListTile(
+//                 title: Row(
+//                   children: [
+//                     RichText(
+//                       text: TextSpan(
+//                         style: DefaultTextStyle.of(context).style,
+//                         children: [
+//                           TextSpan(
+//                               text: customers[index]['name'],
+//                               style: const TextStyle(
+//                                   fontSize: 16,
+//                                   fontWeight: FontWeight.bold,
+//                                   color: Colors.black)),
+//                           const TextSpan(text: '\n'),
+//                           const TextSpan(
+//                             text: 'Contact Number: ',
+//                             style: TextStyle(
+//                                 fontSize: 15, color: Colors.black),
+//                           ),
+//                           TextSpan(
+//                             text: customers[index]['number'],
+//                             style: const TextStyle(
+//                                 fontSize: 15, color: Colors.black),
+//                           ),
+//                           const TextSpan(text: '\n'),
+//                           const TextSpan(
+//                             text: 'From Date: ',
+//                             style: TextStyle(
+//                                 fontSize: 15, color: Colors.black),
+//                           ),
+//                           TextSpan(
+//                             text: customers[index]['fromDate'],
+//                             style: const TextStyle(
+//                                 fontSize: 15, color: Colors.black87),
+//                           ),
+//                           const TextSpan(text: '\n'),
+//                           const TextSpan(
+//                             text: 'To Date: ',
+//                             style: TextStyle(
+//                                 fontSize: 15, color: Colors.black),
+//                           ),
+//                           TextSpan(
+//                             text: customers[index]['toDate'],
+//                             style: const TextStyle(
+//                                 fontSize: 15, color: Colors.black87),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           );
+//         })),
+
+// Container(
+//   child: ListView(
+//     physics: NeverScrollableScrollPhysics(),
+//     shrinkWrap: true,
+//     children: [
+//       ListTile(
+//         title: Text('Customer Name'),
+//       ),
+//       ListTile(
+//         title: Text('Contact Number'),
+//       ),
+//       ListTile(
+//         title: Text('From Date'),
+//       ),
+//       ListTile(
+//         title: Text('To Date'),
+//       ),
+//     ],
+//   ),
+// ),
