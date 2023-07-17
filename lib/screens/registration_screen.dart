@@ -18,7 +18,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   TextEditingController addressController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  String responseMessage = '';
+  String toastMessage = '';
 
   late String name;
   late String email;
@@ -26,6 +26,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   late String address;
   late String password;
   UserProvider? userProvider;
+
+  void showToast(String message) {
+    setState(() {
+      toastMessage = message;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(color: Colors.red),
+        ),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

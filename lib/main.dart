@@ -1,8 +1,8 @@
 import 'package:amritmaya_milk/provider/auth_Provider.dart';
 import 'package:amritmaya_milk/provider/customer_Provider.dart';
 import 'package:amritmaya_milk/provider/user_Provider.dart';
+import 'package:amritmaya_milk/screens/dashboard_screen.dart';
 import 'package:amritmaya_milk/screens/login_screen.dart';
-import 'package:amritmaya_milk/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +12,8 @@ void main() {
 
 class AmritmayaMilk extends StatelessWidget {
   const AmritmayaMilk({super.key});
+
+  final isLoggedIn = true;
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +25,12 @@ class AmritmayaMilk extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: 'login',
-        routes: {
-          'login': (context) => const LoginScreen(),
-          'register': (context) => const RegistrationScreen(),
-        },
+        // initialRoute: 'login',
+        // routes: {
+        //   'login': (context) => const LoginScreen(),
+        //   'register': (context) => const RegistrationScreen(),
+        // },
+        home: isLoggedIn ? DashboardScreen() : LoginScreen(),
       ),
     );
   }
