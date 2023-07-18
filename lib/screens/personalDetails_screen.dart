@@ -1,4 +1,7 @@
+import 'package:amritmaya_milk/data/user_personalDetails_data_model.dart';
+import 'package:amritmaya_milk/provider/user_PersonalDetails_Provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PersonalDetails extends StatefulWidget {
   const PersonalDetails({super.key});
@@ -21,6 +24,14 @@ class _PersonalDetailsState extends State<PersonalDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<UserDetailsProvider>(context, listen: false);
+    final userProfileDataModel = provider.userProfileDataModel;
+
+    _nameController.text = userProfileDataModel!.userName;
+    _contactController.text = userProfileDataModel!.userContact;
+    _emailController.text = userProfileDataModel!.userEmail;
+    _addressController.text = userProfileDataModel!.userAddress;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -36,7 +47,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                 SizedBox(
                   height: 50,
                 ),
-                TextFormField(
+                TextField(
                   onChanged: (value) {
                     setState(() {
                       _name = value;
@@ -54,7 +65,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                 SizedBox(
                   height: 30,
                 ),
-                TextFormField(
+                TextField(
                   onChanged: (value) {
                     setState(() {
                       _contact = value;
@@ -72,7 +83,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                 SizedBox(
                   height: 30,
                 ),
-                TextFormField(
+                TextField(
                   onChanged: (value) {
                     setState(() {
                       _email = value;
@@ -90,7 +101,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                 SizedBox(
                   height: 30,
                 ),
-                TextFormField(
+                TextField(
                   onChanged: (value) {
                     setState(() {
                       _address = value;
@@ -111,7 +122,21 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final updatedDetails = UserProfileDataModel(
+                          userName: _nameController.text,
+                          userEmail: _emailController.text,
+                          userContact: _contactController.text,
+                          userAddress: _addressController.text);
+
+                      final success =
+                          await provider.updatePersonalDetails(updatedDetails);
+                      if (success) {
+                        print("Profile updated sucessfully");
+                      } else {
+                        print("Profile update Failed");
+                      }
+                    },
                     child: Container(
                       height: 50,
                       decoration: BoxDecoration(

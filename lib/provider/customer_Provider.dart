@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../data/data_model.dart';
+import '../data/customer_data_model.dart';
 import '../data/loading_customer_data.dart';
 
 class CustomerProvider extends ChangeNotifier {
