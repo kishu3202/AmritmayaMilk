@@ -32,7 +32,7 @@ class AuthProvider extends ChangeNotifier {
       Map<String, dynamic> res = json.decode(response.body);
       print(res['Success']);
       if (res['Success'] == true) {
-        final loginResponse = res['UserProfileDataModel'];
+        final loginResponse = res['UserDetails'];
 
         // Save the login data using shared preferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
