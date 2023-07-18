@@ -1,7 +1,6 @@
-import 'package:amritmaya_milk/data/user_personalDetails_data_model.dart';
-import 'package:amritmaya_milk/provider/user_PersonalDetails_Provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PersonalDetails extends StatefulWidget {
   const PersonalDetails({super.key});
@@ -16,22 +15,51 @@ class _PersonalDetailsState extends State<PersonalDetails> {
   TextEditingController _contactController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
+  String token = '';
 
-  late String _name;
-  late String _email;
-  late String _contact;
-  late String _address;
+  void initializeForm() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token') ?? '';
+    _nameController.text = prefs.getString('name') ?? '';
+    _contactController.text = prefs.getString('contact') ?? '';
+    _emailController.text = prefs.getString('email') ?? '';
+    _addressController.text = prefs.getString('address') ?? '';
+  }
+
+  @override
+  void initState() {
+    initializeForm();
+    super.initState();
+  }
+
+  void updateProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var updatedUser = new Map<String, dynamic>();
+    updatedUser['name'] = _nameController.text;
+    updatedUser['contact'] = _contactController.text;
+    updatedUser['email'] = _emailController.text;
+    updatedUser['address'] = _addressController.text;
+
+// Update the shared preferences with the new details
+    prefs.setString('name', updatedUser['name']);
+    prefs.setString('contact', updatedUser['contact']);
+    prefs.setString('email', updatedUser['email']);
+    prefs.setString('address', updatedUser['address']);
+
+    final String url =
+        "https://webiipl.in/amritmayamilk/api/UserApiController/profile_update";
+    final Map<String, String> headers = {'X-API-KEY': 'amritmayamilk050512'};
+    final http.Response response =
+        await http.post(Uri.parse(url), headers: headers, body: updatedUser);
+    if (response.statusCode == 200) {
+      print("update sucess");
+    } else {
+      print("update failed");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<UserDetailsProvider>(context, listen: false);
-    final userProfileDataModel = provider.userProfileDataModel;
-
-    _nameController.text = userProfileDataModel!.userName;
-    _contactController.text = userProfileDataModel!.userContact;
-    _emailController.text = userProfileDataModel!.userEmail;
-    _addressController.text = userProfileDataModel!.userAddress;
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -48,11 +76,6 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                   height: 50,
                 ),
                 TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      _name = value;
-                    });
-                  },
                   keyboardType: TextInputType.text,
                   controller: _nameController,
                   decoration: InputDecoration(
@@ -66,11 +89,6 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                   height: 30,
                 ),
                 TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      _contact = value;
-                    });
-                  },
                   keyboardType: TextInputType.phone,
                   controller: _contactController,
                   decoration: InputDecoration(
@@ -84,11 +102,6 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                   height: 30,
                 ),
                 TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      _email = value;
-                    });
-                  },
                   keyboardType: TextInputType.emailAddress,
                   controller: _emailController,
                   decoration: InputDecoration(
@@ -102,11 +115,6 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                   height: 30,
                 ),
                 TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      _address = value;
-                    });
-                  },
                   keyboardType: TextInputType.text,
                   controller: _addressController,
                   decoration: InputDecoration(
@@ -122,21 +130,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: ElevatedButton(
-                    onPressed: () async {
-                      final updatedDetails = UserProfileDataModel(
-                          userName: _nameController.text,
-                          userEmail: _emailController.text,
-                          userContact: _contactController.text,
-                          userAddress: _addressController.text);
-
-                      final success =
-                          await provider.updatePersonalDetails(updatedDetails);
-                      if (success) {
-                        print("Profile updated sucessfully");
-                      } else {
-                        print("Profile update Failed");
-                      }
-                    },
+                    onPressed: updateProfile,
                     child: Container(
                       height: 50,
                       decoration: BoxDecoration(

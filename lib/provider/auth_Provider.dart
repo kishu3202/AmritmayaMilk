@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../screens/dashboard_screen.dart';
 
@@ -31,6 +32,16 @@ class AuthProvider extends ChangeNotifier {
       Map<String, dynamic> res = json.decode(response.body);
       print(res['Success']);
       if (res['Success'] == true) {
+        final loginResponse = res['UserProfileDataModel'];
+
+        // Save the login data using shared preferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('token', loginResponse['token']);
+        prefs.setString('name', loginResponse['name']);
+        prefs.setString('contact', loginResponse['contact']);
+        prefs.setString('email', loginResponse['email']);
+        prefs.setString('address', loginResponse['address']);
+
         Fluttertoast.showToast(
             msg: 'User Login Successfully',
             toastLength: Toast.LENGTH_SHORT,
