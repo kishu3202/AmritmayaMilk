@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PersonalDetails extends StatefulWidget {
-  const PersonalDetails({super.key});
+  const PersonalDetails({Key? key}) : super(key: key);
 
   @override
   State<PersonalDetails> createState() => _PersonalDetailsState();
@@ -17,6 +20,12 @@ class _PersonalDetailsState extends State<PersonalDetails> {
   TextEditingController _addressController = TextEditingController();
   String token = '';
 
+  @override
+  void initState() {
+    initializeForm();
+    super.initState();
+  }
+
   void initializeForm() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token') ?? '';
@@ -24,12 +33,6 @@ class _PersonalDetailsState extends State<PersonalDetails> {
     _contactController.text = prefs.getString('contact') ?? '';
     _emailController.text = prefs.getString('email') ?? '';
     _addressController.text = prefs.getString('address') ?? '';
-  }
-
-  @override
-  void initState() {
-    initializeForm();
-    super.initState();
   }
 
   void updateProfile() async {
@@ -40,20 +43,33 @@ class _PersonalDetailsState extends State<PersonalDetails> {
     updatedUser['email'] = _emailController.text;
     updatedUser['address'] = _addressController.text;
 
-// Update the shared preferences with the new details
-    prefs.setString('name', updatedUser['name']);
-    prefs.setString('contact', updatedUser['contact']);
-    prefs.setString('email', updatedUser['email']);
-    prefs.setString('address', updatedUser['address']);
-
     final String url =
         "https://webiipl.in/amritmayamilk/api/UserApiController/profile_update";
     final Map<String, String> headers = {'X-API-KEY': 'amritmayamilk050512'};
     final http.Response response =
         await http.post(Uri.parse(url), headers: headers, body: updatedUser);
-    if (response.statusCode == 200) {
+    Map<String, dynamic> res = json.decode(response.body);
+    if (res['Success'] == true) {
       print("update sucess");
+      // Update the shared preferences with the new details
+      prefs.setString('name', updatedUser['name']);
+      prefs.setString('contact', updatedUser['contact']);
+      prefs.setString('email', updatedUser['email']);
+      prefs.setString('address', updatedUser['address']);
+
+      Fluttertoast.showToast(
+          msg: 'Profile Details Update have been save Successfully',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.green,
+          textColor: Colors.white);
     } else {
+      Fluttertoast.showToast(
+          msg: 'Failed to update details!',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white);
       print("update failed");
     }
   }
