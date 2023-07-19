@@ -11,7 +11,7 @@ class AuthProvider extends ChangeNotifier {
   bool _loading = false;
   bool get loading => _loading;
 
-  setLoading(bool value) {
+  void setLoading(bool value) {
     _loading = value;
     notifyListeners();
   }
@@ -37,6 +37,7 @@ class AuthProvider extends ChangeNotifier {
         // Save the login data using shared preferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('token', loginResponse['token']);
+        prefs.setString('id', loginResponse['id']);
         prefs.setString('name', loginResponse['name']);
         prefs.setString('contact', loginResponse['contact']);
         prefs.setString('email', loginResponse['email']);

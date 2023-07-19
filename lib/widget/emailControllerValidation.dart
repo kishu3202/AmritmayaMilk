@@ -260,3 +260,30 @@ class EmailValidator extends StatelessWidget {
 //     ],
 //   ),
 // ),
+
+// final List customers = [
+//   {
+//     'name': 'Kishori',
+//     'email': 'kishori@gmail.com',
+//     'phoneNo': '8379813263',
+//     'address': 'Pune'
+//   },
+//   {
+//     'name': 'Dipti',
+//     'email': 'dipti@gmail.com',
+//     'phoneNo': '8894561223',
+//     'address': 'Satara',
+//   },
+//   {
+//     'name': 'Rahul',
+//     'email': 'rahul@gmail.com',
+//     'phoneNo': '9689998016',
+//     'address': 'Sangli',
+//   },
+//   {
+//     'name': 'Sayali',
+//     'email': 'sayali@gmail.com',
+//     'phoneNo': '8975599697',
+//     'address': 'Mumbai',
+//   }
+// ];

@@ -1,9 +1,10 @@
 import 'package:amritmaya_milk/provider/customer_Provider.dart';
+import 'package:amritmaya_milk/screens/customer_update_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CustomerList extends StatefulWidget {
-  const CustomerList({super.key});
+  const CustomerList({Key?key}) : super(key: key);
 
   @override
   State<CustomerList> createState() => _CustomerListState();
@@ -11,32 +12,6 @@ class CustomerList extends StatefulWidget {
 
 class _CustomerListState extends State<CustomerList> {
   bool isEditing = false;
-  // final List customers = [
-  //   {
-  //     'name': 'Kishori',
-  //     'email': 'kishori@gmail.com',
-  //     'phoneNo': '8379813263',
-  //     'address': 'Pune'
-  //   },
-  //   {
-  //     'name': 'Dipti',
-  //     'email': 'dipti@gmail.com',
-  //     'phoneNo': '8894561223',
-  //     'address': 'Satara',
-  //   },
-  //   {
-  //     'name': 'Rahul',
-  //     'email': 'rahul@gmail.com',
-  //     'phoneNo': '9689998016',
-  //     'address': 'Sangli',
-  //   },
-  //   {
-  //     'name': 'Sayali',
-  //     'email': 'sayali@gmail.com',
-  //     'phoneNo': '8975599697',
-  //     'address': 'Mumbai',
-  //   }
-  // ];
 
   @override
   void initState() {
@@ -58,13 +33,10 @@ class _CustomerListState extends State<CustomerList> {
         child: ListView.builder(
           itemCount: 10,
           itemBuilder: (context, index) => Padding(
-            padding: const EdgeInsets.all(5.5),
+            padding: const EdgeInsets.all(8),
             child: Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5.0),
-                side: const BorderSide(
-                  color: Colors.black,
-                ),
+                borderRadius: BorderRadius.circular(10.0),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(5.0),
@@ -174,6 +146,7 @@ class _CustomerListState extends State<CustomerList> {
                         setState(() {
                           isEditing = false;
                         });
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerUpdate(customer: customer)))
                       },
                       child: const Text('Edit'),
                     ),

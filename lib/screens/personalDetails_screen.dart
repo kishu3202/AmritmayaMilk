@@ -19,25 +19,36 @@ class _PersonalDetailsState extends State<PersonalDetails> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
   String token = '';
+  String id = '';
+
+  Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
 
   @override
   void initState() {
-    initializeForm();
+    fetchUserDetails();
     super.initState();
   }
 
-  void initializeForm() async {
+  void fetchUserDetails() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token') ?? '';
-    _nameController.text = prefs.getString('name') ?? '';
-    _contactController.text = prefs.getString('contact') ?? '';
-    _emailController.text = prefs.getString('email') ?? '';
-    _addressController.text = prefs.getString('address') ?? '';
+    setState(() {
+      id = prefs.getString('id') ?? '';
+      token = prefs.getString('token') ?? '';
+      _nameController.text = prefs.getString('name') ?? '';
+      _contactController.text = prefs.getString('contact') ?? '';
+      _emailController.text = prefs.getString('email') ?? '';
+      _addressController.text = prefs.getString('address') ?? '';
+    });
   }
 
   void updateProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    // String token = prefs.getString('token') ?? '';
     var updatedUser = new Map<String, dynamic>();
+    updatedUser['id'] = id;
     updatedUser['name'] = _nameController.text;
     updatedUser['contact'] = _contactController.text;
     updatedUser['email'] = _emailController.text;
@@ -48,6 +59,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
     final Map<String, String> headers = {'X-API-KEY': 'amritmayamilk050512'};
     final http.Response response =
         await http.post(Uri.parse(url), headers: headers, body: updatedUser);
+
     Map<String, dynamic> res = json.decode(response.body);
     if (res['Success'] == true) {
       print("update sucess");

@@ -22,7 +22,6 @@ class AmritmayaMilk extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => CustomerProvider()),
-        // ChangeNotifierProvider(create: (_) => UserDetailsProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
