@@ -92,16 +92,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return await showDialog(
             context: context,
             builder: (context) => AlertDialog(
-                  title: Text('Close App'),
-                  content: Text('Do you want close an app?'),
+                  title: const Text('Close App'),
+                  content: const Text('Do you want close an app?'),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(true),
-                      child: Text('Yes'),
+                      child: const Text('Yes'),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(false),
-                      child: Text('No'),
+                      child: const Text('No'),
                     ),
                   ],
                 ));
@@ -114,8 +114,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           actions: [
             IconButton(
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => PersonalDetails()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const PersonalDetails()));
               },
               icon: const Icon(Icons.person),
               color: Colors.white,
@@ -350,15 +352,15 @@ Future<Future<bool?>> _showExitConfirmationDialog(BuildContext context) async {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Close App'),
-        content: Text('Are you sure you want to close the app?'),
+        title: const Text('Close App'),
+        content: const Text('Are you sure you want to close the app?'),
         actions: <Widget>[
           TextButton(
-            child: Text('No'),
+            child: const Text('No'),
             onPressed: () => Navigator.of(context).pop(false),
           ),
           TextButton(
-            child: Text('Yes'),
+            child: const Text('Yes'),
             onPressed: () => Navigator.of(context).pop(true),
           ),
         ],

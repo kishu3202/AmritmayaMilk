@@ -91,7 +91,8 @@ class _PersonalDetailsState extends State<PersonalDetails> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Personal Details'),
+        title: const Text('Personal Details'),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -100,7 +101,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
             key: _formKey,
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 50,
                 ),
                 TextField(
@@ -108,12 +109,12 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                   controller: _nameController,
                   decoration: InputDecoration(
                       hintText: 'Name',
-                      prefixIcon: Icon(Icons.person),
+                      prefixIcon: const Icon(Icons.person),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       )),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 TextField(
@@ -121,12 +122,12 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                   controller: _contactController,
                   decoration: InputDecoration(
                       hintText: 'Contact',
-                      prefixIcon: Icon(Icons.contact_phone),
+                      prefixIcon: const Icon(Icons.contact_phone),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       )),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 TextField(
@@ -134,12 +135,12 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                   controller: _emailController,
                   decoration: InputDecoration(
                       hintText: 'Email',
-                      prefixIcon: Icon(Icons.email),
+                      prefixIcon: const Icon(Icons.email),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       )),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 TextField(
@@ -147,12 +148,12 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                   controller: _addressController,
                   decoration: InputDecoration(
                       hintText: 'Address',
-                      prefixIcon: Icon(Icons.location_city),
+                      prefixIcon: const Icon(Icons.location_city),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       )),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 50,
                 ),
                 Padding(
@@ -165,7 +166,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                         color: Colors.blue,
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      child: Center(
+                      child: const Center(
                         child: Text(
                           'Submit',
                           style: TextStyle(

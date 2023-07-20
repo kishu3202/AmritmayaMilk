@@ -30,7 +30,7 @@ class AmritmayaMilk extends StatelessWidget {
         //   'login': (context) => const LoginScreen(),
         //   'register': (context) => const RegistrationScreen(),
         // },
-        home: isLoggedIn ? DashboardScreen() : LoginScreen(),
+        home: isLoggedIn ? const DashboardScreen() : const LoginScreen(),
       ),
     );
   }

@@ -25,6 +25,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Add Daily Need Products"),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -163,7 +164,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         ),
                       ),
 
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Align(
@@ -213,7 +214,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         ),
                       ),
 
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Align(
@@ -532,9 +533,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           deliveryChecked! ||
                           maintenanceChecked!)) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: const Text(
-                                'Please select at least one checkbox'),
+                          const SnackBar(
+                            content:
+                                Text('Please select at least one checkbox'),
                           ),
                         );
                       }

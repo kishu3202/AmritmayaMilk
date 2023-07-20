@@ -1,10 +1,10 @@
 import 'package:amritmaya_milk/provider/customer_Provider.dart';
-import 'package:amritmaya_milk/screens/customer_update_screen.dart';
+import 'package:amritmaya_milk/screens/edit_customer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CustomerList extends StatefulWidget {
-  const CustomerList({Key?key}) : super(key: key);
+  const CustomerList({Key? key}) : super(key: key);
 
   @override
   State<CustomerList> createState() => _CustomerListState();
@@ -146,7 +146,11 @@ class _CustomerListState extends State<CustomerList> {
                         setState(() {
                           isEditing = false;
                         });
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerUpdate(customer: customer)))
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditCustomer(
+                                    customer: customerModel.post![index])));
                       },
                       child: const Text('Edit'),
                     ),

@@ -13,10 +13,10 @@ class _FormScreenState extends State<FormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Daily Need Product List'),
+        title: const Text('Daily Need Product List'),
         centerTitle: true,
       ),
-      body: Center(),
+      body: const Center(),
       floatingActionButton: Container(
         height: 60,
         width: 220,
@@ -24,12 +24,13 @@ class _FormScreenState extends State<FormScreen> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ProductListScreen()),
+              MaterialPageRoute(
+                  builder: (context) => const ProductListScreen()),
             );
           },
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-          child: Text(
+          child: const Text(
             'Add Daily Need Products',
             style: TextStyle(fontSize: 15),
           ),

@@ -287,3 +287,52 @@ class EmailValidator extends StatelessWidget {
 //     'address': 'Mumbai',
 //   }
 // ];
+
+// Expanded(
+//   child: RadioListTile(
+//     contentPadding:
+//         EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
+//     tileColor: Colors.deepPurple.shade50,
+//     value: 2,
+//     groupValue: selectedOption,
+//     onChanged: (value) {
+//       setState(() {
+//         selectedOption = value as int;
+//       });
+//     },
+//     title: Transform.translate(
+//         offset: Offset(-10, 0), child: Text("With QR Scanner")),
+//   ),
+// ),
+
+// Expanded(
+//   child: RadioListTile(
+//     contentPadding:
+//         EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+//     tileColor: Colors.deepPurple.shade50,
+//     value: 1,
+//     groupValue: selectedOption,
+//     onChanged: (value) {
+//       setState(() {
+//         selectedOption = value as int;
+//       });
+//     },
+//     title: Transform.translate(
+//       offset: Offset(-10, 0),
+//       child: TextFormField(
+//         controller: mobileNoController,
+//         keyboardType: TextInputType.phone,
+//         decoration: InputDecoration(
+//           hintText: 'With Mobile No',
+//         ),
+//         validator: (value) {
+//           if (value == null || value.isEmpty) {
+//             return 'Please enter a mobile number';
+//           }
+//           return null;
+//         },
+//         enabled: selectedOption == 1,
+//       ),
+//     ),
+//   ),
+// ),

@@ -35,9 +35,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       SnackBar(
         content: Text(
           message,
-          style: TextStyle(color: Colors.red),
+          style: const TextStyle(color: Colors.red),
         ),
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
