@@ -69,6 +69,12 @@ class _ScanScreenState extends State<ScanScreen> {
     );
   }
 
+  @override
+  void initState() {
+    fetchCustomerID();
+    super.initState();
+  }
+
   void fetchCustomerID() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -78,9 +84,7 @@ class _ScanScreenState extends State<ScanScreen> {
 
   Future<void> customerData(String mobileNumber) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // String token = prefs.getString('token') ?? '';
-    var updatedUser = new Map<String, dynamic>();
-    updatedUser['id'] = customerId;
+    var _customerId = prefs.getString('customerId') ?? customerId;
 
     final String url =
         "http://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/customerdata?contact=$mobileNumber";
@@ -89,9 +93,9 @@ class _ScanScreenState extends State<ScanScreen> {
       Uri.parse(url),
       headers: headers,
     );
-
     Map<String, dynamic> res = json.decode(response.body);
     if (res['Success'] == true) {
+      prefs.setString('customerId', _customerId);
       print('Customer Id: $customerId');
       Fluttertoast.showToast(
           msg: 'Customer Data fetch Successfully',
@@ -106,7 +110,7 @@ class _ScanScreenState extends State<ScanScreen> {
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.red,
           textColor: Colors.white);
-      print("update failed");
+      print("failed");
     }
   }
 
