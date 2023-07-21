@@ -6,7 +6,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-import '../data/customerlist_data_model.dart';
 import 'form_screen.dart';
 
 class ScanScreen extends StatefulWidget {
@@ -95,9 +94,9 @@ class _ScanScreenState extends State<ScanScreen> {
         // navigate to the next screen
         final customerDataProvider =
             Provider.of<CustomerDataProvider>(context, listen: false);
-        DataModel? customerData =
-            await customerDataProvider.fetchCustomerData(mobileNo);
-        if (customerData != null) {
+        final customerData =
+            await customerDataProvider.getCustomerData(String, mobileNo);
+        if (customerData['Success'] == true) {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => FormScreen()));
 
@@ -111,7 +110,6 @@ class _ScanScreenState extends State<ScanScreen> {
 
           print('Selected Option: With Mobile Number');
           print('Mobile Number: $mobileNo');
-          print('Customer ID: ${customerData.id}');
         } else {
           print('Error');
         }
