@@ -1,7 +1,10 @@
 import 'dart:developer';
 
+import 'package:amritmaya_milk/provider/customerData_Provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+
 import 'form_screen.dart';
 
 class ScanScreen extends StatefulWidget {
@@ -88,14 +91,18 @@ class _ScanScreenState extends State<ScanScreen> {
         );
       } else {
         // navigate to the next screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const FormScreen(),
-          ),
-        );
-        print('Selected Option: With Mobile Number');
-        print('Mobile Number: $mobileNo');
+        final customerDataProvider =
+            Provider.of<CustomerDataProvider>(context, listen: false);
+        customerDataProvider.getCustomerData(mobileNo).then((_) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const FormScreen(),
+            ),
+          );
+          print('Selected Option: With Mobile Number');
+          print('Mobile Number: $mobileNo');
+        });
       }
     } else if (selectedOption == 2) {
       // check if a QR code has been scanned

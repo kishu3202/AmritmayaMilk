@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
-import 'customer_data_model.dart';
+import 'customerlist_data_model.dart';
 
 Future<List<DataModel>> getData() async {
   List<DataModel> result = [];

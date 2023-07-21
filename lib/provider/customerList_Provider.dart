@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
-import '../data/customer_data_model.dart';
-import '../data/loading_customer_data.dart';
+import '../data/customerlist_data_model.dart';
+import '../data/loading_customerlist_data.dart';
 
 class CustomerProvider extends ChangeNotifier {
   List<DataModel>? post;

@@ -1,4 +1,4 @@
-import 'package:amritmaya_milk/provider/customer_Provider.dart';
+import 'package:amritmaya_milk/provider/customerList_Provider.dart';
 import 'package:amritmaya_milk/screens/edit_customer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
