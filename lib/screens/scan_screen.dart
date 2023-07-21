@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,6 +22,7 @@ class _ScanScreenState extends State<ScanScreen> {
   int selectedOption = 0; // 0: Nothing selected, 1: mobile number, 2: QR code
   TextEditingController mobileNoController = TextEditingController();
   QRViewController? controller;
+  String customerId = '';
 
   @override
   void onQRViewCreated(QRViewController controller) {
@@ -67,24 +69,44 @@ class _ScanScreenState extends State<ScanScreen> {
     );
   }
 
-  Future<void> getCustomerData(String mobileNumber) async {
-    final url =
-        "http://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/customerdata?contact=$mobileNumber";
-    final headers = {'X-API-KEY': 'amritmayamilk050512'};
+  void fetchCustomerID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      customerId = prefs.getString('id') ?? '';
+    });
+  }
 
-    try {
-      final response = await http.get(Uri.parse(url), headers: headers);
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final customerId = data['id'];
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setInt('customer_id', customerId);
-        print('Customer ID: $customerId');
-      } else {
-        print('Failed to fetch data. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error');
+  Future<void> customerData(String mobileNumber) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // String token = prefs.getString('token') ?? '';
+    var updatedUser = new Map<String, dynamic>();
+    updatedUser['id'] = customerId;
+
+    final String url =
+        "http://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/customerdata?contact=$mobileNumber";
+    final Map<String, String> headers = {'X-API-KEY': 'amritmayamilk050512'};
+    final http.Response response = await http.get(
+      Uri.parse(url),
+      headers: headers,
+    );
+
+    Map<String, dynamic> res = json.decode(response.body);
+    if (res['Success'] == true) {
+      print('Customer Id: $customerId');
+      Fluttertoast.showToast(
+          msg: 'Customer Data fetch Successfully',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.green,
+          textColor: Colors.white);
+    } else {
+      Fluttertoast.showToast(
+          msg: 'Failed to fetch data!',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white);
+      print("update failed");
     }
   }
 
@@ -112,7 +134,7 @@ class _ScanScreenState extends State<ScanScreen> {
           },
         );
       } else {
-        await getCustomerData(mobileNo);
+        await customerData(mobileNo);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => FormScreen()));
         print('Selected Option: With Mobile Number');
