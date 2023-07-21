@@ -95,8 +95,11 @@ class _ScanScreenState extends State<ScanScreen> {
     );
     Map<String, dynamic> res = json.decode(response.body);
     if (res['Success'] == true) {
+      customerId = res["customerList"]["id"];
       prefs.setString('customerId', _customerId);
+
       print('Customer Id: $customerId');
+
       Fluttertoast.showToast(
           msg: 'Customer Data fetch Successfully',
           toastLength: Toast.LENGTH_SHORT,
