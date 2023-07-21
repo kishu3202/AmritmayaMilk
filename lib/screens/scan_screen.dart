@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:amritmaya_milk/provider/customerData_Provider.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -96,10 +97,17 @@ class _ScanScreenState extends State<ScanScreen> {
         await customerDataProvider.fetchCustomerData(mobileNo);
         final customerData = customerDataProvider.customerData;
         if (customerData != null) {
-          int id = customerData.id;
-
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => FormScreen()));
+
+          Fluttertoast.showToast(
+              msg: 'Customer Data fetch Successfully',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 2,
+              backgroundColor: Colors.green,
+              textColor: Colors.white);
+
           print('Selected Option: With Mobile Number');
           print('Mobile Number: $mobileNo');
         } else {

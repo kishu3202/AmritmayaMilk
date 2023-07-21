@@ -34,9 +34,9 @@ class CustomerDataProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> saveCustomerId() async {
+  Future<void> saveCustomerId(int id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('id', 'id');
+    prefs.setInt('id', id);
   }
 
   Future<int?> getSavedCustomerId() async {
