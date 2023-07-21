@@ -9,7 +9,7 @@ class CustomerDataProvider extends ChangeNotifier {
   DataModel? _customerData;
   DataModel? get customerData => _customerData;
 
-  Future<void> fetchCustomerData(String mobileNumber) async {
+  Future<DataModel?> fetchCustomerData(String mobileNumber) async {
     final url =
         "http://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/customerdata?contact=$mobileNumber";
     final headers = {'X-API-KEY': 'amritmayamilk050512'};
