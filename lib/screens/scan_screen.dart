@@ -66,7 +66,7 @@ class _ScanScreenState extends State<ScanScreen> {
     );
   }
 
-  void _submitData() {
+  void _submitData() async {
     if (selectedOption == 1) {
       String mobileNo = mobileNoController.text.trim();
       // check if mobile number is not empty
@@ -93,16 +93,18 @@ class _ScanScreenState extends State<ScanScreen> {
         // navigate to the next screen
         final customerDataProvider =
             Provider.of<CustomerDataProvider>(context, listen: false);
-        customerDataProvider.getCustomerData(mobileNo).then((_) {
+        await customerDataProvider.fetchCustomerData(mobileNo);
+        final customerData = customerDataProvider.customerData;
+        if (customerData != null) {
+          int id = customerData.id;
+
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const FormScreen(),
-            ),
-          );
+              context, MaterialPageRoute(builder: (context) => FormScreen()));
           print('Selected Option: With Mobile Number');
           print('Mobile Number: $mobileNo');
-        });
+        } else {
+          print('Error');
+        }
       }
     } else if (selectedOption == 2) {
       // check if a QR code has been scanned
