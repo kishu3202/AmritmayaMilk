@@ -1,10 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
 
-import 'package:amritmaya_milk/provider/customerData_Provider.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'form_screen.dart';
 
@@ -67,6 +67,27 @@ class _ScanScreenState extends State<ScanScreen> {
     );
   }
 
+  Future<void> getCustomerData(String mobileNumber) async {
+    final url =
+        "http://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/customerdata?contact=$mobileNumber";
+    final headers = {'X-API-KEY': 'amritmayamilk050512'};
+
+    try {
+      final response = await http.get(Uri.parse(url), headers: headers);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final customerId = data['id'];
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('customer_id', customerId);
+        print('Customer ID: $customerId');
+      } else {
+        print('Failed to fetch data. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error');
+    }
+  }
+
   void _submitData() async {
     if (selectedOption == 1) {
       String mobileNo = mobileNoController.text.trim();
@@ -91,28 +112,11 @@ class _ScanScreenState extends State<ScanScreen> {
           },
         );
       } else {
-        // navigate to the next screen
-        final customerDataProvider =
-            Provider.of<CustomerDataProvider>(context, listen: false);
-        final customerData =
-            await customerDataProvider.getCustomerData(String, mobileNo);
-        if (customerData['Success'] == true) {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => FormScreen()));
-
-          Fluttertoast.showToast(
-              msg: 'Customer Data fetch Successfully',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 2,
-              backgroundColor: Colors.green,
-              textColor: Colors.white);
-
-          print('Selected Option: With Mobile Number');
-          print('Mobile Number: $mobileNo');
-        } else {
-          print('Error');
-        }
+        await getCustomerData(mobileNo);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => FormScreen()));
+        print('Selected Option: With Mobile Number');
+        print('Mobile Number: $mobileNo');
       }
     } else if (selectedOption == 2) {
       // check if a QR code has been scanned
