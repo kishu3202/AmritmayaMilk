@@ -1,3 +1,4 @@
+import 'package:amritmaya_milk/screens/showAddRemoveProductList.dart';
 import 'package:flutter/material.dart';
 
 import 'add_remove_product_card.dart';
@@ -57,7 +58,9 @@ class _AddRemoveMultipleProductState extends State<AddRemoveMultipleProduct> {
                     height: 50,
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        showProduct(context);
+                      },
                       child: Text(
                         'Show',
                         style: TextStyle(fontSize: 17),
@@ -83,5 +86,13 @@ class _AddRemoveMultipleProductState extends State<AddRemoveMultipleProduct> {
         ],
       ),
     );
+  }
+
+  void showProduct(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                ShowAddRemoveProductList(_productDataList: [])));
   }
 }
