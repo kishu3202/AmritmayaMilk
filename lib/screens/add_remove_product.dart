@@ -24,6 +24,41 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
   String quantity = "";
   String rate = "";
 
+  void removeCard(String index) {
+    _productDataList.removeAt(index as int);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  void saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String> dataList =
+        _productDataList.map((data) => data.toString()).toList();
+    prefs.setStringList('productDataList', dataList);
+  }
+
+  void loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final dataList = prefs.getStringList('productDataList');
+    if (dataList != null) {
+      setState(() {
+        _productDataList.clear();
+        for (final data in dataList) {
+          final parts = data.split(',');
+          _productDataList.add(ProductData(
+            productName: parts[0],
+            rate: parts[1],
+            quantity: parts[2],
+          ));
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -41,7 +76,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
           children: [
             TextField(
               keyboardType: TextInputType.text,
-              // controller: productController,
+              controller: productController,
               onChanged: (value) {
                 setState(() {
                   productName = value;
@@ -57,7 +92,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
               height: 8,
             ),
             TextField(
-              // controller: productController,
+              controller: quantityController,
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
@@ -74,7 +109,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
               height: 8,
             ),
             TextField(
-              // controller: productController,
+              controller: rateController,
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
@@ -99,10 +134,11 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
                         onPressed: () {
                           setState(() {
                             _productDataList.add(ProductData(
-                                productName: "productName",
-                                rate: "rate",
-                                quantity: "quantity"));
+                                productName: productController.text,
+                                rate: rateController.text,
+                                quantity: quantityController.text));
                             saveData();
+                            printData();
                           });
                         },
                         child: Text(
@@ -149,19 +185,11 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
     );
   }
 
-  void removeCard(String index) {
-    _productDataList.removeAt(index as int);
-  }
-
-  void saveData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> productDataList = [];
-    for (var productData in _productDataList) {
-      String dataString =
-          '${productData.productName}, ${productData.quantity}, ${productData.rate}';
-      productDataList.add(dataString);
+  void printData() {
+    for (var data in _productDataList) {
+      print(
+          'Product Name: ${data.productName}, Rate: ${data.rate}, Quantity: ${data.quantity}');
     }
-    await prefs.setStringList('productDataList', productDataList);
   }
 }
 
