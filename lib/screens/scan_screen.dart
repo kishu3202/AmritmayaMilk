@@ -78,13 +78,12 @@ class _ScanScreenState extends State<ScanScreen> {
   void fetchCustomerID() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      customerId = prefs.getString('id') ?? '';
+      customerId = prefs.getString('customerId') ?? '';
     });
   }
 
   Future<void> customerData(String mobileNumber) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var _customerId = prefs.getString('customerId') ?? customerId;
 
     final String url =
         "http://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/customerdata?contact=$mobileNumber";
@@ -96,7 +95,7 @@ class _ScanScreenState extends State<ScanScreen> {
     Map<String, dynamic> res = json.decode(response.body);
     if (res['Success'] == true) {
       customerId = res["customerList"]["id"];
-      prefs.setString('customerId', _customerId);
+      prefs.setString('customerId', customerId);
 
       print('Customer Id: $customerId');
 
