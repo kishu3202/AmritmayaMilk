@@ -37,7 +37,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
               // controller: productController,
               onChanged: (value) {
                 setState(() {
-                  _productDataList[index].productName = value;
+                  productName = value;
                 });
               },
               decoration: InputDecoration(
@@ -54,7 +54,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
-                  _productDataList[index].quantity = value;
+                  quantity = value;
                 });
               },
               decoration: InputDecoration(
@@ -71,7 +71,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
-                  _productDataList[index].rate = value;
+                  rate = value;
                 });
               },
               decoration: InputDecoration(
@@ -115,9 +115,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
                       height: 40,
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
-                        onPressed: () {
-                          removeCard(index);
-                        },
+                        onPressed: () {},
                         child: Text(
                           "Remove",
                           style: TextStyle(fontSize: 16),

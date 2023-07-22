@@ -89,10 +89,7 @@ class _AddRemoveMultipleProductState extends State<AddRemoveMultipleProduct> {
   }
 
   void showProduct(BuildContext context) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                ShowAddRemoveProductList(_productDataList: [])));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => ShowAddRemoveProductList()));
   }
 }

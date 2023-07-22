@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'add_remove_product_card.dart';
-
-class ShowAddRemoveProductList extends StatelessWidget {
-   // ShowAddRemoveProductList({super.key});
-   final List<ProductData> _productDataList;
-
-  ShowAddRemoveProductList({required this._productDataList});
+class ShowAddRemoveProductList extends StatefulWidget {
+  const ShowAddRemoveProductList({super.key});
 
   @override
+  State<ShowAddRemoveProductList> createState() =>
+      _ShowAddRemoveProductListState();
+}
+
+class _ShowAddRemoveProductListState extends State<ShowAddRemoveProductList> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: Text('Product List'),
-      ),
-      body: ,
-    );
+    return Scaffold();
   }
 }
