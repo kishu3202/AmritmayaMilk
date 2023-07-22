@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddRemoveProductCard extends StatefulWidget {
-  const AddRemoveProductCard({super.key});
+  AddRemoveProductCard(
+      {super.key,
+      required this.index,
+      required this.onDelete,
+      required productData});
+  var index;
+  final onDelete;
 
   @override
   State<AddRemoveProductCard> createState() => _AddRemoveProductCardState();
@@ -10,9 +17,9 @@ class AddRemoveProductCard extends StatefulWidget {
 class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
   List<ProductData> _productDataList = [];
 
-  // TextEditingController productController = TextEditingController();
-  // TextEditingController quantityController = TextEditingController();
-  // TextEditingController rateController = TextEditingController();
+  TextEditingController productController = TextEditingController();
+  TextEditingController quantityController = TextEditingController();
+  TextEditingController rateController = TextEditingController();
   String productName = '';
   String quantity = "";
   String rate = "";
@@ -92,7 +99,10 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
                         onPressed: () {
                           setState(() {
                             _productDataList.add(ProductData(
-                                productName: "", rate: "", quantity: "0"));
+                                productName: "productName",
+                                rate: "rate",
+                                quantity: "quantity"));
+                            saveData();
                           });
                         },
                         child: Text(
@@ -115,7 +125,9 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
                       height: 40,
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          widget.onDelete(widget.index);
+                        },
                         child: Text(
                           "Remove",
                           style: TextStyle(fontSize: 16),
@@ -139,6 +151,17 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
 
   void removeCard(String index) {
     _productDataList.removeAt(index as int);
+  }
+
+  void saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> productDataList = [];
+    for (var productData in _productDataList) {
+      String dataString =
+          '${productData.productName}, ${productData.quantity}, ${productData.rate}';
+      productDataList.add(dataString);
+    }
+    await prefs.setStringList('productDataList', productDataList);
   }
 }
 

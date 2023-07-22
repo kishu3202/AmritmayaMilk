@@ -1,7 +1,8 @@
 import 'package:amritmaya_milk/screens/showAddRemoveProductList.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'add_remove_product_card.dart';
+import 'add_remove_product.dart';
 
 class AddRemoveMultipleProduct extends StatefulWidget {
   const AddRemoveMultipleProduct({super.key});
@@ -12,7 +13,54 @@ class AddRemoveMultipleProduct extends StatefulWidget {
 }
 
 class _AddRemoveMultipleProductState extends State<AddRemoveMultipleProduct> {
-  List<AddRemoveProductCard> productCards = [];
+  List<AddRemoveProductCard> productCards = [
+    // AddRemoveProductCard(index: index, onDelete: onDelete)
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? productDataList = prefs.getStringList('productDataList');
+    if (productDataList != null) {
+      List<ProductData> products = productDataList.map((dataString) {
+        List<String> data = dataString.split(',');
+        return ProductData(
+          productName: data[0],
+          quantity: data[1],
+          rate: data[2],
+        );
+      }).toList();
+      setState(() {
+        productCards = products
+            .asMap()
+            .map((index, productData) => MapEntry(
+                  index,
+                  AddRemoveProductCard(
+                    index: index,
+                    onDelete: _removeCard,
+                    productData: productData,
+                  ),
+                ))
+            .values
+            .toList();
+      });
+    }
+  }
+
+  void _removeCard(int index) {
+    setState(() {
+      productCards.removeAt(index);
+      for (int i = index; i < productCards.length; i++) {
+        (productCards[i] as AddRemoveProductCard).index = i;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +84,14 @@ class _AddRemoveMultipleProductState extends State<AddRemoveMultipleProduct> {
                     child: ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          productCards.add(AddRemoveProductCard());
+                          productCards.add(AddRemoveProductCard(
+                            index: productCards.length,
+                            onDelete: (index) {
+                              print('index');
+                              _removeCard(index);
+                            },
+                            productData: null,
+                          ));
                         });
                       },
                       child: Text(
@@ -89,7 +144,11 @@ class _AddRemoveMultipleProductState extends State<AddRemoveMultipleProduct> {
   }
 
   void showProduct(BuildContext context) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => ShowAddRemoveProductList()));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ShowAddRemoveProductList(
+                  products: [],
+                )));
   }
 }
