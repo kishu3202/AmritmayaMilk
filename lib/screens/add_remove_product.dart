@@ -2,13 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AddRemoveProductCard extends StatefulWidget {
-  AddRemoveProductCard(
-      {super.key,
-      required this.index,
-      required this.onDelete,
-      required productData});
+  AddRemoveProductCard({
+    super.key,
+    required this.index,
+    required this.onDelete,
+    required productData,
+    // required this.productName,
+    // required this.rate,
+    // required this.quantity
+  });
   var index;
   final onDelete;
+  // String productName;
+  // String quantity;
+  // String rate;
 
   @override
   State<AddRemoveProductCard> createState() => _AddRemoveProductCardState();

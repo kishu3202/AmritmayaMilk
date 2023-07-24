@@ -108,6 +108,14 @@ class _AddRemoveMultipleProductState extends State<AddRemoveMultipleProduct> {
   }
 
   void showProduct(BuildContext context) {
+    // final List<ProductData> products = [];
+    // for (final card in productCards) {
+    //   final data = ProductData(
+    //       productName: card.productName,
+    //       rate: card.rate,
+    //       quantity: card.quantity);
+    //   products.add(data);
+    // }
     Navigator.push(
         context,
         MaterialPageRoute(

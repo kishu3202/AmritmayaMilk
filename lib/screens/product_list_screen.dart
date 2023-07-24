@@ -12,6 +12,7 @@ class ProductListScreen extends StatefulWidget {
 }
 
 class _ProductListScreenState extends State<ProductListScreen> {
+  // List<Product> productList = [];
   final formKey = GlobalKey<FormState>();
   String? selectedProduct;
   String? selectedUnit;
@@ -24,7 +25,71 @@ class _ProductListScreenState extends State<ProductListScreen> {
   bool? maintenanceChecked = false;
 
   String productId = '';
+
   @override
+  // void initState() {
+  //   super.initState();
+  //   fetchProductDetails();
+  // }
+  // Future<void> fetchProductDetails() async {
+  //   final String apiUrl =
+  //       'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct';
+  //
+  //   final Map<String, String> headers = {'X-API-KEY': 'amritmayamilk050512'};
+  //   final Map<String, dynamic> body = {
+  //     'customerId': widget.customerId.toString()
+  //   };
+  //   try {
+  //     http.Response response =
+  //         await http.post(Uri.parse(apiUrl), headers: headers, body: body);
+  //
+  //     if (response.statusCode == 200) {
+  //       // If the request is successful, parse the response body
+  //       List<dynamic> data = json.decode(response.body);
+  //       List<Product> fetchedProducts = [];
+  //
+  //       for (var item in data) {
+  //         fetchedProducts.add(Product.fromJson(item));
+  //       }
+  //       // Save the fetched product list to SharedPreferences
+  //       saveProductListToSharedPreferences(fetchedProducts);
+  //
+  //       // Update the state with the fetched product list
+  //       setState(() {
+  //         productList = fetchedProducts;
+  //       });
+  //     } else {
+  //       // If the request fails, handle the error accordingly
+  //       print('Failed to fetch product details: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     // If an exception occurs during the API call, handle the error accordingly
+  //     print('Error fetching product details: $e');
+  //   }
+  // }
+  //
+  // // Save the product list to SharedPreferences
+  // Future<void> saveProductListToSharedPreferences(
+  //     List<Product> products) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   List<String> productJsonList =
+  //       products.map((product) => json.encode(product.toJson())).toList();
+  //   await prefs.setStringList('productList', productJsonList);
+  // }
+  //
+  // // Retrieve the product list from SharedPreferences
+  // Future<List<Product>> getProductListFromSharedPreferences() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   List<String>? productJsonList = prefs.getStringList('productList');
+  //   if (productJsonList != null) {
+  //     List<Product> products = productJsonList
+  //         .map((jsonString) => Product.fromJson(json.decode(jsonString)))
+  //         .toList();
+  //     return products;
+  //   } else {
+  //     return [];
+  //   }
+  // }
   void initState() {
     super.initState();
     _loadDailyNeedProductDetails(); // Load daily need product details when the screen initializes
@@ -91,7 +156,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
         );
       } else {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        final customerId = prefs.getInt('customer_id') ?? widget.customerId;
+        final customerId = prefs.getString('customer_id') ?? widget.customerId;
 
         // Construct the request body
         final Map<String, dynamic> data = {
@@ -641,3 +706,33 @@ class _ProductListScreenState extends State<ProductListScreen> {
     );
   }
 }
+
+// class Product {
+//   late String selectedProduct;
+//   late String selectedUnit;
+//   late String selectedQuantity;
+//   late String selectedRate;
+//
+//   Product({
+//     required this.selectedProduct,
+//     required this.selectedQuantity,
+//     required this.selectedRate,
+//     required this.selectedUnit,
+//   });
+//
+//   factory Product.fromJson(Map<String, dynamic> json) {
+//     return Product(
+//         selectedProduct: json['product_id[]'],
+//         selectedQuantity: json['qnt[]'],
+//         selectedRate: json['rate[]'],
+//         selectedUnit: json['unit_id[]']);
+//   }
+//   Map<String, dynamic> toJson() {
+//     return {
+//       "selectedProduct": selectedProduct,
+//       "selectedQuantity": selectedQuantity,
+//       "selectedUnit": selectedUnit,
+//       "selectedRate": selectedRate
+//     };
+//   }
+// }

@@ -12,7 +12,7 @@ class ShowAddRemoveProductList extends StatefulWidget {
 }
 
 class _ShowAddRemoveProductListState extends State<ShowAddRemoveProductList> {
-  late List<ProductData> products;
+  late List<ProductData>? products;
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +25,11 @@ class _ShowAddRemoveProductListState extends State<ShowAddRemoveProductList> {
       body: Column(
         children: [
           ListView.builder(
-              itemCount: products.length,
+              itemCount: products?.length ?? 0,
               itemBuilder: (context, index) {
-                final product = products[index];
+                final product = products![index];
                 return ListTile(
-                  title: Text(product.productName),
+                  title: Text('Product Name : ${product.productName}'),
                   subtitle: Text(
                       'Quantity: ${product.quantity}, Rate: ${product.rate}'),
                 );
