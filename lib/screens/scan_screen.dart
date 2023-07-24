@@ -142,7 +142,9 @@ class _ScanScreenState extends State<ScanScreen> {
       } else {
         await customerData(mobileNo);
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => FormScreen()));
+            context,
+            MaterialPageRoute(
+                builder: (context) => FormScreen(customerId: customerId)));
         print('Selected Option: With Mobile Number');
         print('Mobile Number: $mobileNo');
       }
@@ -171,7 +173,8 @@ class _ScanScreenState extends State<ScanScreen> {
         // navigate to the formscreen
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const FormScreen()),
+          MaterialPageRoute(
+              builder: (context) => const FormScreen(customerId: '')),
         );
         print('Selected Option: QR Code Scanner');
         print('Scanned Barcode: $scanBarcode');

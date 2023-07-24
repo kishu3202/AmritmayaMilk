@@ -1,6 +1,5 @@
 import 'package:amritmaya_milk/screens/showAddRemoveProductList.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'add_remove_product.dart';
 
@@ -16,41 +15,6 @@ class _AddRemoveMultipleProductState extends State<AddRemoveMultipleProduct> {
   List<AddRemoveProductCard> productCards = [
     // AddRemoveProductCard(index: index, onDelete: onDelete)
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  void _loadData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? productDataList = prefs.getStringList('productDataList');
-    if (productDataList != null) {
-      List<ProductData> products = productDataList.map((dataString) {
-        List<String> data = dataString.split(',');
-        return ProductData(
-          productName: data[0],
-          quantity: data[1],
-          rate: data[2],
-        );
-      }).toList();
-      setState(() {
-        productCards = products
-            .asMap()
-            .map((index, productData) => MapEntry(
-                  index,
-                  AddRemoveProductCard(
-                    index: index,
-                    onDelete: _removeCard,
-                    productData: productData,
-                  ),
-                ))
-            .values
-            .toList();
-      });
-    }
-  }
 
   void _removeCard(int index) {
     setState(() {
@@ -147,8 +111,7 @@ class _AddRemoveMultipleProductState extends State<AddRemoveMultipleProduct> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => ShowAddRemoveProductList(
-                  products: [],
-                )));
+          builder: (context) => ShowAddRemoveProductList(products: []),
+        ));
   }
 }

@@ -2,7 +2,8 @@ import 'package:amritmaya_milk/screens/product_list_screen.dart';
 import 'package:flutter/material.dart';
 
 class FormScreen extends StatefulWidget {
-  const FormScreen({super.key});
+  final String customerId;
+  const FormScreen({super.key, required this.customerId});
 
   @override
   State<FormScreen> createState() => _FormScreenState();
@@ -25,7 +26,9 @@ class _FormScreenState extends State<FormScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const ProductListScreen()),
+                  builder: (context) => ProductListScreen(
+                        customerId: widget.customerId,
+                      )),
             );
           },
           shape:

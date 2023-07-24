@@ -336,3 +336,52 @@ class EmailValidator extends StatelessWidget {
 //     ),
 //   ),
 // ),
+
+// Align(
+//   alignment: Alignment.topLeft,
+//   child: TextField(
+//     onChanged: (value) {
+//       unit = value;
+//     },
+//     decoration: InputDecoration(
+//         border: OutlineInputBorder(
+//             borderRadius: BorderRadius.circular(10)),
+//         labelText: 'Unit'),
+//     style:
+//         const TextStyle(fontSize: 15, color: Colors.black),
+//   ),
+// ),
+// const SizedBox(
+//   height: 10,
+// ),
+// Align(
+//   alignment: Alignment.topLeft,
+//   child: TextField(
+//     onChanged: (value) {
+//       quantity = value;
+//     },
+//     decoration: InputDecoration(
+//         border: OutlineInputBorder(
+//             borderRadius: BorderRadius.circular(10)),
+//         labelText: 'Quantity'),
+//     style:
+//         const TextStyle(fontSize: 15, color: Colors.black),
+//   ),
+// ),
+// const SizedBox(
+//   height: 10,
+// ),
+// Align(
+//   alignment: Alignment.topLeft,
+//   child: TextField(
+//     onChanged: (value) {
+//       rate = value;
+//     },
+//     decoration: InputDecoration(
+//         border: OutlineInputBorder(
+//             borderRadius: BorderRadius.circular(10)),
+//         labelText: 'Rate'),
+//     style:
+//         const TextStyle(fontSize: 15, color: Colors.black),
+//   ),
+// ),

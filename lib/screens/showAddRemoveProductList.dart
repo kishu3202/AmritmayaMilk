@@ -23,19 +23,19 @@ class _ShowAddRemoveProductListState extends State<ShowAddRemoveProductList> {
         title: Text('Product List'),
       ),
       body: Column(
-          // children: [
-          //   ListView.builder(
-          //       itemCount: products.length,
-          //       itemBuilder: (context, index) {
-          //         final product = products[index];
-          //         return ListTile(
-          //           title: Text(product.productName),
-          //           subtitle: Text(
-          //               'Quantity: ${product.quantity}, Rate: ${product.rate}'),
-          //         );
-          //       })
-          // ],
-          ),
+        children: [
+          ListView.builder(
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                final product = products[index];
+                return ListTile(
+                  title: Text(product.productName),
+                  subtitle: Text(
+                      'Quantity: ${product.quantity}, Rate: ${product.rate}'),
+                );
+              })
+        ],
+      ),
     );
   }
 }

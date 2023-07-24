@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductListScreen extends StatefulWidget {
-  const ProductListScreen({super.key});
+  final String customerId;
+  ProductListScreen({super.key, required this.customerId});
 
   @override
   State<ProductListScreen> createState() => _ProductListScreenState();
@@ -18,6 +22,115 @@ class _ProductListScreenState extends State<ProductListScreen> {
   bool? polytheneBigChecked = false;
   bool? deliveryChecked = false;
   bool? maintenanceChecked = false;
+
+  String productId = '';
+  @override
+  void initState() {
+    super.initState();
+    _loadDailyNeedProductDetails(); // Load daily need product details when the screen initializes
+  }
+
+  Future<void> _loadDailyNeedProductDetails() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    selectedProduct = prefs.getString('selected_product') ?? null;
+    selectedUnit = prefs.getString('selected_unit') ?? null;
+    selectedQuantity = prefs.getString('selected_quantity') ?? null;
+    selectedRate = prefs.getString('selected_rate') ?? null;
+    polytheneSmallChecked = prefs.getBool('polythene_small_checked') ?? false;
+    polytheneBigChecked = prefs.getBool('polythene_big_checked') ?? false;
+    deliveryChecked = prefs.getBool('delivery_checked') ?? false;
+    maintenanceChecked = prefs.getBool('maintenance_checked') ?? false;
+    setState(() {}); // Refresh the UI after loading the details
+  }
+
+  // Function to save customer daily need product details to SharedPreferences
+  Future<void> _saveDailyNeedProductDetails() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('customer_id', widget.customerId);
+    prefs.setString('selected_product', selectedProduct!);
+    prefs.setString('selected_unit', selectedUnit!);
+    prefs.setString('selected_quantity', selectedQuantity!);
+    prefs.setString('selected_rate', selectedRate!);
+    prefs.setBool('polythene_small_checked', polytheneSmallChecked!);
+    prefs.setBool('polythene_big_checked', polytheneBigChecked!);
+    prefs.setBool('delivery_checked', deliveryChecked!);
+    prefs.setBool('maintenance_checked', maintenanceChecked!);
+
+    _showToastMessage("Daily need product details saved successfully");
+  }
+
+  final String baseUrl =
+      'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct';
+  final String apiKey = 'amritmayamilk050512';
+  void _showToastMessage(String Message) {
+    Fluttertoast.showToast(
+      msg: Message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+    );
+  }
+
+  Future<void> _submitDailyNeedProduct() async {
+    if (!formKey.currentState!.validate()) {
+      print('Please fill all the details');
+    } else {
+      if (!(polytheneSmallChecked! ||
+          polytheneBigChecked! ||
+          deliveryChecked! ||
+          maintenanceChecked!)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.red,
+            content: Text(
+              'Please select at least one checkbox',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        );
+      } else {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        final customerId = prefs.getInt('customer_id') ?? widget.customerId;
+
+        // Construct the request body
+        final Map<String, dynamic> data = {
+          'customer_id': widget.customerId.toString(),
+          'product_id[]': productId.toString(),
+          'product_name': selectedProduct!,
+          'unit_id[]': selectedUnit!,
+          'qnt[]': selectedQuantity!,
+          'rate': selectedRate!,
+          'polythene_small': polytheneSmallChecked.toString(),
+          'polythene_big': polytheneBigChecked.toString(),
+          'delivery_charges': deliveryChecked.toString(),
+          'maintenance_charges': maintenanceChecked.toString(),
+        };
+        final response = await http.post(
+          Uri.parse(baseUrl),
+          headers: {'X-API-KEY': apiKey},
+          body: data,
+        );
+
+        if (response.statusCode == 200) {
+          _showToastMessage("Daily Need has been saved Successfully");
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('customer_id', widget.customerId);
+          print("Customer ID: ${widget.customerId}");
+          print("Selected Product: $selectedProduct");
+          print("Selected Unit: $selectedUnit");
+          print("Selected Quantity: $selectedQuantity");
+          print("Selected Rate: $selectedRate");
+          print("Polythene Small Checked: $polytheneSmallChecked");
+          print("Polythene Big Checked: $polytheneBigChecked");
+          print("Delivery Checked: $deliveryChecked");
+          print("Maintenance Checked: $maintenanceChecked");
+        } else {
+          _showToastMessage("Failed to save Daily Need");
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +276,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           }).toList(),
                         ),
                       ),
-
                       const SizedBox(
                         height: 10,
                       ),
@@ -213,7 +325,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           }).toList(),
                         ),
                       ),
-
                       const SizedBox(
                         height: 10,
                       ),
@@ -263,55 +374,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           }).toList(),
                         ),
                       ),
-
-                      // Align(
-                      //   alignment: Alignment.topLeft,
-                      //   child: TextField(
-                      //     onChanged: (value) {
-                      //       unit = value;
-                      //     },
-                      //     decoration: InputDecoration(
-                      //         border: OutlineInputBorder(
-                      //             borderRadius: BorderRadius.circular(10)),
-                      //         labelText: 'Unit'),
-                      //     style:
-                      //         const TextStyle(fontSize: 15, color: Colors.black),
-                      //   ),
-                      // ),
-                      // const SizedBox(
-                      //   height: 10,
-                      // ),
-                      // Align(
-                      //   alignment: Alignment.topLeft,
-                      //   child: TextField(
-                      //     onChanged: (value) {
-                      //       quantity = value;
-                      //     },
-                      //     decoration: InputDecoration(
-                      //         border: OutlineInputBorder(
-                      //             borderRadius: BorderRadius.circular(10)),
-                      //         labelText: 'Quantity'),
-                      //     style:
-                      //         const TextStyle(fontSize: 15, color: Colors.black),
-                      //   ),
-                      // ),
-                      // const SizedBox(
-                      //   height: 10,
-                      // ),
-                      // Align(
-                      //   alignment: Alignment.topLeft,
-                      //   child: TextField(
-                      //     onChanged: (value) {
-                      //       rate = value;
-                      //     },
-                      //     decoration: InputDecoration(
-                      //         border: OutlineInputBorder(
-                      //             borderRadius: BorderRadius.circular(10)),
-                      //         labelText: 'Rate'),
-                      //     style:
-                      //         const TextStyle(fontSize: 15, color: Colors.black),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
@@ -525,30 +587,34 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 padding: const EdgeInsets.all(10.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    if (!formKey.currentState!.validate()) {
-                      print('Validation Error');
-                    } else {
-                      if (!(polytheneSmallChecked! ||
-                          polytheneBigChecked! ||
-                          deliveryChecked! ||
-                          maintenanceChecked!)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content:
-                                Text('Please select at least one checkbox'),
-                          ),
-                        );
-                      }
-                      print(
-                          "submit successful selectedProduct: ${selectedProduct}");
-                      print(
-                          "submit successful selectedProduct: ${selectedUnit}");
-                      print(
-                          "submit successful selectedProduct: ${selectedQuantity}");
-                      print(
-                          "submit successful selectedProduct: ${selectedRate}");
-                    }
+                    _submitDailyNeedProduct();
+                    _saveDailyNeedProductDetails();
                   },
+                  // onPressed: () {
+                  //   if (!formKey.currentState!.validate()) {
+                  //     print('Validation Error');
+                  //   } else {
+                  //     if (!(polytheneSmallChecked! ||
+                  //         polytheneBigChecked! ||
+                  //         deliveryChecked! ||
+                  //         maintenanceChecked!)) {
+                  //       ScaffoldMessenger.of(context).showSnackBar(
+                  //         const SnackBar(
+                  //           content:
+                  //               Text('Please select at least one checkbox'),
+                  //         ),
+                  //       );
+                  //     }
+                  //     print(
+                  //         "submit successful selectedProduct: ${selectedProduct}");
+                  //     print(
+                  //         "submit successful selectedProduct: ${selectedUnit}");
+                  //     print(
+                  //         "submit successful selectedProduct: ${selectedQuantity}");
+                  //     print(
+                  //         "submit successful selectedProduct: ${selectedRate}");
+                  //   }
+                  // },
                   child: Container(
                     height: 50,
                     decoration: BoxDecoration(
