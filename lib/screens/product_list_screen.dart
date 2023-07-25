@@ -107,7 +107,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
       final productQntData = ProductQuantityList.fromJson(jsonBody);
       setState(() {
         productqntList = productQntData.productqntList;
-        selectedQuantity = null;
       });
     } else {
       print('Failed to fetch product units: ${response.statusCode}');
@@ -325,11 +324,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedUnit = newValue;
-                              if (selectedProduct != null &&
-                                  selectedUnit != null) {
-                                _fetchProductQntList(
-                                    selectedProduct!, productId, unitId);
-                              }
+                              final selectedUnitData = productunitList
+                                  .firstWhere((unit) => unit.name == newValue,
+                                      orElse: () => ProductunitList(
+                                          unitId: '', name: ''));
+                              unitId = selectedUnitData.unitId;
+                              // if (selectedProduct != null &&
+                              //     selectedUnit != null) {
+                              _fetchProductQntList(
+                                  selectedProduct!, productId, unitId);
+                              // }
                             });
                           },
                           validator: (value) {
