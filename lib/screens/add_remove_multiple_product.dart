@@ -12,8 +12,13 @@ class AddRemoveMultipleProduct extends StatefulWidget {
 }
 
 class _AddRemoveMultipleProductState extends State<AddRemoveMultipleProduct> {
+  List<ProductData> productDataList = [];
   List<AddRemoveProductCard> productCards = [
-    // AddRemoveProductCard(index: index, onDelete: onDelete)
+    AddRemoveProductCard(
+      index: '',
+      onDelete: '',
+      productData: '',
+    )
   ];
 
   void _removeCard(int index) {
@@ -78,7 +83,7 @@ class _AddRemoveMultipleProductState extends State<AddRemoveMultipleProduct> {
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
                       onPressed: () {
-                        showProduct(context);
+                        showProduct(context, productCards.length);
                       },
                       child: Text(
                         'Show',
@@ -107,7 +112,7 @@ class _AddRemoveMultipleProductState extends State<AddRemoveMultipleProduct> {
     );
   }
 
-  void showProduct(BuildContext context) {
+  void showProduct(BuildContext context, int length) {
     // final List<ProductData> products = [];
     // for (final card in productCards) {
     //   final data = ProductData(
@@ -116,10 +121,12 @@ class _AddRemoveMultipleProductState extends State<AddRemoveMultipleProduct> {
     //       quantity: card.quantity);
     //   products.add(data);
     // }
+
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ShowAddRemoveProductList(products: []),
+          builder: (context) =>
+              ShowAddRemoveProductList(products: productCards[length].index),
         ));
   }
 }

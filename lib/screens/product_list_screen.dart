@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../data/productList_data_model.dart';
 
 class ProductListScreen extends StatefulWidget {
   final String customerId;
@@ -12,7 +16,6 @@ class ProductListScreen extends StatefulWidget {
 }
 
 class _ProductListScreenState extends State<ProductListScreen> {
-  // List<Product> productList = [];
   final formKey = GlobalKey<FormState>();
   String? selectedProduct;
   String? selectedUnit;
@@ -26,73 +29,31 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   String productId = '';
 
+  List<ProductListElement> productList = [];
+
   @override
-  // void initState() {
-  //   super.initState();
-  //   fetchProductDetails();
-  // }
-  // Future<void> fetchProductDetails() async {
-  //   final String apiUrl =
-  //       'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct';
-  //
-  //   final Map<String, String> headers = {'X-API-KEY': 'amritmayamilk050512'};
-  //   final Map<String, dynamic> body = {
-  //     'customerId': widget.customerId.toString()
-  //   };
-  //   try {
-  //     http.Response response =
-  //         await http.post(Uri.parse(apiUrl), headers: headers, body: body);
-  //
-  //     if (response.statusCode == 200) {
-  //       // If the request is successful, parse the response body
-  //       List<dynamic> data = json.decode(response.body);
-  //       List<Product> fetchedProducts = [];
-  //
-  //       for (var item in data) {
-  //         fetchedProducts.add(Product.fromJson(item));
-  //       }
-  //       // Save the fetched product list to SharedPreferences
-  //       saveProductListToSharedPreferences(fetchedProducts);
-  //
-  //       // Update the state with the fetched product list
-  //       setState(() {
-  //         productList = fetchedProducts;
-  //       });
-  //     } else {
-  //       // If the request fails, handle the error accordingly
-  //       print('Failed to fetch product details: ${response.statusCode}');
-  //     }
-  //   } catch (e) {
-  //     // If an exception occurs during the API call, handle the error accordingly
-  //     print('Error fetching product details: $e');
-  //   }
-  // }
-  //
-  // // Save the product list to SharedPreferences
-  // Future<void> saveProductListToSharedPreferences(
-  //     List<Product> products) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   List<String> productJsonList =
-  //       products.map((product) => json.encode(product.toJson())).toList();
-  //   await prefs.setStringList('productList', productJsonList);
-  // }
-  //
-  // // Retrieve the product list from SharedPreferences
-  // Future<List<Product>> getProductListFromSharedPreferences() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   List<String>? productJsonList = prefs.getStringList('productList');
-  //   if (productJsonList != null) {
-  //     List<Product> products = productJsonList
-  //         .map((jsonString) => Product.fromJson(json.decode(jsonString)))
-  //         .toList();
-  //     return products;
-  //   } else {
-  //     return [];
-  //   }
-  // }
   void initState() {
     super.initState();
-    _loadDailyNeedProductDetails(); // Load daily need product details when the screen initializes
+    _loadDailyNeedProductDetails();
+    _fetchProductList(); // Load daily need product details when the screen initializes
+  }
+
+  Future<void> _fetchProductList() async {
+    final response = await http.get(
+      Uri.parse(
+          "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productlist"),
+      headers: {'X-API-KEY': 'amritmayamilk050512'},
+    );
+    if (response.statusCode == 200) {
+      productList.clear();
+      final jsonBody = json.decode(response.body);
+      final productListData = ProductList.fromJson(jsonBody);
+      setState(() {
+        productList = productListData.productList;
+      });
+    } else {
+      print('Failed to fetch product list: ${response.statusCode}');
+    }
   }
 
   Future<void> _loadDailyNeedProductDetails() async {
@@ -247,8 +208,24 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedProduct = newValue;
+                              final selectedProductData =
+                                  productList.firstWhere(
+                                      (element) => element.name == newValue,
+                                      orElse: () => ProductListElement(
+                                          id: '',
+                                          name: '',
+                                          unitId: '',
+                                          createdAt: DateTime.now(),
+                                          updatedAt: DateTime.now(),
+                                          unitName: ''));
+                              productId = selectedProductData.id;
                             });
                           },
+                          items: productList.map((ProductListElement product) {
+                            return DropdownMenuItem<String>(
+                                value: product.name, child: Text(product.name));
+                          }).toList(),
+
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please select an option';
@@ -273,23 +250,23 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               ),
                             ),
                           ),
-                          items: <String>[
-                            'Product 1',
-                            'Product 2',
-                            'Product 3',
-                            'Product 4',
-                            'Product 5',
-                            'Product 6',
-                            'Product 7',
-                            'Product 8',
-                            'Product 9',
-                            'Product 10'
-                          ].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+                          // items: <String>[
+                          //   'Product 1',
+                          //   'Product 2',
+                          //   'Product 3',
+                          //   'Product 4',
+                          //   'Product 5',
+                          //   'Product 6',
+                          //   'Product 7',
+                          //   'Product 8',
+                          //   'Product 9',
+                          //   'Product 10'
+                          // ].map<DropdownMenuItem<String>>((String value) {
+                          //   return DropdownMenuItem<String>(
+                          //     value: value,
+                          //     child: Text(value),
+                          //   );
+                          // }).toList(),
                         ),
                       ),
                       const SizedBox(

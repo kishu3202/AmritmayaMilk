@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'add_remove_product.dart';
-
 class ShowAddRemoveProductList extends StatefulWidget {
-  const ShowAddRemoveProductList(
-      {super.key, required List<ProductData> products});
+  final products;
+  const ShowAddRemoveProductList({super.key, this.products});
 
   @override
   State<ShowAddRemoveProductList> createState() =>
@@ -12,8 +10,6 @@ class ShowAddRemoveProductList extends StatefulWidget {
 }
 
 class _ShowAddRemoveProductListState extends State<ShowAddRemoveProductList> {
-  late List<ProductData>? products;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,16 +20,20 @@ class _ShowAddRemoveProductListState extends State<ShowAddRemoveProductList> {
       ),
       body: Column(
         children: [
-          ListView.builder(
-              itemCount: products?.length ?? 0,
-              itemBuilder: (context, index) {
-                final product = products![index];
-                return ListTile(
-                  title: Text('Product Name : ${product.productName}'),
-                  subtitle: Text(
-                      'Quantity: ${product.quantity}, Rate: ${product.rate}'),
-                );
-              })
+          Expanded(
+            child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: widget.products.length,
+                itemBuilder: (context, index) {
+                  final product = widget.products![index];
+                  return ListTile(
+                    title: Text('Product Name : ${product.productName}'),
+                    subtitle: Text(
+                        'Quantity: ${product.quantity}, Rate: ${product.rate}'),
+                  );
+                }),
+          )
         ],
       ),
     );

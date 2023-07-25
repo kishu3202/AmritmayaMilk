@@ -3,26 +3,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AddRemoveProductCard extends StatefulWidget {
   AddRemoveProductCard({
-    super.key,
+    Key? key,
     required this.index,
     required this.onDelete,
     required productData,
-    // required this.productName,
-    // required this.rate,
-    // required this.quantity
-  });
+  }) : super(key: key);
   var index;
   final onDelete;
-  // String productName;
-  // String quantity;
-  // String rate;
 
   @override
   State<AddRemoveProductCard> createState() => _AddRemoveProductCardState();
 }
 
 class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
-  List<ProductData> _productDataList = [];
+  List<ProductData> productDataList = [];
 
   TextEditingController productController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
@@ -32,7 +26,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
   String rate = "";
 
   void removeCard(String index) {
-    _productDataList.removeAt(index as int);
+    productDataList.removeAt(index as int);
   }
 
   @override
@@ -44,7 +38,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
   void saveData() async {
     final prefs = await SharedPreferences.getInstance();
     final List<String> dataList =
-        _productDataList.map((data) => data.toString()).toList();
+        productDataList.map((data) => data.toString()).toList();
     prefs.setStringList('productDataList', dataList);
   }
 
@@ -53,10 +47,10 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
     final dataList = prefs.getStringList('productDataList');
     if (dataList != null) {
       setState(() {
-        _productDataList.clear();
+        productDataList.clear();
         for (final data in dataList) {
           final parts = data.split(',');
-          _productDataList.add(ProductData(
+          productDataList.add(ProductData(
             productName: parts[0],
             rate: parts[1],
             quantity: parts[2],
@@ -140,7 +134,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            _productDataList.add(ProductData(
+                            productDataList.add(ProductData(
                                 productName: productController.text,
                                 rate: rateController.text,
                                 quantity: quantityController.text));
@@ -193,7 +187,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
   }
 
   void printData() {
-    for (var data in _productDataList) {
+    for (var data in productDataList) {
       print(
           'Product Name: ${data.productName}, Rate: ${data.rate}, Quantity: ${data.quantity}');
     }
