@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/productList_data_model.dart';
+import '../data/productUnit_data_model.dart';
 
 class ProductListScreen extends StatefulWidget {
   final String customerId;
@@ -30,12 +32,15 @@ class _ProductListScreenState extends State<ProductListScreen> {
   String productId = '';
 
   List<ProductListElement> productList = [];
+  List<ProductunitList> productunitList = [];
 
   @override
   void initState() {
     super.initState();
     _loadDailyNeedProductDetails();
-    _fetchProductList(); // Load daily need product details when the screen initializes
+    _fetchProductList();
+    // _fetchProductUnitList(String, productId);
+    // Load daily need product details when the screen initializes
   }
 
   Future<void> _fetchProductList() async {
@@ -53,6 +58,32 @@ class _ProductListScreenState extends State<ProductListScreen> {
       });
     } else {
       print('Failed to fetch product list: ${response.statusCode}');
+    }
+  }
+
+  void fetchCustomerID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      productId = prefs.getString('product_id') ?? '';
+    });
+  }
+
+  Future<void> _fetchProductUnitList(String, productId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final response = await http.get(
+      Uri.parse(
+          'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productunit?product_id=$productId'),
+      headers: {'X-API-KEY': 'amritmayamilk050512'},
+    );
+    if (response.statusCode == 200) {
+      final jsonBody = json.decode(response.body);
+      final productUnitData = ProductUnitList.fromJson(jsonBody);
+      // return productUnitList.productunitList;
+      setState(() {
+        productunitList = productUnitData.productunitList;
+      });
+    } else {
+      print('Failed to fetch product units: ${response.statusCode}');
     }
   }
 
@@ -219,13 +250,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                           updatedAt: DateTime.now(),
                                           unitName: ''));
                               productId = selectedProductData.id;
+                              _fetchProductUnitList(String, productId);
                             });
                           },
                           items: productList.map((ProductListElement product) {
                             return DropdownMenuItem<String>(
                                 value: product.name, child: Text(product.name));
                           }).toList(),
-
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please select an option';
@@ -250,23 +281,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               ),
                             ),
                           ),
-                          // items: <String>[
-                          //   'Product 1',
-                          //   'Product 2',
-                          //   'Product 3',
-                          //   'Product 4',
-                          //   'Product 5',
-                          //   'Product 6',
-                          //   'Product 7',
-                          //   'Product 8',
-                          //   'Product 9',
-                          //   'Product 10'
-                          // ].map<DropdownMenuItem<String>>((String value) {
-                          //   return DropdownMenuItem<String>(
-                          //     value: value,
-                          //     child: Text(value),
-                          //   );
-                          // }).toList(),
                         ),
                       ),
                       const SizedBox(
@@ -309,13 +323,19 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               ),
                             ),
                           ),
-                          items: <String>['1', '2', '3', '4', '5']
-                              .map<DropdownMenuItem<String>>((String value) {
+                          items: productunitList.map((unit) {
                             return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
+                              value: unit.unitId,
+                              child: Text(unit.name),
                             );
                           }).toList(),
+                          // items: <String>['1', '2', '3', '4', '5']
+                          //     .map<DropdownMenuItem<String>>((String value) {
+                          //   return DropdownMenuItem<String>(
+                          //     value: value,
+                          //     child: Text(value),
+                          //   );
+                          // }).toList(),
                         ),
                       ),
                       const SizedBox(
@@ -683,33 +703,3 @@ class _ProductListScreenState extends State<ProductListScreen> {
     );
   }
 }
-
-// class Product {
-//   late String selectedProduct;
-//   late String selectedUnit;
-//   late String selectedQuantity;
-//   late String selectedRate;
-//
-//   Product({
-//     required this.selectedProduct,
-//     required this.selectedQuantity,
-//     required this.selectedRate,
-//     required this.selectedUnit,
-//   });
-//
-//   factory Product.fromJson(Map<String, dynamic> json) {
-//     return Product(
-//         selectedProduct: json['product_id[]'],
-//         selectedQuantity: json['qnt[]'],
-//         selectedRate: json['rate[]'],
-//         selectedUnit: json['unit_id[]']);
-//   }
-//   Map<String, dynamic> toJson() {
-//     return {
-//       "selectedProduct": selectedProduct,
-//       "selectedQuantity": selectedQuantity,
-//       "selectedUnit": selectedUnit,
-//       "selectedRate": selectedRate
-//     };
-//   }
-// }
