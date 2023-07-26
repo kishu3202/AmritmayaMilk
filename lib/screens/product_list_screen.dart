@@ -474,7 +474,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedRate = newValue;
-                              //
+                              // _fetchProductRateList(selectedProduct!, productId,
+                              //     unitId, quantityId);
                             });
                           },
                           validator: (value) {
