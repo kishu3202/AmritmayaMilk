@@ -358,9 +358,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               selectedUnit = newValue;
                               if (selectedProduct != null &&
                                   selectedUnit != null) {
-                                // _fetchProductQntList(
-                                //     selectedProduct!, productId, unitId);
-                                _fetchProductUnitList(String, productId);
+                                _fetchProductQntList(
+                                    selectedProduct!, productId, unitId);
                               }
                             });
                           },
@@ -410,7 +409,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedQuantity = newValue;
-                              _fetchProductQntList(String, productId, unitId);
+                              _fetchProductRateList(selectedProduct!, productId,
+                                  unitId, quantityId);
                             });
                           },
                           validator: (value) {
@@ -466,13 +466,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedRate = newValue;
-                              // _fetchProductQntList(String, productId, unitId);
-                              _fetchProductRateList(
-                                selectedProduct!,
-                                productId,
-                                unitId,
-                                quantityId,
-                              );
                             });
                           },
                           validator: (value) {
