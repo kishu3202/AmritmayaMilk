@@ -136,8 +136,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
       print(jsonBody);
       final productRateData = ProductRateList.fromJson(jsonBody);
       setState(() {
-        productrateList =
-            productRateData.productrateList as List<ProductrateList>;
+        productrateList = productRateData.productrateList;
       });
     } else {
       print('Failed to fetch product units: ${response.statusCode}');

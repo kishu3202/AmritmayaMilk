@@ -9,7 +9,7 @@ String productRateListToJson(ProductRateList data) =>
 class ProductRateList {
   String message;
   bool success;
-  ProductrateList productrateList;
+  List<ProductrateList> productrateList;
 
   ProductRateList({
     required this.message,
@@ -21,13 +21,15 @@ class ProductRateList {
       ProductRateList(
         message: json["Message"],
         success: json["Success"],
-        productrateList: ProductrateList.fromJson(json["productrateList"]),
+        productrateList: List<ProductrateList>.from(
+            json["productrateList"].map((x) => ProductrateList.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "Message": message,
         "Success": success,
-        "productrateList": productrateList.toJson(),
+        "productrateList":
+            List<dynamic>.from(productrateList.map((x) => x.toJson())),
       };
 }
 
