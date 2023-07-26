@@ -13,7 +13,7 @@ import '../data/productUnit_data_model.dart';
 
 class ProductListScreen extends StatefulWidget {
   final String customerId;
-  ProductListScreen({super.key, required this.customerId});
+  const ProductListScreen({super.key, required this.customerId});
 
   @override
   State<ProductListScreen> createState() => _ProductListScreenState();
@@ -74,6 +74,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
           "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productlist"),
       headers: {'X-API-KEY': 'amritmayamilk050512'},
     );
+    print(
+        "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productlist");
     if (response.statusCode == 200) {
       productList.clear();
       final jsonBody = json.decode(response.body);
@@ -87,11 +89,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   Future<void> _fetchProductUnitList(String, productId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     final response = await http.get(
       Uri.parse(
           'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productunit?product_id=$productId'),
       headers: {'X-API-KEY': 'amritmayamilk050512'},
     );
+    print(
+        'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productunit?product_id=$productId');
     if (response.statusCode == 200) {
       final jsonBody = json.decode(response.body);
       final productUnitData = ProductUnitList.fromJson(jsonBody);
@@ -104,11 +109,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   Future<void> _fetchProductQntList(String, productId, unitId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     final response = await http.get(
       Uri.parse(
           "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productqnt?product_id=$productId&unit_id=$unitId"),
       headers: {'X-API-KEY': 'amritmayamilk050512'},
     );
+    print(
+        "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productqnt?product_id=$productId&unit_id=$unitId");
     if (response.statusCode == 200) {
       final jsonBody = json.decode(response.body);
       print(jsonBody);
@@ -123,11 +131,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   Future<void> _fetchProductRateList(
       String, productId, unitId, quantityId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     final response = await http.get(
       Uri.parse(
           'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId'),
       headers: {'X-API-KEY': 'amritmayamilk050512'},
     );
+    print(
+        "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId");
     if (response.statusCode == 200) {
       final jsonBody = json.decode(response.body);
       print(jsonBody);
@@ -463,6 +474,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedRate = newValue;
+                              //
                             });
                           },
                           validator: (value) {

@@ -16,6 +16,7 @@ class _ShowAddRemoveProductListState extends State<ShowAddRemoveProductList> {
       appBar: AppBar(
         centerTitle: true,
         automaticallyImplyLeading: false,
+        // ignore: prefer_const_constructors
         title: Text('Product List'),
       ),
       body: Column(
