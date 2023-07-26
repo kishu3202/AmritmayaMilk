@@ -69,7 +69,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
       ),
       color: Colors.deepPurple.shade50,
       shadowColor: Color.alphaBlend(Colors.black87, Colors.black12),
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -89,7 +89,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
                     borderRadius: BorderRadius.circular(10.0),
                   )),
             ),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             TextField(
@@ -106,7 +106,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
                     borderRadius: BorderRadius.circular(10.0),
                   )),
             ),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             TextField(
@@ -142,7 +142,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
                             printData();
                           });
                         },
-                        child: Text(
+                        child: const Text(
                           "Add",
                           style: TextStyle(fontSize: 16),
                         ),
@@ -154,7 +154,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 5,
                   ),
                   Flexible(
@@ -165,7 +165,7 @@ class _AddRemoveProductCardState extends State<AddRemoveProductCard> {
                         onPressed: () {
                           widget.onDelete(widget.index);
                         },
-                        child: Text(
+                        child: const Text(
                           "Remove",
                           style: TextStyle(fontSize: 16),
                         ),

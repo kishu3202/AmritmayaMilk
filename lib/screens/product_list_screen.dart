@@ -87,7 +87,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   Future<void> _fetchProductUnitList(String, productId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     final response = await http.get(
       Uri.parse(
           'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productunit?product_id=$productId'),
@@ -105,7 +104,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   Future<void> _fetchProductQntList(String, productId, unitId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     final response = await http.get(
       Uri.parse(
           "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productqnt?product_id=$productId&unit_id=$unitId"),
@@ -125,7 +123,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   Future<void> _fetchProductRateList(
       String, productId, unitId, quantityId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     final response = await http.get(
       Uri.parse(
           'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId'),
@@ -136,7 +133,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
       print(jsonBody);
       final productRateData = ProductRateList.fromJson(jsonBody);
       setState(() {
-        productrateList = productRateData.productrateList;
+        productrateList =
+            productRateData.productrateList as List<ProductrateList>;
       });
     } else {
       print('Failed to fetch product units: ${response.statusCode}');
@@ -204,7 +202,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
         );
       } else {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        final customerId = prefs.getString('customer_id') ?? widget.customerId;
 
         // Construct the request body
         final Map<String, dynamic> data = {
