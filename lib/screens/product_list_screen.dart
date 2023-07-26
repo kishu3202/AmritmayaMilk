@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/productList_data_model.dart';
 import '../data/productQuantity_data_model.dart';
+import '../data/productRate_data_model.dart';
 import '../data/productUnit_data_model.dart';
 
 class ProductListScreen extends StatefulWidget {
@@ -32,16 +33,39 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   String productId = '';
   String unitId = '';
+  String quantityId = '';
 
   List<ProductListElement> productList = [];
   List<ProductunitList> productunitList = [];
   List<ProductqntList> productqntList = [];
+  List<ProductrateList> productrateList = [];
 
   @override
   void initState() {
     super.initState();
     _loadDailyNeedProductDetails();
     _fetchProductList();
+  }
+
+  void fetchProductID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      productId = prefs.getString('product_id') ?? '';
+    });
+  }
+
+  void fetchUnitID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      unitId = prefs.getString('unit_id') ?? '';
+    });
+  }
+
+  void fetchQuantityID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      quantityId = prefs.getString('main_qnt') ?? '';
+    });
   }
 
   Future<void> _fetchProductList() async {
@@ -62,20 +86,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
     }
   }
 
-  void fetchProductID() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      productId = prefs.getString('product_id') ?? '';
-    });
-  }
-
-  void fetchUnitID() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      unitId = prefs.getString('unit_id') ?? '';
-    });
-  }
-
   Future<void> _fetchProductUnitList(String, productId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final response = await http.get(
@@ -86,7 +96,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
     if (response.statusCode == 200) {
       final jsonBody = json.decode(response.body);
       final productUnitData = ProductUnitList.fromJson(jsonBody);
-      // return productUnitList.productunitList;
       setState(() {
         productunitList = productUnitData.productunitList;
       });
@@ -99,14 +108,36 @@ class _ProductListScreenState extends State<ProductListScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final response = await http.get(
       Uri.parse(
-          " https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productqnt?product_id=$productId&unit_id=$unitId"),
+          "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productqnt?product_id=$productId&unit_id=$unitId"),
       headers: {'X-API-KEY': 'amritmayamilk050512'},
     );
     if (response.statusCode == 200) {
       final jsonBody = json.decode(response.body);
+      print(jsonBody);
       final productQntData = ProductQuantityList.fromJson(jsonBody);
       setState(() {
         productqntList = productQntData.productqntList;
+      });
+    } else {
+      print('Failed to fetch product units: ${response.statusCode}');
+    }
+  }
+
+  Future<void> _fetchProductRateList(
+      String, productId, unitId, quantityId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final response = await http.get(
+      Uri.parse(
+          'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId'),
+      headers: {'X-API-KEY': 'amritmayamilk050512'},
+    );
+    if (response.statusCode == 200) {
+      final jsonBody = json.decode(response.body);
+      print(jsonBody);
+      final productRateData = ProductRateList.fromJson(jsonBody);
+      setState(() {
+        productrateList =
+            productRateData.productrateList as List<ProductrateList>;
       });
     } else {
       print('Failed to fetch product units: ${response.statusCode}');
@@ -278,6 +309,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               productId = selectedProductData.id;
                               _fetchProductUnitList(String, productId);
                               _fetchProductQntList(String, productId, unitId);
+                              _fetchProductRateList(
+                                  String, productId, unitId, quantityId);
                             });
                           },
                           items: productList.map((ProductListElement product) {
@@ -324,16 +357,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedUnit = newValue;
-                              final selectedUnitData = productunitList
-                                  .firstWhere((unit) => unit.name == newValue,
-                                      orElse: () => ProductunitList(
-                                          unitId: '', name: ''));
-                              unitId = selectedUnitData.unitId;
-                              // if (selectedProduct != null &&
-                              //     selectedUnit != null) {
-                              _fetchProductQntList(
-                                  selectedProduct!, productId, unitId);
-                              // }
+                              if (selectedProduct != null &&
+                                  selectedUnit != null) {
+                                // _fetchProductQntList(
+                                //     selectedProduct!, productId, unitId);
+                                _fetchProductUnitList(String, productId);
+                              }
                             });
                           },
                           validator: (value) {
@@ -382,6 +411,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedQuantity = newValue;
+                              _fetchProductQntList(String, productId, unitId);
                             });
                           },
                           validator: (value) {
@@ -437,6 +467,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedRate = newValue;
+                              // _fetchProductQntList(String, productId, unitId);
+                              _fetchProductRateList(
+                                selectedProduct!,
+                                productId,
+                                unitId,
+                                quantityId,
+                              );
                             });
                           },
                           validator: (value) {
@@ -463,13 +500,19 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               ),
                             ),
                           ),
-                          items: <String>['1', '2', '3', '4', '5']
-                              .map<DropdownMenuItem<String>>((String value) {
+                          items: productrateList.map((ProductrateList rate) {
                             return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
+                              value: rate.rate,
+                              child: Text(rate.rate),
                             );
                           }).toList(),
+                          // items: <String>['1', '2', '3', '4', '5']
+                          //     .map<DropdownMenuItem<String>>((String value) {
+                          //   return DropdownMenuItem<String>(
+                          //     value: value,
+                          //     child: Text(value),
+                          //   );
+                          // }).toList(),
                         ),
                       ),
                     ],
