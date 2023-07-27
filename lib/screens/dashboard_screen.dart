@@ -1,6 +1,5 @@
 import 'package:amritmaya_milk/screens/customer_list_screen.dart';
 import 'package:amritmaya_milk/screens/login_screen.dart';
-import 'package:amritmaya_milk/screens/multipleProductAddRemove_screen.dart';
 import 'package:amritmaya_milk/screens/personalDetails_screen.dart';
 import 'package:amritmaya_milk/screens/scan_screen.dart';
 import 'package:flutter/material.dart';

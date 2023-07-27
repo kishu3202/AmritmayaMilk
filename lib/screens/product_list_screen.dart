@@ -21,6 +21,7 @@ class ProductListScreen extends StatefulWidget {
 
 class _ProductListScreenState extends State<ProductListScreen> {
   final formKey = GlobalKey<FormState>();
+  // Initialize dropdown values to null
   String? selectedProduct;
   String? selectedUnit;
   String? selectedQuantity;
@@ -35,37 +36,17 @@ class _ProductListScreenState extends State<ProductListScreen> {
   String unitId = '';
   String quantityId = '';
 
+// List to store fetched data
   List<ProductListElement> productList = [];
   List<ProductunitList> productunitList = [];
   List<ProductqntList> productqntList = [];
-  List<ProductrateList> productrateList = [];
+  ProductrateList? productrateList;
 
   @override
   void initState() {
     super.initState();
     _loadDailyNeedProductDetails();
     _fetchProductList();
-  }
-
-  void fetchProductID() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      productId = prefs.getString('product_id') ?? '';
-    });
-  }
-
-  void fetchUnitID() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      unitId = prefs.getString('unit_id') ?? '';
-    });
-  }
-
-  void fetchQuantityID() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      quantityId = prefs.getString('main_qnt') ?? '';
-    });
   }
 
   Future<void> _fetchProductList() async {
@@ -131,7 +112,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   Future<void> _fetchProductRateList(
       String, productId, unitId, quantityId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     final response = await http.get(
       Uri.parse(
           'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId'),
@@ -144,8 +124,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
       print(jsonBody);
       final productRateData = ProductRateList.fromJson(jsonBody);
       setState(() {
-        productrateList =
-            productRateData.productrateList as List<ProductrateList>;
+        productrateList = productRateData.productrateList;
       });
     } else {
       print('Failed to fetch product units: ${response.statusCode}');
@@ -303,6 +282,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedProduct = newValue;
+                              print(selectedProduct);
                               final selectedProductData =
                                   productList.firstWhere(
                                       (element) => element.name == newValue,
@@ -313,7 +293,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                           createdAt: DateTime.now(),
                                           updatedAt: DateTime.now(),
                                           unitName: ''));
+                              print(selectedProductData.unitId);
                               productId = selectedProductData.id;
+                              unitId = selectedProductData.unitId;
                               _fetchProductUnitList(String, productId);
                               _fetchProductQntList(String, productId, unitId);
                               _fetchProductRateList(
@@ -416,6 +398,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           ),
                           onChanged: (String? newValue) {
                             setState(() {
+                              quantityId = newValue!;
                               selectedQuantity = newValue;
                               _fetchProductRateList(selectedProduct!, productId,
                                   unitId, quantityId);
@@ -474,8 +457,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedRate = newValue;
-                              // _fetchProductRateList(selectedProduct!, productId,
-                              //     unitId, quantityId);
                             });
                           },
                           validator: (value) {
@@ -502,12 +483,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               ),
                             ),
                           ),
-                          items: productrateList.map((ProductrateList rate) {
-                            return DropdownMenuItem<String>(
-                              value: rate.rate,
-                              child: Text(rate.rate),
-                            );
-                          }).toList(),
+
+                          items: productrateList != null
+                              ? [productrateList?.rate].map((rate) {
+                                  return DropdownMenuItem<String>(
+                                    value: rate,
+                                    child: Text(rate!),
+                                  );
+                                }).toList()
+                              : [],
+                          // }).toList(),
                           // items: <String>['1', '2', '3', '4', '5']
                           //     .map<DropdownMenuItem<String>>((String value) {
                           //   return DropdownMenuItem<String>(
