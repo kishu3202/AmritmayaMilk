@@ -385,3 +385,30 @@ class EmailValidator extends StatelessWidget {
 //         const TextStyle(fontSize: 15, color: Colors.black),
 //   ),
 // ),
+
+
+// onPressed: () {
+//   if (!formKey.currentState!.validate()) {
+//     print('Validation Error');
+//   } else {
+//     if (!(polytheneSmallChecked! ||
+//         polytheneBigChecked! ||
+//         deliveryChecked! ||
+//         maintenanceChecked!)) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(
+//           content:
+//               Text('Please select at least one checkbox'),
+//         ),
+//       );
+//     }
+//     print(
+//         "submit successful selectedProduct: ${selectedProduct}");
+//     print(
+//         "submit successful selectedProduct: ${selectedUnit}");
+//     print(
+//         "submit successful selectedProduct: ${selectedQuantity}");
+//     print(
+//         "submit successful selectedProduct: ${selectedRate}");
+//   }
+// },

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'add_remove_multiple_product.dart';
+import 'multipleProduct_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -115,7 +115,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const AddRemoveMultipleProduct()));
+                      builder: (context) => MultipleProductScreen()));
             },
             icon: const Icon(Icons.add),
             color: Colors.white,
