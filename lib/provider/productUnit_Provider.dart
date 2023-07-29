@@ -34,10 +34,10 @@ class ProductUnitProvider extends ChangeNotifier {
         Strings.productUnitNameList.clear();
 
         final response1 = response["productunitList"];
-        response1.forEach((unit) {
-          productUnitList.add(ProductUnitList.fromJson(unit));
-          Strings.productUnitIdList.add(unit["unit_id"]);
-          Strings.productUnitNameList.add(unit["name"]);
+        response1.forEach((id) {
+          productUnitList.add(ProductUnitList.fromJson(id));
+          Strings.productUnitIdList.add(id["unit_id"]);
+          Strings.productUnitNameList.add(id["name"]);
         });
         notifyListeners();
         return responseMap;

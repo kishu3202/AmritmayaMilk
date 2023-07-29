@@ -59,7 +59,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     final res = await bid.getProductNameList();
   }
 
-  Future<void> getProductUnitData(BuildContext con) async {
+  Future<void> getProductUnitData(BuildContext con, String productId) async {
     final bid = Provider.of<ProductUnitProvider>(context, listen: false);
     final res = await bid.getProductUnitList(productId);
   }
@@ -237,9 +237,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                           int selectedProductIndex = Strings
                                               .productNameList
                                               .indexOf(newValue!);
-                                          String selectedProductId = Strings
+                                          String productId = Strings
                                               .productIdList
                                               .elementAt(selectedProductIndex);
+                                          print(productId);
+                                          getProductUnitData(
+                                              context, productId);
                                         });
                                       },
                                       items: Strings.productNameList
@@ -284,7 +287,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         height: 10,
                       ),
                       FutureBuilder(
-                          future: getProductUnitData(context),
+                          future: getProductUnitData(context, productId),
                           builder: (context, snapshot) => Consumer<
                                   ProductListProvider>(
                               builder: (con, productInfo, _) => Align(
@@ -301,11 +304,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                           selectedUnit = newValue;
                                           print('Selected Unit: $selectedUnit');
                                           int selectedProductIndex = Strings
-                                              .productNameList
+                                              .productUnitNameList
                                               .indexOf(newValue!);
-                                          String selectedProductId = Strings
-                                              .productIdList
+                                          String unitId = Strings
+                                              .productUnitIdList
                                               .elementAt(selectedProductIndex);
+                                          print(unitId);
                                         });
                                       },
                                       items: Strings.productUnitNameList
@@ -368,11 +372,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                           print(
                                               'Selected Quantity: $selectedQuantity');
                                           int selectedProductIndex = Strings
-                                              .productNameList
+                                              .productQuantityNameList
                                               .indexOf(newValue!);
-                                          String selectedProductId = Strings
-                                              .productIdList
+                                          String quantityId = Strings
+                                              .productQuantityIdList
                                               .elementAt(selectedProductIndex);
+                                          print(quantityId);
                                         });
                                       },
                                       items: Strings.productQuantityNameList

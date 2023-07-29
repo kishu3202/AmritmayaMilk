@@ -31,12 +31,10 @@ class ProductRateProvider extends ChangeNotifier {
         responseMap['status'] = true;
 
         Strings.productRateIdList.clear();
-        // Strings.productRateNameList.clear();
 
         final response1 = response["productrateList"];
         response1.forEach((id) {
           Strings.productRateIdList.add(id["rate"]);
-          // Strings.productRateNameList.add(id["name"]);
         });
         notifyListeners();
         return responseMap;

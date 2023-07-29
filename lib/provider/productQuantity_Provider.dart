@@ -30,12 +30,10 @@ class ProductQuantityProvider extends ChangeNotifier {
         responseMap['status'] = true;
 
         Strings.productQuantityIdList.clear();
-        // Strings.productQuantityNameList.clear();
 
         final response1 = response["productqntList"];
         response1.forEach((id) {
           Strings.productQuantityIdList.add(id["qnt"]);
-          // Strings.productQuantityNameList.add(id["name"]);
         });
         notifyListeners();
         return responseMap;
