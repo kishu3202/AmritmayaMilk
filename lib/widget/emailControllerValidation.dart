@@ -386,7 +386,6 @@ class EmailValidator extends StatelessWidget {
 //   ),
 // ),
 
-
 // onPressed: () {
 //   if (!formKey.currentState!.validate()) {
 //     print('Validation Error');
@@ -412,3 +411,133 @@ class EmailValidator extends StatelessWidget {
 //         "submit successful selectedProduct: ${selectedRate}");
 //   }
 // },
+
+// Future<void> _fetchProductList() async {
+//   final response = await http.get(
+//     Uri.parse(
+//         "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productlist"),
+//     headers: {'X-API-KEY': 'amritmayamilk050512'},
+//   );
+//   print(
+//       "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productlist");
+//   if (response.statusCode == 200) {
+//     print('API Response: ${response.body}');
+//     productList.clear();
+//     final jsonBody = json.decode(response.body);
+//     final productListData = ProductList.fromJson(jsonBody);
+//     setState(() {
+//       productList = productListData.productList;
+//     });
+//   } else {
+//     print('Failed to fetch product list: ${response.statusCode}');
+//   }
+// }
+
+// Future<void> _fetchProductUnitList(String, productId) async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   final response = await http.get(
+//     Uri.parse(
+//         'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productunit?product_id=$productId'),
+//     headers: {'X-API-KEY': 'amritmayamilk050512'},
+//   );
+//   print(
+//       'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productunit?product_id=$productId');
+//   if (response.statusCode == 200) {
+//     final jsonBody = json.decode(response.body);
+//     final productUnitData = ProductUnitList.fromJson(jsonBody);
+//     setState(() {
+//       productunitList = productUnitData.productunitList;
+//     });
+//   } else {
+//     print('Failed to fetch product units: ${response.statusCode}');
+//   }
+// }
+//
+// Future<void> _fetchProductQntList(String, productId, unitId) async {
+//   final response = await http.get(
+//     Uri.parse(
+//         "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productqnt?product_id=$productId&unit_id=$unitId"),
+//     headers: {'X-API-KEY': 'amritmayamilk050512'},
+//   );
+//   print(
+//       "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productqnt?product_id=$productId&unit_id=$unitId");
+//   if (response.statusCode == 200) {
+//     final jsonBody = json.decode(response.body);
+//     print(jsonBody);
+//     final productQntData = ProductQuantityList.fromJson(jsonBody);
+//     setState(() {
+//       productqntList = productQntData.productqntList;
+//     });
+//   } else {
+//     print('Failed to fetch product units: ${response.statusCode}');
+//   }
+// }
+//
+// Future<void> _fetchProductRateList(
+//     String, productId, unitId, quantityId) async {
+//   final response = await http.get(
+//     Uri.parse(
+//         'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId'),
+//     headers: {'X-API-KEY': 'amritmayamilk050512'},
+//   );
+//   print(
+//       "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId");
+//   if (response.statusCode == 200) {
+//     final jsonBody = json.decode(response.body);
+//     print(jsonBody);
+//     final productRateData = ProductRateList.fromJson(jsonBody);
+//     setState(() {
+//       productrateList = productRateData.productrateList;
+//     });
+//   } else {
+//     print('Failed to fetch product units: ${response.statusCode}');
+//   }
+// }
+
+// Align(
+//   alignment: Alignment.topLeft,
+//   child: DropdownButtonFormField<String>(
+//     value: selectedRate,
+//     hint: const Text(
+//       'Rate',
+//       style: TextStyle(fontSize: 15, color: Colors.black),
+//     ),
+//     onChanged: (String? newValue) {
+//       setState(() {
+//         selectedRate = newValue;
+//       });
+//     },
+//     validator: (value) {
+//       if (value == null || value.isEmpty) {
+//         return 'Please select an option';
+//       }
+//       return null;
+//     },
+//     icon: const Icon(
+//       Icons.arrow_drop_down_circle,
+//       color: Colors.blue,
+//     ),
+//     dropdownColor: Colors.deepPurple.shade50,
+//     decoration: InputDecoration(
+//       labelText: "Rate",
+//       prefixIcon: const Icon(
+//         Icons.price_change_outlined,
+//         color: Colors.blue,
+//       ),
+//       border: OutlineInputBorder(
+//         borderRadius: BorderRadius.circular(10),
+//         borderSide: const BorderSide(
+//           color: Colors.black87,
+//         ),
+//       ),
+//     ),
+//     items: productrateList != null
+//         ? [productrateList?.rate].map((rate) {
+//             return DropdownMenuItem<String>(
+//               value: rate,
+//               child: Text(rate!),
+//             );
+//           }).toList()
+//         : [],
+//   ),
+// ),
