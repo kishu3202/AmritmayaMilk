@@ -10,7 +10,7 @@ import '../data/productUnit_data_model.dart';
 
 class ProductUnitProvider extends ChangeNotifier {
   List<ProductUnitList>? post;
-  List<ProductUnitList> productUnitList = [];
+  // List<ProductUnitList> productUnitList = [];
   bool loading = false;
 
   Future<Map<String, dynamic>> getProductUnitList(productId) async {
@@ -26,6 +26,8 @@ class ProductUnitProvider extends ChangeNotifier {
             "Content-Type": "application/json",
             "X-API-KEY": "amritmayamilk050512",
           });
+      print(
+          "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productunit?product_id=$productId");
       final response = json.decode(res.body) as Map<String, dynamic>;
       if (res.statusCode == 200) {
         responseMap['status'] = true;
@@ -35,9 +37,10 @@ class ProductUnitProvider extends ChangeNotifier {
 
         final response1 = response["productunitList"];
         response1.forEach((id) {
-          productUnitList.add(ProductUnitList.fromJson(id));
           Strings.productUnitIdList.add(id["unit_id"]);
           Strings.productUnitNameList.add(id["name"]);
+          print(Strings.productUnitNameList);
+          print("****************************************");
         });
         notifyListeners();
         return responseMap;

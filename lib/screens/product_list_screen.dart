@@ -60,18 +60,29 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   Future<void> getProductUnitData(BuildContext con, String productId) async {
-    final bid = Provider.of<ProductUnitProvider>(context, listen: false);
-    final res = await bid.getProductUnitList(productId);
+    // final bid = Provider.of<ProductUnitProvider>(context, listen: false);
+    // final res = await bid.getProductUnitList(productId);
+    final productUnitProvider =
+        Provider.of<ProductUnitProvider>(context, listen: false);
+    await productUnitProvider.getProductUnitList(productId);
   }
 
-  Future<void> getProductQuantityData(BuildContext con) async {
-    final bid = Provider.of<ProductQuantityProvider>(context, listen: false);
-    final res = await bid.getProductQuantityList(productId, unitId);
+  Future<void> getProductQuantityData(
+      BuildContext con, String productId, String unitId) async {
+    // final bid = Provider.of<ProductQuantityProvider>(context, listen: false);
+    // final res = await bid.getProductQuantityList(productId, unitId);
+    final productQuantityProvider =
+        Provider.of<ProductQuantityProvider>(context, listen: false);
+    await productQuantityProvider.getProductQuantityList(productId, unitId);
   }
 
-  Future<void> getProductRateData(BuildContext con) async {
-    final bid = Provider.of<ProductRateProvider>(context, listen: false);
-    final res = await bid.getProductRateList(productId, unitId, quantityId);
+  Future<void> getProductRateData(BuildContext con, String productId,
+      String unitId, String quantityId) async {
+    // final bid = Provider.of<ProductRateProvider>(context, listen: false);
+    // final res = await bid.getProductRateList(productId, unitId, quantityId);
+    final productRateProvider =
+        Provider.of<ProductRateProvider>(context, listen: false);
+    await productRateProvider.getProductRateList(productId, unitId, quantityId);
   }
 
   Future<void> _loadDailyNeedProductDetails() async {
@@ -177,8 +188,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final productListProvider =
-        Provider.of<ProductListProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -248,6 +257,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                       items: Strings.productNameList
                                           .map<DropdownMenuItem<String>>(
                                               (String value) {
+                                        print(value);
                                         return DropdownMenuItem<String>(
                                           value: value,
                                           child: Text(
@@ -289,8 +299,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       FutureBuilder(
                           future: getProductUnitData(context, productId),
                           builder: (context, snapshot) => Consumer<
-                                  ProductListProvider>(
-                              builder: (con, productInfo, _) => Align(
+                                  ProductUnitProvider>(
+                              builder: (con, productUnitInfo, _) => Align(
                                     alignment: Alignment.topLeft,
                                     child: DropdownButtonFormField<String>(
                                       value: selectedUnit,
@@ -303,18 +313,21 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                         setState(() {
                                           selectedUnit = newValue;
                                           print('Selected Unit: $selectedUnit');
-                                          int selectedProductIndex = Strings
+                                          int selectedUnitIndex = Strings
                                               .productUnitNameList
                                               .indexOf(newValue!);
-                                          String unitId = Strings
+                                          String? unitId = Strings
                                               .productUnitIdList
-                                              .elementAt(selectedProductIndex);
+                                              .elementAt(selectedUnitIndex);
                                           print(unitId);
+                                          getProductQuantityData(
+                                              con, productId, unitId);
                                         });
                                       },
                                       items: Strings.productUnitNameList
                                           .map<DropdownMenuItem<String>>(
                                               (String value) {
+                                        print(value);
                                         return DropdownMenuItem<String>(
                                           value: value,
                                           child: Text(
@@ -354,10 +367,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         height: 10,
                       ),
                       FutureBuilder(
-                          future: getProductQuantityData(context),
+                          future: getProductQuantityData(
+                              context, productId, unitId),
                           builder: (context, snapshot) => Consumer<
-                                  ProductListProvider>(
-                              builder: (con, productInfo, _) => Align(
+                                  ProductQuantityProvider>(
+                              builder: (con, productQuantityInfo, _) => Align(
                                     alignment: Alignment.topLeft,
                                     child: DropdownButtonFormField<String>(
                                       value: selectedQuantity,
@@ -371,12 +385,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                           selectedQuantity = newValue;
                                           print(
                                               'Selected Quantity: $selectedQuantity');
-                                          int selectedProductIndex = Strings
+                                          int selectedQuantityIndex = Strings
                                               .productQuantityNameList
                                               .indexOf(newValue!);
-                                          String quantityId = Strings
+                                          String? quantityId = Strings
                                               .productQuantityIdList
-                                              .elementAt(selectedProductIndex);
+                                              .elementAt(selectedQuantityIndex);
                                           print(quantityId);
                                         });
                                       },
@@ -422,9 +436,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         height: 10,
                       ),
                       FutureBuilder(
-                          future: getProductRateData(context),
+                          future: getProductRateData(
+                              context, productId, unitId, quantityId),
                           builder: (context, snapshot) => Consumer<
-                                  ProductListProvider>(
+                                  ProductRateProvider>(
                               builder: (con, productInfo, _) => Align(
                                     alignment: Alignment.topLeft,
                                     child: DropdownButtonFormField<String>(
@@ -438,12 +453,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                         setState(() {
                                           selectedRate = newValue;
                                           print('Selected Rate: $selectedRate');
-                                          int selectedProductIndex = Strings
-                                              .productNameList
-                                              .indexOf(newValue!);
-                                          String selectedProductId = Strings
-                                              .productIdList
-                                              .elementAt(selectedProductIndex);
                                         });
                                       },
                                       items: Strings.productRateNameList

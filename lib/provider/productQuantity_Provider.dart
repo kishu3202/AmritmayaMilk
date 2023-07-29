@@ -25,6 +25,8 @@ class ProductQuantityProvider extends ChangeNotifier {
             "Content-Type": "application/json",
             "X-API-KEY": "amritmayamilk050512",
           });
+      print(
+          "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productqnt?product_id=$productId&unit_id=$unitId");
       final response = json.decode(res.body) as Map<String, dynamic>;
       if (res.statusCode == 200) {
         responseMap['status'] = true;

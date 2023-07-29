@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 class ProductListProvider extends ChangeNotifier {
   List<ProductList>? post;
-  List<ProductList> productList = [];
+  // List<ProductList> productList = [];
   bool loading = false;
 
   Future<Map<String, dynamic>> getProductNameList() async {
