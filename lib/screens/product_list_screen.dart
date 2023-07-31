@@ -54,35 +54,50 @@ class _ProductListScreenState extends State<ProductListScreen> {
     _loadDailyNeedProductDetails();
   }
 
+  void fetchProductId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      productId = prefs.getString('id') ?? '';
+    });
+  }
+
+  void fetchUnitId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      unitId = prefs.getString('unit_id') ?? '';
+    });
+  }
+
+  void fetchQuantityId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      quantityId = prefs.getString('main_qnt') ?? '';
+    });
+  }
+
   Future<void> getProductListData(BuildContext con) async {
+    fetchProductId();
     final bid = Provider.of<ProductListProvider>(context, listen: false);
     final res = await bid.getProductNameList();
   }
 
   Future<void> getProductUnitData(BuildContext con, String productId) async {
-    // final bid = Provider.of<ProductUnitProvider>(context, listen: false);
-    // final res = await bid.getProductUnitList(productId);
-    final productUnitProvider =
-        Provider.of<ProductUnitProvider>(context, listen: false);
-    await productUnitProvider.getProductUnitList(productId);
+    fetchUnitId();
+    final bid = Provider.of<ProductUnitProvider>(context, listen: false);
+    final res = await bid.getProductUnitList(productId);
   }
 
   Future<void> getProductQuantityData(
       BuildContext con, String productId, String unitId) async {
-    // final bid = Provider.of<ProductQuantityProvider>(context, listen: false);
-    // final res = await bid.getProductQuantityList(productId, unitId);
-    final productQuantityProvider =
-        Provider.of<ProductQuantityProvider>(context, listen: false);
-    await productQuantityProvider.getProductQuantityList(productId, unitId);
+    fetchQuantityId();
+    final bid = Provider.of<ProductQuantityProvider>(context, listen: false);
+    final res = await bid.getProductQuantityList(productId, unitId);
   }
 
   Future<void> getProductRateData(BuildContext con, String productId,
       String unitId, String quantityId) async {
-    // final bid = Provider.of<ProductRateProvider>(context, listen: false);
-    // final res = await bid.getProductRateList(productId, unitId, quantityId);
-    final productRateProvider =
-        Provider.of<ProductRateProvider>(context, listen: false);
-    await productRateProvider.getProductRateList(productId, unitId, quantityId);
+    final bid = Provider.of<ProductRateProvider>(context, listen: false);
+    final res = await bid.getProductRateList(productId, unitId, quantityId);
   }
 
   Future<void> _loadDailyNeedProductDetails() async {
@@ -238,8 +253,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                         style: TextStyle(
                                             fontSize: 15, color: Colors.black),
                                       ),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
+                                      onChanged: (String? newValue) async {
+                                        setState(() async {
                                           selectedProduct = newValue;
                                           print(
                                               'Selected Product: $selectedProduct');
@@ -250,8 +265,18 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                               .productIdList
                                               .elementAt(selectedProductIndex);
                                           print(productId);
+
+                                          SharedPreferences prefs =
+                                              await SharedPreferences
+                                                  .getInstance();
+                                          prefs.setString('id', productId);
+
                                           getProductUnitData(
                                               context, productId);
+                                          await getProductListData(context);
+
+                                          fetchUnitId();
+                                          fetchQuantityId();
                                         });
                                       },
                                       items: Strings.productNameList
@@ -309,8 +334,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                         style: TextStyle(
                                             fontSize: 15, color: Colors.black),
                                       ),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
+                                      onChanged: (String? newValue) async {
+                                        setState(() async {
                                           selectedUnit = newValue;
                                           print('Selected Unit: $selectedUnit');
                                           int selectedUnitIndex = Strings
@@ -320,6 +345,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                               .productUnitIdList
                                               .elementAt(selectedUnitIndex);
                                           print(unitId);
+
+                                          SharedPreferences prefs =
+                                              await SharedPreferences
+                                                  .getInstance();
+                                          prefs.setString('unit_id', unitId);
+
                                           getProductQuantityData(
                                               con, productId, unitId);
                                         });
@@ -381,7 +412,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                             fontSize: 15, color: Colors.black),
                                       ),
                                       onChanged: (String? newValue) {
-                                        setState(() {
+                                        setState(() async {
                                           selectedQuantity = newValue;
                                           print(
                                               'Selected Quantity: $selectedQuantity');
@@ -392,6 +423,15 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                               .productQuantityIdList
                                               .elementAt(selectedQuantityIndex);
                                           print(quantityId);
+
+                                          SharedPreferences prefs =
+                                              await SharedPreferences
+                                                  .getInstance();
+                                          prefs.setString(
+                                              'main_qnt', quantityId);
+
+                                          getProductRateData(con, productId,
+                                              unitId, quantityId);
                                         });
                                       },
                                       items: Strings.productQuantityNameList

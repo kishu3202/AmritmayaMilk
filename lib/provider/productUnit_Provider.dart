@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:amritmaya_milk/widget/string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/productUnit_data_model.dart';
 
@@ -14,6 +15,8 @@ class ProductUnitProvider extends ChangeNotifier {
   bool loading = false;
 
   Future<Map<String, dynamic>> getProductUnitList(productId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String unitId = prefs.getString('unit_id') ?? '';
     Map<String, dynamic> responseMap = {
       'status': false,
       'msg': '',

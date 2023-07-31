@@ -5,6 +5,7 @@ import 'package:amritmaya_milk/data/productList_data_model.dart';
 import 'package:amritmaya_milk/widget/string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductListProvider extends ChangeNotifier {
   List<ProductList>? post;
@@ -12,6 +13,9 @@ class ProductListProvider extends ChangeNotifier {
   bool loading = false;
 
   Future<Map<String, dynamic>> getProductNameList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String productId = prefs.getString('id') ?? '';
+
     Map<String, dynamic> responseMap = {
       'status': false,
       'msg': '',
@@ -24,6 +28,7 @@ class ProductListProvider extends ChangeNotifier {
             "Content-Type": "application/json",
             "X-API-KEY": "amritmayamilk050512",
           });
+
       print(
           "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productlist");
       final response = json.decode(res.body) as Map<String, dynamic>;
@@ -38,6 +43,7 @@ class ProductListProvider extends ChangeNotifier {
           Strings.productIdList.add(id["id"]);
           Strings.productNameList.add(id["name"]);
         });
+
         notifyListeners();
         return responseMap;
       } else {

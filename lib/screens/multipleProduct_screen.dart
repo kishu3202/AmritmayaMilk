@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MultipleProductScreen extends StatefulWidget {
   @override
@@ -6,18 +9,47 @@ class MultipleProductScreen extends StatefulWidget {
 }
 
 class _MultipleProductScreenState extends State<MultipleProductScreen> {
-  List<Product> products = [];
+  List<Product> products = [Product(name: "", quantity: "", rate: "")];
+
+  static const String _productListKey = 'product_list';
+
+  @override
+  void initState() {
+    super.initState();
+    // Load the products from shared preferences when the widget initializes
+    _loadProducts();
+  }
+
+  void _loadProducts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? productListJson = prefs.getString(_productListKey);
+    if (productListJson != null) {
+      List<dynamic> decodedList = json.decode(productListJson);
+      setState(() {
+        products = decodedList.map((item) => Product.fromJson(item)).toList();
+      });
+    }
+  }
+
+  void _saveProducts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String productListJson =
+        json.encode(products.map((product) => product.toJson()).toList());
+    prefs.setString(_productListKey, productListJson);
+  }
 
   void addProduct() {
     Product newProduct = Product(name: "", quantity: "", rate: "");
     setState(() {
       products.add(newProduct);
+      _saveProducts();
     });
   }
 
   void removeProduct(int index) {
     setState(() {
       products.removeAt(index);
+      _saveProducts(); // Save the updated list of products
     });
   }
 
@@ -25,8 +57,11 @@ class _MultipleProductScreenState extends State<MultipleProductScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => ShowProductsPage(products: products)),
-    );
+        builder: (context) => ShowProductsPage(products: products),
+      ),
+    ).then((value) {
+      _loadProducts();
+    });
   }
 
   @override
@@ -112,6 +147,23 @@ class Product {
   String rate;
 
   Product({required this.name, required this.quantity, required this.rate});
+  // Helper method to convert the product to a map
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'quantity': quantity,
+      'rate': rate,
+    };
+  }
+
+  // Helper method to create a product from a map
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      name: json['name'] ?? '',
+      quantity: json['quantity'] ?? '',
+      rate: json['rate'] ?? '',
+    );
+  }
 }
 
 class ProductCard extends StatefulWidget {
@@ -275,14 +327,25 @@ class ShowProductsPage extends StatelessWidget {
       body: ListView.builder(
         itemCount: products.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text("Product Name: ${products[index].name}"),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Quantity: ${products[index].quantity}"),
-                Text("Rate: ${products[index].rate}"),
-              ],
+          return Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Card(
+              color: Colors.deepPurple.shade50,
+              shadowColor: Color.alphaBlend(Colors.black87, Colors.black12),
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              child: ListTile(
+                title: Text("Product Name: ${products[index].name}"),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Quantity: ${products[index].quantity}"),
+                    Text("Rate: ${products[index].rate}"),
+                  ],
+                ),
+              ),
             ),
           );
         },

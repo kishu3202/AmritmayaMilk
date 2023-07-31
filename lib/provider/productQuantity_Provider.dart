@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:amritmaya_milk/widget/string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/productQuantity_data_model.dart';
 
@@ -13,6 +14,8 @@ class ProductQuantityProvider extends ChangeNotifier {
   bool loading = false;
 
   Future<Map<String, dynamic>> getProductQuantityList(productId, unitId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String quantityId = prefs.getString('main_qnt') ?? '';
     Map<String, dynamic> responseMap = {
       'status': false,
       'msg': '',
@@ -36,6 +39,7 @@ class ProductQuantityProvider extends ChangeNotifier {
         final response1 = response["productqntList"];
         response1.forEach((id) {
           Strings.productQuantityIdList.add(id["qnt"]);
+          print(Strings.productQuantityIdList);
         });
         notifyListeners();
         return responseMap;
