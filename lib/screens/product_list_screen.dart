@@ -26,10 +26,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
   final ProductListProvider productListProvider = ProductListProvider();
 
   // Initialize dropdown values to null
-  String? selectedProduct = '';
-  String? selectedUnit = '';
-  String? selectedQuantity = '';
-  String? selectedRate = '';
+  String? selectedProduct;
+  String? selectedUnit;
+  String? selectedQuantity;
+  String? selectedRate;
 
   bool? polytheneSmallChecked = false;
   bool? polytheneBigChecked = false;
@@ -215,7 +215,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                         style: TextStyle(
                                             fontSize: 15, color: Colors.black),
                                       ),
-                                      value: productData.selectedProductId,
+                                      value: productData.selectedProduct,
                                       items: productData.productNameList
                                           .map((String value) {
                                         return DropdownMenuItem<String>(
@@ -229,7 +229,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                         productData
                                             .setSelectedProduct(selectedValue!);
                                         productData.fetchUnitIds(
-                                            productData.selectedProductId!);
+                                            productData.selectedProduct!);
                                       },
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
@@ -270,7 +270,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                     style: TextStyle(
                                         fontSize: 15, color: Colors.black),
                                   ),
-                                  value: productData.selectedUnitId,
+                                  value: productData.selectedUnit,
                                   items: productData.unitNameList
                                       .map((String value) {
                                     return DropdownMenuItem<String>(
@@ -285,8 +285,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                     productData
                                         .setSelectedUnitId(selectedValue!);
                                     productData.fetchQuantityIds(
-                                      productData.selectedProductId!,
-                                      productData.selectedUnitId!,
+                                      productData.selectedProduct!,
+                                      productData.selectedUnit!,
                                     );
                                   },
                                   validator: (value) {
@@ -325,7 +325,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                     style: TextStyle(
                                         fontSize: 15, color: Colors.black),
                                   ),
-                                  value: productData.selectedQuantityId,
+                                  value: productData.selectedQuantity,
                                   items: productData.quantityList
                                       .map((String value) {
                                     return DropdownMenuItem<String>(
@@ -340,9 +340,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                     productData
                                         .setSelectedQuantityId(selectedValue!);
                                     productData.fetchRates(
-                                        productData.selectedProductId!,
-                                        productData.selectedUnitId!,
-                                        productData.selectedQuantityId!);
+                                        productData.selectedProduct!,
+                                        productData.selectedUnit!,
+                                        productData.selectedQuantity!);
                                   },
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -381,7 +381,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                     style: TextStyle(
                                         fontSize: 15, color: Colors.black),
                                   ),
-                                  value: productData.selectedRateId,
+                                  value: productData.selectedRate,
                                   items:
                                       productData.rateList.map((String value) {
                                     return DropdownMenuItem<String>(

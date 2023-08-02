@@ -4,10 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 class ProductListProvider extends ChangeNotifier {
-  String? selectedProductId;
-  String? selectedUnitId;
-  String? selectedQuantityId;
-  String? selectedRateId;
+  String? selectedProduct;
+  String? selectedUnit;
+  String? selectedQuantity;
+  String? selectedRate;
 
   List<String> productIdList = [];
   List<String> productNameList = [];
@@ -150,28 +150,28 @@ class ProductListProvider extends ChangeNotifier {
   }
 
   void setSelectedProduct(String productId) {
-    selectedProductId = productId;
+    selectedProduct = productId;
     notifyListeners();
   }
 
   void setSelectedUnitId(String unitId) {
-    selectedUnitId = unitId;
+    selectedUnit = unitId;
     notifyListeners();
   }
 
   void setSelectedQuantityId(String quantityId) {
-    selectedQuantityId = quantityId;
-    print('Selected Quantity ID: $selectedQuantityId');
+    selectedQuantity = quantityId;
+    print('Selected Quantity ID: $selectedQuantity');
     fetchRates(
-      selectedProductId!,
-      selectedUnitId!,
-      selectedQuantityId!,
+      selectedProduct!,
+      selectedUnit!,
+      selectedQuantity!,
     );
     notifyListeners();
   }
 
   void setSelectedRateId(String rate) {
-    selectedRateId = rate;
+    selectedRate = rate;
     notifyListeners();
   }
 }
