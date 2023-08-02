@@ -1,8 +1,5 @@
 import 'dart:async';
 
-import 'package:amritmaya_milk/provider/productQuantity_Provider.dart';
-import 'package:amritmaya_milk/provider/productRate_Provider.dart';
-import 'package:amritmaya_milk/provider/productUnit_Provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -14,7 +11,6 @@ import '../data/productQuantity_data_model.dart';
 import '../data/productRate_data_model.dart';
 import '../data/productUnit_data_model.dart';
 import '../provider/productList_Provider.dart';
-import '../widget/string.dart';
 
 class ProductListScreen extends StatefulWidget {
   final String customerId;
@@ -26,6 +22,8 @@ class ProductListScreen extends StatefulWidget {
 
 class _ProductListScreenState extends State<ProductListScreen> {
   final formKey = GlobalKey<FormState>();
+
+  final ProductListProvider productListProvider = ProductListProvider();
 
   // Initialize dropdown values to null
   String? selectedProduct = '';
@@ -41,6 +39,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   String productId = '';
   String unitId = '';
   String quantityId = '';
+  String rate = '';
 
 // List to store fetched data
   List<ProductListElement> productList = [];
@@ -52,52 +51,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
   void initState() {
     super.initState();
     _loadDailyNeedProductDetails();
-  }
-
-  void fetchProductId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      productId = prefs.getString('id') ?? '';
-    });
-  }
-
-  void fetchUnitId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      unitId = prefs.getString('unit_id') ?? '';
-    });
-  }
-
-  void fetchQuantityId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      quantityId = prefs.getString('main_qnt') ?? '';
-    });
-  }
-
-  Future<void> getProductListData(BuildContext con) async {
-    fetchProductId();
-    final bid = Provider.of<ProductListProvider>(context, listen: false);
-    final res = await bid.getProductNameList();
-  }
-
-  Future<void> getProductUnitData(BuildContext con, String productId) async {
-    fetchUnitId();
-    final bid = Provider.of<ProductUnitProvider>(context, listen: false);
-    final res = await bid.getProductUnitList(productId);
-  }
-
-  Future<void> getProductQuantityData(
-      BuildContext con, String productId, String unitId) async {
-    fetchQuantityId();
-    final bid = Provider.of<ProductQuantityProvider>(context, listen: false);
-    final res = await bid.getProductQuantityList(productId, unitId);
-  }
-
-  Future<void> getProductRateData(BuildContext con, String productId,
-      String unitId, String quantityId) async {
-    final bid = Provider.of<ProductRateProvider>(context, listen: false);
-    final res = await bid.getProductRateList(productId, unitId, quantityId);
   }
 
   Future<void> _loadDailyNeedProductDetails() async {
@@ -203,6 +156,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final productData =
+        Provider.of<ProductListProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -240,57 +195,42 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   padding: const EdgeInsets.all(10.0),
                   child: Column(
                     children: [
-                      FutureBuilder(
-                          future: getProductListData(context),
-                          builder: (context, snapshot) => Consumer<
-                                  ProductListProvider>(
-                              builder: (con, productInfo, _) => Align(
-                                    alignment: Alignment.topLeft,
-                                    child: DropdownButtonFormField<String>(
-                                      value: selectedProduct,
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          children: [
+                            Builder(builder: (context) {
+                              final productData =
+                                  Provider.of<ProductListProvider>(context,
+                                      listen: false);
+                              return FutureBuilder(
+                                future: productData.fetchProductNames(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  } else {
+                                    return DropdownButtonFormField<String>(
                                       hint: const Text(
                                         'Product Name',
                                         style: TextStyle(
                                             fontSize: 15, color: Colors.black),
                                       ),
-                                      onChanged: (String? newValue) async {
-                                        setState(() async {
-                                          selectedProduct = newValue;
-                                          print(
-                                              'Selected Product: $selectedProduct');
-                                          int selectedProductIndex = Strings
-                                              .productNameList
-                                              .indexOf(newValue!);
-                                          String productId = Strings
-                                              .productIdList
-                                              .elementAt(selectedProductIndex);
-                                          print(productId);
-
-                                          SharedPreferences prefs =
-                                              await SharedPreferences
-                                                  .getInstance();
-                                          prefs.setString('id', productId);
-
-                                          getProductUnitData(
-                                              context, productId);
-                                          await getProductListData(context);
-
-                                          fetchUnitId();
-                                          fetchQuantityId();
-                                        });
-                                      },
-                                      items: Strings.productNameList
-                                          .map<DropdownMenuItem<String>>(
-                                              (String value) {
-                                        print(value);
+                                      value: productData.selectedProductId,
+                                      items: productData.productNameList
+                                          .map((String value) {
                                         return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(
-                                            value,
-                                            style: TextStyle(fontSize: 18),
-                                          ),
+                                          value: productData.productIdList[
+                                              productData.productNameList
+                                                  .indexOf(value)],
+                                          child: Text(value),
                                         );
                                       }).toList(),
+                                      onChanged: (String? selectedValue) {
+                                        productData
+                                            .setSelectedProduct(selectedValue!);
+                                        productData.fetchUnitIds(
+                                            productData.selectedProductId!);
+                                      },
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return 'Please select an option';
@@ -305,7 +245,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                       decoration: InputDecoration(
                                         labelText: "Product Name",
                                         prefixIcon: const Icon(
-                                          Icons.shopping_cart,
+                                          Icons.shopping_bag_outlined,
                                           color: Colors.blue,
                                         ),
                                         border: OutlineInputBorder(
@@ -316,223 +256,174 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                           ),
                                         ),
                                       ),
+                                    );
+                                  }
+                                },
+                              );
+                            }),
+                            SizedBox(height: 20),
+                            Consumer<ProductListProvider>(
+                              builder: (context, productData, _) {
+                                return DropdownButtonFormField<String>(
+                                  hint: const Text(
+                                    'Unit',
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.black),
+                                  ),
+                                  value: productData.selectedUnitId,
+                                  items: productData.unitNameList
+                                      .map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: productData.unitIdList[productData
+                                          .unitNameList
+                                          .indexOf(value)],
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? selectedValue) {
+                                    selectedUnit = selectedValue!;
+                                    productData
+                                        .setSelectedUnitId(selectedValue!);
+                                    productData.fetchQuantityIds(
+                                      productData.selectedProductId!,
+                                      productData.selectedUnitId!,
+                                    );
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please select an option';
+                                    }
+                                    return null;
+                                  },
+                                  icon: const Icon(
+                                    Icons.arrow_drop_down_circle,
+                                    color: Colors.blue,
+                                  ),
+                                  dropdownColor: Colors.deepPurple.shade50,
+                                  decoration: InputDecoration(
+                                    labelText: "Unit",
+                                    prefixIcon: const Icon(
+                                      Icons.ad_units_outlined,
+                                      color: Colors.blue,
                                     ),
-                                  ))),
-                      const SizedBox(
-                        height: 10,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(height: 20),
+                            Consumer<ProductListProvider>(
+                              builder: (context, productData, _) {
+                                return DropdownButtonFormField<String>(
+                                  hint: const Text(
+                                    'Quantity',
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.black),
+                                  ),
+                                  value: productData.selectedQuantityId,
+                                  items: productData.quantityList
+                                      .map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: productData.quantityList[
+                                          productData.quantityList
+                                              .indexOf(value)],
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? selectedValue) {
+                                    quantityId = selectedValue!;
+                                    productData
+                                        .setSelectedQuantityId(selectedValue!);
+                                    productData.fetchRates(
+                                        productData.selectedProductId!,
+                                        productData.selectedUnitId!,
+                                        productData.selectedQuantityId!);
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please select an option';
+                                    }
+                                    return null;
+                                  },
+                                  icon: const Icon(
+                                    Icons.arrow_drop_down_circle,
+                                    color: Colors.blue,
+                                  ),
+                                  dropdownColor: Colors.deepPurple.shade50,
+                                  decoration: InputDecoration(
+                                    labelText: "Quantity",
+                                    prefixIcon: const Icon(
+                                      Icons.production_quantity_limits,
+                                      color: Colors.blue,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(height: 20),
+                            Consumer<ProductListProvider>(
+                              builder: (context, productData, _) {
+                                print('Rate List: ${productData.rateList}');
+                                return DropdownButtonFormField<String>(
+                                  hint: const Text(
+                                    'Rate',
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.black),
+                                  ),
+                                  value: productData.selectedRateId,
+                                  items:
+                                      productData.rateList.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? selectedValue) {
+                                    rate = selectedValue!;
+                                    productData
+                                        .setSelectedRateId(selectedValue!);
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please select an option';
+                                    }
+                                    return null;
+                                  },
+                                  icon: const Icon(
+                                    Icons.arrow_drop_down_circle,
+                                    color: Colors.blue,
+                                  ),
+                                  dropdownColor: Colors.deepPurple.shade50,
+                                  decoration: InputDecoration(
+                                    labelText: "Rate",
+                                    prefixIcon: const Icon(
+                                      Icons.monetization_on,
+                                      color: Colors.blue,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                      FutureBuilder(
-                          future: getProductUnitData(context, productId),
-                          builder: (context, snapshot) => Consumer<
-                                  ProductUnitProvider>(
-                              builder: (con, productUnitInfo, _) => Align(
-                                    alignment: Alignment.topLeft,
-                                    child: DropdownButtonFormField<String>(
-                                      value: selectedUnit,
-                                      hint: const Text(
-                                        'Unit',
-                                        style: TextStyle(
-                                            fontSize: 15, color: Colors.black),
-                                      ),
-                                      onChanged: (String? newValue) async {
-                                        setState(() async {
-                                          selectedUnit = newValue;
-                                          print('Selected Unit: $selectedUnit');
-                                          int selectedUnitIndex = Strings
-                                              .productUnitNameList
-                                              .indexOf(newValue!);
-                                          String? unitId = Strings
-                                              .productUnitIdList
-                                              .elementAt(selectedUnitIndex);
-                                          print(unitId);
-
-                                          SharedPreferences prefs =
-                                              await SharedPreferences
-                                                  .getInstance();
-                                          prefs.setString('unit_id', unitId);
-
-                                          getProductQuantityData(
-                                              con, productId, unitId);
-                                        });
-                                      },
-                                      items: Strings.productUnitNameList
-                                          .map<DropdownMenuItem<String>>(
-                                              (String value) {
-                                        print(value);
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(
-                                            value,
-                                            style: TextStyle(fontSize: 18),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please select an option';
-                                        }
-                                        return null;
-                                      },
-                                      icon: const Icon(
-                                        Icons.arrow_drop_down_circle,
-                                        color: Colors.blue,
-                                      ),
-                                      dropdownColor: Colors.deepPurple.shade50,
-                                      decoration: InputDecoration(
-                                        labelText: "Unit",
-                                        prefixIcon: const Icon(
-                                          Icons.shopping_cart,
-                                          color: Colors.blue,
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          borderSide: const BorderSide(
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ))),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      FutureBuilder(
-                          future: getProductQuantityData(
-                              context, productId, unitId),
-                          builder: (context, snapshot) => Consumer<
-                                  ProductQuantityProvider>(
-                              builder: (con, productQuantityInfo, _) => Align(
-                                    alignment: Alignment.topLeft,
-                                    child: DropdownButtonFormField<String>(
-                                      value: selectedQuantity,
-                                      hint: const Text(
-                                        'Quantity',
-                                        style: TextStyle(
-                                            fontSize: 15, color: Colors.black),
-                                      ),
-                                      onChanged: (String? newValue) {
-                                        setState(() async {
-                                          selectedQuantity = newValue;
-                                          print(
-                                              'Selected Quantity: $selectedQuantity');
-                                          int selectedQuantityIndex = Strings
-                                              .productQuantityNameList
-                                              .indexOf(newValue!);
-                                          String? quantityId = Strings
-                                              .productQuantityIdList
-                                              .elementAt(selectedQuantityIndex);
-                                          print(quantityId);
-
-                                          SharedPreferences prefs =
-                                              await SharedPreferences
-                                                  .getInstance();
-                                          prefs.setString(
-                                              'main_qnt', quantityId);
-
-                                          getProductRateData(con, productId,
-                                              unitId, quantityId);
-                                        });
-                                      },
-                                      items: Strings.productQuantityNameList
-                                          .map<DropdownMenuItem<String>>(
-                                              (String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(
-                                            value,
-                                            style: TextStyle(fontSize: 18),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please select an option';
-                                        }
-                                        return null;
-                                      },
-                                      icon: const Icon(
-                                        Icons.arrow_drop_down_circle,
-                                        color: Colors.blue,
-                                      ),
-                                      dropdownColor: Colors.deepPurple.shade50,
-                                      decoration: InputDecoration(
-                                        labelText: "Quantity",
-                                        prefixIcon: const Icon(
-                                          Icons.shopping_cart,
-                                          color: Colors.blue,
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          borderSide: const BorderSide(
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ))),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      FutureBuilder(
-                          future: getProductRateData(
-                              context, productId, unitId, quantityId),
-                          builder: (context, snapshot) => Consumer<
-                                  ProductRateProvider>(
-                              builder: (con, productInfo, _) => Align(
-                                    alignment: Alignment.topLeft,
-                                    child: DropdownButtonFormField<String>(
-                                      value: selectedRate,
-                                      hint: const Text(
-                                        'Rate',
-                                        style: TextStyle(
-                                            fontSize: 15, color: Colors.black),
-                                      ),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          selectedRate = newValue;
-                                          print('Selected Rate: $selectedRate');
-                                        });
-                                      },
-                                      items: Strings.productRateNameList
-                                          .map<DropdownMenuItem<String>>(
-                                              (String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(
-                                            value,
-                                            style: TextStyle(fontSize: 18),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please select an option';
-                                        }
-                                        return null;
-                                      },
-                                      icon: const Icon(
-                                        Icons.arrow_drop_down_circle,
-                                        color: Colors.blue,
-                                      ),
-                                      dropdownColor: Colors.deepPurple.shade50,
-                                      decoration: InputDecoration(
-                                        labelText: "Rate",
-                                        prefixIcon: const Icon(
-                                          Icons.shopping_cart,
-                                          color: Colors.blue,
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          borderSide: const BorderSide(
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ))),
                     ],
                   ),
                 ),

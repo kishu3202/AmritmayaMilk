@@ -1,9 +1,7 @@
 import 'package:amritmaya_milk/provider/auth_Provider.dart';
 import 'package:amritmaya_milk/provider/customerList_Provider.dart';
+import 'package:amritmaya_milk/provider/dailyNeedProduct_Provider.dart';
 import 'package:amritmaya_milk/provider/productList_Provider.dart';
-import 'package:amritmaya_milk/provider/productQuantity_Provider.dart';
-import 'package:amritmaya_milk/provider/productRate_Provider.dart';
-import 'package:amritmaya_milk/provider/productUnit_Provider.dart';
 import 'package:amritmaya_milk/provider/user_Provider.dart';
 import 'package:amritmaya_milk/screens/dashboard_screen.dart';
 import 'package:amritmaya_milk/screens/login_screen.dart';
@@ -27,9 +25,7 @@ class AmritmayaMilk extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => CustomerProvider()),
         ChangeNotifierProvider(create: (_) => ProductListProvider()),
-        ChangeNotifierProvider(create: (_) => ProductUnitProvider()),
-        ChangeNotifierProvider(create: (_) => ProductRateProvider()),
-        ChangeNotifierProvider(create: (_) => ProductQuantityProvider()),
+        ChangeNotifierProvider(create: (_) => DailyNeedProductProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
