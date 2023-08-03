@@ -422,15 +422,18 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         const SizedBox(
                           height: 16,
                         ),
-                        GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2),
-                            itemCount: 4,
-                            itemBuilder: (context, index) {
-                              return CheckboxListTile(
-                                  value: value, onChanged: onChanged);
-                            }),
+                        Consumer<ProductListProvider>(
+                            builder: (context, productData, _) {
+                          return GridView.builder(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2),
+                              itemCount: 4,
+                              itemBuilder: (context, index) {
+                                return CheckboxListTile(
+                                    value: value, onChanged: onChanged);
+                              });
+                        }),
                       ],
                     )),
               ),
