@@ -9,6 +9,11 @@ class ProductListProvider extends ChangeNotifier {
   String? selectedQuantity;
   String? selectedRate;
 
+  bool? polytheneSmallChecked = false;
+  bool? polytheneBigChecked = false;
+  bool? deliveryChecked = false;
+  bool? maintenanceChecked = false;
+
   List<String> productIdList = [];
   List<String> productNameList = [];
   List<String> unitIdList = [];
@@ -146,6 +151,37 @@ class ProductListProvider extends ChangeNotifier {
     } catch (e) {
       print('Error fetching rates: $e');
       throw Exception('Failed to fetch rates');
+    }
+  }
+
+  Future<void> submitDailyNeedProduct() async {
+    try {
+      final res = await http.post(
+        Uri.parse(
+            "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct"),
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": "amritmayamilk050512",
+        },
+        body: json.encode({
+          'productName': selectedProduct,
+          'unit': selectedUnit,
+          'quantity': selectedQuantity,
+          'rate': selectedRate,
+          'polytheneSmallChecked': polytheneSmallChecked,
+          'polytheneBigChecked': polytheneBigChecked,
+          'deliveryChecked': deliveryChecked,
+          'maintenanceChecked': maintenanceChecked,
+        }),
+      );
+
+      if (res.statusCode == 200) {
+        print('Data submitted successfully');
+      } else {
+        print('Failed to submit data');
+      }
+    } catch (e) {
+      print('Error during data submission: $e');
     }
   }
 

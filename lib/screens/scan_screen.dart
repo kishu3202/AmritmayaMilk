@@ -141,6 +141,11 @@ class _ScanScreenState extends State<ScanScreen> {
         );
       } else {
         await customerData(mobileNo);
+        // Save the selected option and mobile number in SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setInt('selected_option', selectedOption);
+        prefs.setString('mobile_number', mobileNo);
+
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -170,6 +175,11 @@ class _ScanScreenState extends State<ScanScreen> {
           },
         );
       } else {
+        // Save the selected option and scanned barcode in SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setInt('selected_option', selectedOption);
+        prefs.setString('scanned_barcode', scanBarcode);
+
         // navigate to the formscreen
         Navigator.push(
           context,

@@ -12,11 +12,38 @@ class FormScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<FormScreen> {
-  void fetchCustomerData() {
+  @override
+  void initState() {
+    super.initState();
+    fetchCustomerData();
+  }
+
+  void fetchCustomerData() async {
     final dailyNeedProvider =
         Provider.of<DailyNeedProductProvider>(context, listen: false);
-    dailyNeedProvider.fetchDailyNeedProduct(widget.customerId);
+    await dailyNeedProvider.fetchDailyNeedProduct(widget.customerId);
   }
+
+  // void fetchCustomerData() async {
+  //   // Fetch saved data from SharedPreferences
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   int selectedOption = prefs.getInt('selected_option') ?? 0;
+  //   String mobileNumber = prefs.getString('mobile_number') ?? '';
+  //   String scannedBarcode = prefs.getString('scanned_barcode') ?? '';
+  //
+  //   // Use the saved data to decide which API call to make
+  //   if (selectedOption == 1) {
+  //     // Make the API call using the mobile number from SharedPreferences
+  //     final dailyNeedProvider =
+  //         Provider.of<DailyNeedProductProvider>(context, listen: false);
+  //     dailyNeedProvider.fetchDailyNeedProduct(widget.customerId);
+  //   } else if (selectedOption == 2) {
+  //     // Make the API call using the scanned barcode from SharedPreferences
+  //     final dailyNeedProvider =
+  //         Provider.of<DailyNeedProductProvider>(context, listen: false);
+  //     dailyNeedProvider.fetchDailyNeedProduct(widget.customerId);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

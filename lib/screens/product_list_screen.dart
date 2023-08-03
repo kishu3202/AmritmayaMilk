@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -80,11 +79,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
     prefs.setBool('maintenance_checked', maintenanceChecked!);
 
     _showToastMessage("Daily need product details saved successfully");
+    print('Daily need product saved successfully');
   }
 
-  final String baseUrl =
-      'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct';
-  final String apiKey = 'amritmayamilk050512';
   void _showToastMessage(String Message) {
     Fluttertoast.showToast(
       msg: Message,
@@ -113,42 +110,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
           ),
         );
       } else {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-        // Construct the request body
-        final Map<String, dynamic> data = {
-          'customer_id': widget.customerId.toString(),
-          'product_id[]': productId.toString(),
-          'product_name': selectedProduct!,
-          'unit_id[]': selectedUnit!,
-          'qnt[]': selectedQuantity!,
-          'rate': selectedRate!,
-          'polythene_small': polytheneSmallChecked.toString(),
-          'polythene_big': polytheneBigChecked.toString(),
-          'delivery_charges': deliveryChecked.toString(),
-          'maintenance_charges': maintenanceChecked.toString(),
-        };
-        final response = await http.post(
-          Uri.parse(baseUrl),
-          headers: {'X-API-KEY': apiKey},
-          body: data,
-        );
-
-        if (response.statusCode == 200) {
-          _showToastMessage("Daily Need has been saved Successfully");
+        try {
           final SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.setString('customer_id', widget.customerId);
-          print("Customer ID: ${widget.customerId}");
-          print("Selected Product: $selectedProduct");
-          print("Selected Unit: $selectedUnit");
-          print("Selected Quantity: $selectedQuantity");
-          print("Selected Rate: $selectedRate");
-          print("Polythene Small Checked: $polytheneSmallChecked");
-          print("Polythene Big Checked: $polytheneBigChecked");
-          print("Delivery Checked: $deliveryChecked");
-          print("Maintenance Checked: $maintenanceChecked");
-        } else {
-          _showToastMessage("Failed to save Daily Need");
+          final productData =
+              Provider.of<ProductListProvider>(context, listen: false);
+          await productData.submitDailyNeedProduct();
+          _showToastMessage("Daily Need has been saved Successfully");
+        } catch (e) {
+          _showToastMessage('Failed to save Daily Need');
         }
       }
     }
@@ -338,11 +307,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                   onChanged: (String? selectedValue) {
                                     quantityId = selectedValue!;
                                     productData
-                                        .setSelectedQuantityId(selectedValue!);
+                                        .setSelectedQuantityId(selectedValue);
                                     productData.fetchRates(
                                         productData.selectedProduct!,
                                         productData.selectedUnit!,
                                         productData.selectedQuantity!);
+                                    print(selectedQuantity);
                                   },
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
