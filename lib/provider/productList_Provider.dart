@@ -20,6 +20,9 @@ class ProductListProvider extends ChangeNotifier {
   List<String> unitNameList = [];
   List<String> quantityList = [];
   List<String> rateList = [];
+  List<String> idList = [];
+  List<String> nameList = [];
+  List<String> amountList = [];
 
   Future<void> fetchProductNames() async {
     try {
@@ -142,7 +145,6 @@ class ProductListProvider extends ChangeNotifier {
             rateList.add(rateValue.toString());
           });
         }
-
         print('Fetched Rates: $rateList');
         notifyListeners();
       } else {
@@ -151,6 +153,45 @@ class ProductListProvider extends ChangeNotifier {
     } catch (e) {
       print('Error fetching rates: $e');
       throw Exception('Failed to fetch rates');
+    }
+  }
+
+  Future<void> fetchOtherCharges() async {
+    try {
+      final res = await http.get(
+        Uri.parse(
+            "http://webiipl.in/amritmayamilk/api/UserApiController/othercharges"),
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": "amritmayamilk050512",
+        },
+      );
+      final response = json.decode(res.body) as Map<String, dynamic>;
+      print('API Response - Fetch Rates: $response');
+      if (res.statusCode == 200) {
+        idList.clear();
+        amountList.clear();
+        nameList.clear();
+
+        final otherCharges = response["othercharges"];
+        print('Other Charges: $otherCharges');
+        otherCharges.forEach((other) {
+          final otherChargesId = other['id'];
+          final otherChargesName = other['name'];
+          final otherChargesAmount = other['amount'];
+
+          if (idList.contains(otherChargesId)) {
+            idList.add(otherChargesId);
+            amountList.add(otherChargesAmount);
+            nameList.add(otherChargesName);
+          }
+        });
+        notifyListeners();
+      } else {
+        throw Exception('Failed to fetch other charges');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch other charges');
     }
   }
 
@@ -164,14 +205,14 @@ class ProductListProvider extends ChangeNotifier {
           "X-API-KEY": "amritmayamilk050512",
         },
         body: json.encode({
-          'productName': selectedProduct,
-          'unit': selectedUnit,
-          'quantity': selectedQuantity,
-          'rate': selectedRate,
-          'polytheneSmallChecked': polytheneSmallChecked,
-          'polytheneBigChecked': polytheneBigChecked,
-          'deliveryChecked': deliveryChecked,
-          'maintenanceChecked': maintenanceChecked,
+          'product_id[]': selectedProduct,
+          'unit_id[]': selectedUnit,
+          'qnt[]': selectedQuantity,
+          'rate[]': selectedRate,
+          'other_charges[]': polytheneSmallChecked,
+          'other_charges[]': polytheneBigChecked,
+          'other_charges[]': deliveryChecked,
+          'other_charges[]': maintenanceChecked,
         }),
       );
 

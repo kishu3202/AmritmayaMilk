@@ -422,6 +422,31 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       const SizedBox(
                         height: 16,
                       ),
+                    ],
+                  ),
+                ),
+              ),
+              Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                    side: const BorderSide(
+                      color: Colors.black,
+                    )),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Other Charges",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
                       Row(
                         children: [
                           Expanded(
