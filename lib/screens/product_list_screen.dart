@@ -408,223 +408,231 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       color: Colors.black,
                     )),
                 child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Other Charges",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    side: const BorderSide(
-                      color: Colors.black,
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Other Charges",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2),
+                            itemCount: 4,
+                            itemBuilder: (context, index) {
+                              return CheckboxListTile(
+                                  value: value, onChanged: onChanged);
+                            }),
+                      ],
                     )),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Other Charges",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.deepPurple.shade50,
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1.0,
-                                ),
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              child: Transform.translate(
-                                offset: const Offset(-10, 0),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 1),
-                                  child: CheckboxListTile(
-                                    // tristate: true,
-                                    title: const Text(
-                                      'Polythene charges (Small)',
-                                      style: TextStyle(
-                                          color: Colors.black87, fontSize: 15),
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      // side: BorderSide(color: Colors.grey),
-                                    ),
-                                    value: polytheneSmallChecked,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        polytheneSmallChecked = value;
-                                      });
-                                    },
-
-                                    controlAffinity:
-                                        ListTileControlAffinity.leading,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.deepPurple.shade50,
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1.0,
-                                ),
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              child: Transform.translate(
-                                offset: const Offset(-10, 0),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 1),
-                                  child: CheckboxListTile(
-                                    // tristate: true,
-                                    title: const Text(
-                                      'Polythene charges (Big)',
-                                      style: TextStyle(
-                                          color: Colors.black87, fontSize: 15),
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      // side: BorderSide(color: Colors.grey),
-                                    ),
-                                    value: polytheneBigChecked,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        polytheneBigChecked = value;
-                                      });
-                                    },
-                                    controlAffinity:
-                                        ListTileControlAffinity.leading,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.deepPurple.shade50,
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1.0,
-                                ),
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              child: Transform.translate(
-                                offset: const Offset(-10, 0),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 1),
-                                  child: CheckboxListTile(
-                                    // tristate: true,
-                                    title: const Text(
-                                      'Delivery charges',
-                                      style: TextStyle(
-                                          color: Colors.black87, fontSize: 15),
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      // side: BorderSide(color: Colors.grey),
-                                    ),
-                                    value: deliveryChecked,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        deliveryChecked = value;
-                                      });
-                                    },
-                                    controlAffinity:
-                                        ListTileControlAffinity.leading,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.deepPurple.shade50,
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1.0,
-                                ),
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              child: Transform.translate(
-                                offset: const Offset(-10, 0),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 1),
-                                  child: CheckboxListTile(
-                                    // tristate: true,
-                                    title: const Text(
-                                      'Maintenance charges',
-                                      style: TextStyle(
-                                          color: Colors.black87, fontSize: 15),
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      // side: BorderSide(color: Colors.grey),
-                                    ),
-                                    value: maintenanceChecked,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        maintenanceChecked = value;
-                                      });
-                                    },
-                                    controlAffinity:
-                                        ListTileControlAffinity.leading,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
               ),
+
+              // Card(
+              //   shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(5.0),
+              //       side: const BorderSide(
+              //         color: Colors.black,
+              //       )),
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(10.0),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         const Text(
+              //           "Other Charges",
+              //           style: TextStyle(
+              //               fontSize: 16,
+              //               fontWeight: FontWeight.bold,
+              //               color: Colors.black),
+              //         ),
+              //         const SizedBox(
+              //           height: 16,
+              //         ),
+              //         Row(
+              //           children: [
+              //             Expanded(
+              //               child: Container(
+              //                 decoration: BoxDecoration(
+              //                   color: Colors.deepPurple.shade50,
+              //                   border: Border.all(
+              //                     color: Colors.grey,
+              //                     width: 1.0,
+              //                   ),
+              //                   borderRadius: BorderRadius.circular(5.0),
+              //                 ),
+              //                 child: Transform.translate(
+              //                   offset: const Offset(-10, 0),
+              //                   child: Padding(
+              //                     padding:
+              //                         const EdgeInsets.symmetric(horizontal: 1),
+              //                     child: CheckboxListTile(
+              //                       // tristate: true,
+              //                       title: const Text(
+              //                         'Polythene charges (Small)',
+              //                         style: TextStyle(
+              //                             color: Colors.black87, fontSize: 15),
+              //                       ),
+              //                       shape: RoundedRectangleBorder(
+              //                         borderRadius: BorderRadius.circular(5.0),
+              //                         // side: BorderSide(color: Colors.grey),
+              //                       ),
+              //                       value: polytheneSmallChecked,
+              //                       onChanged: (value) {
+              //                         setState(() {
+              //                           polytheneSmallChecked = value;
+              //                         });
+              //                       },
+              //                       controlAffinity:
+              //                           ListTileControlAffinity.leading,
+              //                     ),
+              //                   ),
+              //                 ),
+              //               ),
+              //             ),
+              //             const SizedBox(
+              //               width: 5,
+              //             ),
+              //             Expanded(
+              //               child: Container(
+              //                 decoration: BoxDecoration(
+              //                   color: Colors.deepPurple.shade50,
+              //                   border: Border.all(
+              //                     color: Colors.grey,
+              //                     width: 1.0,
+              //                   ),
+              //                   borderRadius: BorderRadius.circular(5.0),
+              //                 ),
+              //                 child: Transform.translate(
+              //                   offset: const Offset(-10, 0),
+              //                   child: Padding(
+              //                     padding:
+              //                         const EdgeInsets.symmetric(horizontal: 1),
+              //                     child: CheckboxListTile(
+              //                       // tristate: true,
+              //                       title: const Text(
+              //                         'Polythene charges (Big)',
+              //                         style: TextStyle(
+              //                             color: Colors.black87, fontSize: 15),
+              //                       ),
+              //                       shape: RoundedRectangleBorder(
+              //                         borderRadius: BorderRadius.circular(5.0),
+              //                         // side: BorderSide(color: Colors.grey),
+              //                       ),
+              //                       value: polytheneBigChecked,
+              //                       onChanged: (value) {
+              //                         setState(() {
+              //                           polytheneBigChecked = value;
+              //                         });
+              //                       },
+              //                       controlAffinity:
+              //                           ListTileControlAffinity.leading,
+              //                     ),
+              //                   ),
+              //                 ),
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //         const SizedBox(
+              //           height: 5,
+              //         ),
+              //         Row(
+              //           children: [
+              //             Expanded(
+              //               child: Container(
+              //                 decoration: BoxDecoration(
+              //                   color: Colors.deepPurple.shade50,
+              //                   border: Border.all(
+              //                     color: Colors.grey,
+              //                     width: 1.0,
+              //                   ),
+              //                   borderRadius: BorderRadius.circular(5.0),
+              //                 ),
+              //                 child: Transform.translate(
+              //                   offset: const Offset(-10, 0),
+              //                   child: Padding(
+              //                     padding:
+              //                         const EdgeInsets.symmetric(horizontal: 1),
+              //                     child: CheckboxListTile(
+              //                       // tristate: true,
+              //                       title: const Text(
+              //                         'Delivery charges',
+              //                         style: TextStyle(
+              //                             color: Colors.black87, fontSize: 15),
+              //                       ),
+              //                       shape: RoundedRectangleBorder(
+              //                         borderRadius: BorderRadius.circular(5.0),
+              //                         // side: BorderSide(color: Colors.grey),
+              //                       ),
+              //                       value: deliveryChecked,
+              //                       onChanged: (value) {
+              //                         setState(() {
+              //                           deliveryChecked = value;
+              //                         });
+              //                       },
+              //                       controlAffinity:
+              //                           ListTileControlAffinity.leading,
+              //                     ),
+              //                   ),
+              //                 ),
+              //               ),
+              //             ),
+              //             const SizedBox(
+              //               width: 5,
+              //             ),
+              //             Expanded(
+              //               child: Container(
+              //                 decoration: BoxDecoration(
+              //                   color: Colors.deepPurple.shade50,
+              //                   border: Border.all(
+              //                     color: Colors.grey,
+              //                     width: 1.0,
+              //                   ),
+              //                   borderRadius: BorderRadius.circular(5.0),
+              //                 ),
+              //                 child: Transform.translate(
+              //                   offset: const Offset(-10, 0),
+              //                   child: Padding(
+              //                     padding:
+              //                         const EdgeInsets.symmetric(horizontal: 1),
+              //                     child: CheckboxListTile(
+              //                       // tristate: true,
+              //                       title: const Text(
+              //                         'Maintenance charges',
+              //                         style: TextStyle(
+              //                             color: Colors.black87, fontSize: 15),
+              //                       ),
+              //                       shape: RoundedRectangleBorder(
+              //                         borderRadius: BorderRadius.circular(5.0),
+              //                         // side: BorderSide(color: Colors.grey),
+              //                       ),
+              //                       value: maintenanceChecked,
+              //                       onChanged: (value) {
+              //                         setState(() {
+              //                           maintenanceChecked = value;
+              //                         });
+              //                       },
+              //                       controlAffinity:
+              //                           ListTileControlAffinity.leading,
+              //                     ),
+              //                   ),
+              //                 ),
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
               const SizedBox(
                 height: 30,
               ),
