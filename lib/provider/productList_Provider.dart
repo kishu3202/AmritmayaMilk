@@ -8,6 +8,7 @@ class ProductListProvider extends ChangeNotifier {
   String? selectedUnit;
   String? selectedQuantity;
   String? selectedRate;
+  // int number = int.parse(selectedProduct!);
 
   bool? polytheneSmallChecked = false;
   bool? polytheneBigChecked = false;
@@ -23,6 +24,7 @@ class ProductListProvider extends ChangeNotifier {
   List<String> idList = [];
   List<String> nameList = [];
   List<String> amountList = [];
+  Set<String> selectedIds = {};
 
   Future<void> fetchProductNames() async {
     try {
@@ -121,6 +123,33 @@ class ProductListProvider extends ChangeNotifier {
     }
   }
 
+  // Future<String?> fetchRates(
+  //     String productId, String unitId, String quantityId) async {
+  //   try {
+  //     final res = await http.get(
+  //       Uri.parse(
+  //           "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId"),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "X-API-KEY": "amritmayamilk050512",
+  //       },
+  //     );
+  //
+  //     final response = json.decode(res.body) as Map<String, dynamic>;
+  //     if (res.statusCode == 200) {
+  //       final rateData = response["productrateList"];
+  //       if (rateData is Map<String, dynamic> && rateData.isNotEmpty) {
+  //         final defaultRateKey = rateData.keys.first;
+  //         final defaultRate = rateData[defaultRateKey].toString();
+  //         return defaultRate;
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching default rate: $e');
+  //   }
+  //   return null;
+  // }
+
   Future<void> fetchRates(
       String productId, String unitId, String quantityId) async {
     try {
@@ -166,8 +195,9 @@ class ProductListProvider extends ChangeNotifier {
           "X-API-KEY": "amritmayamilk050512",
         },
       );
+
       final response = json.decode(res.body) as Map<String, dynamic>;
-      print('API Response - Fetch Rates: $response');
+      print('API Response - Fetch Other Charges: $response');
       if (res.statusCode == 200) {
         idList.clear();
         amountList.clear();
@@ -180,7 +210,10 @@ class ProductListProvider extends ChangeNotifier {
           final otherChargesName = other['name'];
           final otherChargesAmount = other['amount'];
 
-          if (idList.contains(otherChargesId)) {
+          print(otherChargesId);
+          print(otherChargesName);
+
+          if (!idList.contains(otherChargesId)) {
             idList.add(otherChargesId);
             amountList.add(otherChargesAmount);
             nameList.add(otherChargesName);
@@ -205,14 +238,11 @@ class ProductListProvider extends ChangeNotifier {
           "X-API-KEY": "amritmayamilk050512",
         },
         body: json.encode({
-          'product_id[]': selectedProduct,
-          'unit_id[]': selectedUnit,
-          'qnt[]': selectedQuantity,
-          'rate[]': selectedRate,
-          'other_charges[]': polytheneSmallChecked,
-          'other_charges[]': polytheneBigChecked,
-          'other_charges[]': deliveryChecked,
-          'other_charges[]': maintenanceChecked,
+          'product_id[]': selectedProduct.toString(),
+          'unit_id[]': selectedUnit.toString(),
+          'qnt[]': selectedQuantity.toString(),
+          'rate[]': selectedRate.toString(),
+          'other_charges[]': selectedIds.toString(),
         }),
       );
 

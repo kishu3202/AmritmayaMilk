@@ -27,7 +27,7 @@ class _CustomerListState extends State<CustomerList> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Customer List'),
-        automaticallyImplyLeading: false,
+        // automaticallyImplyLeading: false,
       ),
       body: Container(
         child: ListView.builder(

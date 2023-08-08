@@ -86,12 +86,13 @@ class _ScanScreenState extends State<ScanScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     final String url =
-        "http://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/customerdata?contact=$mobileNumber";
+        "http://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/customerdata?contact=$mobileNumber&name=";
     final Map<String, String> headers = {'X-API-KEY': 'amritmayamilk050512'};
     final http.Response response = await http.get(
       Uri.parse(url),
       headers: headers,
     );
+    print('Response body: ${response.body}');
     Map<String, dynamic> res = json.decode(response.body);
     if (res['Success'] == true) {
       customerId = res["customerList"]["id"];
@@ -217,7 +218,7 @@ class _ScanScreenState extends State<ScanScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text('QR Code Scanner'),
-        automaticallyImplyLeading: false,
+        // automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [

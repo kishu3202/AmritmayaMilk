@@ -122,7 +122,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           centerTitle: true,
           title: const Text('Dashboard'),
-          automaticallyImplyLeading: false,
+          // automaticallyImplyLeading: false,
           actions: [
             IconButton(
               onPressed: () {

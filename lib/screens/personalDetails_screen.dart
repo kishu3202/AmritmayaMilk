@@ -92,7 +92,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Personal Details'),
-        automaticallyImplyLeading: false,
+        // automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Padding(

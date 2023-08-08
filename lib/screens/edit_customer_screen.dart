@@ -74,7 +74,7 @@ class _EditCustomerState extends State<EditCustomer> {
         appBar: AppBar(
           title: const Text("Edit Customer Details"),
           centerTitle: true,
-          automaticallyImplyLeading: false,
+          // automaticallyImplyLeading: false,
         ),
         body: SingleChildScrollView(
           child: Padding(
