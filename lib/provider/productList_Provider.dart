@@ -123,7 +123,7 @@ class ProductListProvider extends ChangeNotifier {
     }
   }
 
-  // Future<String?> fetchRates(
+  // Future<void> fetchRates(
   //     String productId, String unitId, String quantityId) async {
   //   try {
   //     final res = await http.get(
@@ -136,26 +136,34 @@ class ProductListProvider extends ChangeNotifier {
   //     );
   //
   //     final response = json.decode(res.body) as Map<String, dynamic>;
+  //     print('API Response - Fetch Rates: $response');
   //     if (res.statusCode == 200) {
+  //       rateList.clear();
+  //
   //       final rateData = response["productrateList"];
-  //       if (rateData is Map<String, dynamic> && rateData.isNotEmpty) {
-  //         final defaultRateKey = rateData.keys.first;
-  //         final defaultRate = rateData[defaultRateKey].toString();
-  //         return defaultRate;
+  //       if (rateData is Map<String, dynamic>) {
+  //         rateData.forEach((key, value) {
+  //           final rateValue = value;
+  //           rateList.add(rateValue.toString());
+  //         });
   //       }
+  //       print('Fetched Rates: $rateList');
+  //       notifyListeners();
+  //     } else {
+  //       throw Exception('Failed to fetch rates');
   //     }
   //   } catch (e) {
-  //     print('Error fetching default rate: $e');
+  //     print('Error fetching rates: $e');
+  //     throw Exception('Failed to fetch rates');
   //   }
-  //   return null;
   // }
-
   Future<void> fetchRates(
       String productId, String unitId, String quantityId) async {
     try {
       final res = await http.get(
         Uri.parse(
-            "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId"),
+          "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId",
+        ),
         headers: {
           "Content-Type": "application/json",
           "X-API-KEY": "amritmayamilk050512",
@@ -175,6 +183,7 @@ class ProductListProvider extends ChangeNotifier {
           });
         }
         print('Fetched Rates: $rateList');
+        setSelectedRateId(rateList.first);
         notifyListeners();
       } else {
         throw Exception('Failed to fetch rates');

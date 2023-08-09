@@ -531,10 +531,26 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             child: Text(value),
                           );
                         }).toList(),
-                        onChanged: (String? selectedValue) {
-                          rate = selectedValue!;
-                          productData.setSelectedRateId(selectedValue!);
+                        onChanged: (String? selectedValue) async {
+                          if (selectedValue != null) {
+                            productData.setSelectedProduct(selectedValue);
+                            productData
+                                .fetchUnitIds(productData.selectedProduct!);
+                            await productData.fetchQuantityIds(
+                              productData.selectedProduct!,
+                              productData.selectedUnit!,
+                            );
+                            await productData.fetchRates(
+                              productData.selectedProduct!,
+                              productData.selectedUnit!,
+                              productData.selectedQuantity!,
+                            );
+                          }
                         },
+                        // onChanged: (String? selectedValue) {
+                        //   rate = selectedValue!;
+                        //   productData.setSelectedRateId(selectedValue!);
+                        // },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please select an option';
