@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ProductListProvider extends ChangeNotifier {
@@ -8,7 +8,8 @@ class ProductListProvider extends ChangeNotifier {
   String? selectedUnit;
   String? selectedQuantity;
   String? selectedRate;
-  // int number = int.parse(selectedProduct!);
+  String? staffId;
+  String? otherId;
 
   bool? polytheneSmallChecked = false;
   bool? polytheneBigChecked = false;
@@ -24,7 +25,16 @@ class ProductListProvider extends ChangeNotifier {
   List<String> idList = [];
   List<String> nameList = [];
   List<String> amountList = [];
-  Set<String> selectedIds = {};
+  List<String> selectedIds = [];
+
+  bool _loading = false;
+
+  bool get loading => _loading;
+
+  void setLoading(bool value) {
+    _loading = value;
+    notifyListeners();
+  }
 
   Future<void> fetchProductNames() async {
     try {
@@ -123,40 +133,6 @@ class ProductListProvider extends ChangeNotifier {
     }
   }
 
-  // Future<void> fetchRates(
-  //     String productId, String unitId, String quantityId) async {
-  //   try {
-  //     final res = await http.get(
-  //       Uri.parse(
-  //           "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId"),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "X-API-KEY": "amritmayamilk050512",
-  //       },
-  //     );
-  //
-  //     final response = json.decode(res.body) as Map<String, dynamic>;
-  //     print('API Response - Fetch Rates: $response');
-  //     if (res.statusCode == 200) {
-  //       rateList.clear();
-  //
-  //       final rateData = response["productrateList"];
-  //       if (rateData is Map<String, dynamic>) {
-  //         rateData.forEach((key, value) {
-  //           final rateValue = value;
-  //           rateList.add(rateValue.toString());
-  //         });
-  //       }
-  //       print('Fetched Rates: $rateList');
-  //       notifyListeners();
-  //     } else {
-  //       throw Exception('Failed to fetch rates');
-  //     }
-  //   } catch (e) {
-  //     print('Error fetching rates: $e');
-  //     throw Exception('Failed to fetch rates');
-  //   }
-  // }
   Future<void> fetchRates(
       String productId, String unitId, String quantityId) async {
     try {
@@ -238,30 +214,40 @@ class ProductListProvider extends ChangeNotifier {
   }
 
   Future<void> submitDailyNeedProduct() async {
-    try {
-      final res = await http.post(
-        Uri.parse(
-            "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct"),
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-KEY": "amritmayamilk050512",
-        },
-        body: json.encode({
-          'product_id[]': selectedProduct.toString(),
-          'unit_id[]': selectedUnit.toString(),
-          'qnt[]': selectedQuantity.toString(),
-          'rate[]': selectedRate.toString(),
-          'other_charges[]': selectedIds.toString(),
-        }),
-      );
+    var headers = {
+      "Content-Type": "application/json",
+      'X-API-KEY': 'amritmayamilk050512',
+      'Cookie': 'ci_session=6731fe4c932cf1389c94e708434f2ea9b7338335'
+    };
 
-      if (res.statusCode == 200) {
-        print('Data submitted successfully');
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct'));
+    request.fields.addAll({
+      'customer_id': 'customerId',
+      'product_id[]': "selectedProduct",
+      'qnt[]': 'selectedQuantity',
+      'unit_id[]': 'selectedUnit',
+      'rate[]': 'selectedRate',
+      'staff_id': 'staffId',
+      'other_charges[]': 'selectedIds',
+      'other_id[]': 'otherId'
+    });
+    request.headers.addAll(headers);
+    try {
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        final jsonData = await response.stream.bytesToString();
+        final decoded = jsonDecode(jsonData);
+        print(decoded);
+        print(decoded["Success"]);
       } else {
-        print('Failed to submit data');
+        print(response.reasonPhrase);
       }
     } catch (e) {
-      print('Error during data submission: $e');
+      debugPrint("cachedError${e.toString()}");
     }
   }
 
@@ -291,3 +277,40 @@ class ProductListProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+// Future<void> submitDailyNeedProduct() async {
+//   var headers = {
+//     'X-API-KEY': 'amritmayamilk050512',
+//     'Cookie': 'ci_session=6731fe4c932cf1389c94e708434f2ea9b7338335'
+//   };
+//   var request = http.MultipartRequest(
+//       'POST',
+//       Uri.parse(
+//           'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct'));
+//   request.fields.addAll({
+//     'customer_id': 'customerId',
+//     'product_id[]': "selectedProduct",
+//     'qnt[]': 'selectedQuantity',
+//     'unit_id[]': 'selectedUnit',
+//     'rate[]': 'selectedRate',
+//     'staff_id': '1',
+//     'other_charges[]': 'selectedIds',
+//     'other_id': '2'
+//   });
+//   request.headers.addAll(headers);
+//
+//   try {
+//     http.StreamedResponse response = await request.send();
+//
+//     if (response.statusCode == 200) {
+//       final jsonData = await response.stream.bytesToString();
+//       final decoded = jsonDecode(jsonData);
+//       print(decoded);
+//       print(decoded["Success"]);
+//     } else {
+//       print(response.reasonPhrase);
+//     }
+//   } catch (e) {
+//     debugPrint("cachedError${e.toString()}");
+//   }
+// }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,11 +10,18 @@ import '../data/productList_data_model.dart';
 import '../data/productQuantity_data_model.dart';
 import '../data/productRate_data_model.dart';
 import '../data/productUnit_data_model.dart';
+import '../provider/dailyNeedProduct_Provider.dart';
 import '../provider/productList_Provider.dart';
 
 class ProductListScreen extends StatefulWidget {
   final String customerId;
-  const ProductListScreen({super.key, required this.customerId});
+  final String savedDialNeedList;
+
+  const ProductListScreen({
+    super.key,
+    required this.customerId,
+    required this.savedDialNeedList,
+  });
 
   @override
   State<ProductListScreen> createState() => _ProductListScreenState();
@@ -24,24 +32,25 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   final ProductListProvider productListProvider = ProductListProvider();
   List<Widget> cardAdd = [];
+  // List to store fetched data
+  List<ProductListElement> productList = [];
+  List<ProductunitList> productunitList = [];
+  List<ProductqntList> productqntList = [];
+  ProductrateList? productrateList;
 
   // Initialize dropdown values to null
   String? selectedProduct;
   String? selectedUnit;
   String? selectedQuantity;
   String? selectedRate;
+  String? staffId;
+  String? otherId;
   bool? selectedIds;
 
   String productId = '';
   String unitId = '';
   String quantityId = '';
   String rate = '';
-
-// List to store fetched data
-  List<ProductListElement> productList = [];
-  List<ProductunitList> productunitList = [];
-  List<ProductqntList> productqntList = [];
-  ProductrateList? productrateList;
 
   @override
   void initState() {
@@ -60,6 +69,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
     selectedIds = prefs.getBool('polythene_big_checked') ?? false;
     selectedIds = prefs.getBool('delivery_checked') ?? false;
     selectedIds = prefs.getBool('maintenance_checked') ?? false;
+    staffId = prefs.getString('staff_id') ?? null;
+    otherId = prefs.getString('other_id') ?? null;
     setState(() {}); // Refresh the UI after loading the details
   }
 
@@ -67,11 +78,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
   Future<void> _saveDailyNeedProductDetails() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('customer_id', widget.customerId);
+    prefs.setString('staff_id', staffId ?? '');
+    prefs.setString('other_id', otherId ?? '');
     prefs.setString('selected_product', selectedProduct ?? '');
     prefs.setString('selected_unit', selectedUnit ?? '');
     prefs.setString('selected_quantity', selectedQuantity ?? '');
     prefs.setString('selected_rate', selectedRate ?? '');
-
     prefs.setBool('polythene_small_checked', selectedIds ?? false);
     prefs.setBool('polythene_big_checked', selectedIds ?? false);
     prefs.setBool('delivery_checked', selectedIds ?? false);
@@ -91,7 +103,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     );
   }
 
-  Future<void> _submitDailyNeedProduct() async {
+  Future<void> _submitDailyNeedProduct(BuildContext context) async {
     final productData =
         Provider.of<ProductListProvider>(context, listen: false);
 
@@ -110,12 +122,43 @@ class _ProductListScreenState extends State<ProductListScreen> {
         );
       } else {
         try {
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          final productData =
-              Provider.of<ProductListProvider>(context, listen: false);
+          final requestData = {
+            'product_id[]': productData.selectedProduct,
+            'unit_id[]': productData.selectedUnit,
+            'qnt[]': productData.selectedQuantity,
+            'rate[]': productData.selectedRate,
+            'other_charges[]': productData.selectedIds,
+            'customer_id': widget.customerId,
+            'staff_id': productData.staffId,
+            'other_id[]': productData.otherId,
+          };
+          if (widget.savedDialNeedList != null) {
+            final savedDataList = json.decode(widget.savedDialNeedList);
+            if (savedDataList is List && savedDataList.isNotEmpty) {
+              final staffId = savedDataList[0]['productdetails'][0]['staff_id'];
+              requestData['staff_id'] = staffId;
+
+              final otherId =
+                  savedDataList[0]['other_charges'][0]['other_charges_id'];
+              requestData['other_id[]'] = otherId;
+            }
+          }
+          print('Request body: ${json.encode(requestData)}');
+
           await productData.submitDailyNeedProduct();
           _showToastMessage("Daily Need has been saved Successfully");
+
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('submittedData', json.encode(requestData));
+          print('Submitted data stored in shared preferences: $requestData');
+
+          // Now update the dailyNeedList in the provider with the submitted data
+          final dailyNeedProvider =
+              Provider.of<DailyNeedProductProvider>(context, listen: false);
+          await dailyNeedProvider.getPostDailyNeedProduct(widget.customerId);
+          dailyNeedProvider.notifyListeners();
         } catch (e) {
+          print('Error during data submission: $e');
           _showToastMessage('Failed to save Daily Need');
         }
       }
@@ -128,14 +171,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
         Provider.of<ProductListProvider>(context, listen: false);
     return WillPopScope(
       onWillPop: () async {
-        // Navigate back to the previous screen with the customerId
         Navigator.pop(context, widget.customerId);
-        return false; // Return false to allow the default back button behavior
+        return false;
       },
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text("Add Daily Need Products"),
+          title: const Text("Add Daily Need Pro3ducts"),
         ),
         body: SingleChildScrollView(
           child: Form(
@@ -307,7 +349,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   padding: const EdgeInsets.all(10.0),
                   child: ElevatedButton(
                     onPressed: () {
-                      _submitDailyNeedProduct();
+                      _submitDailyNeedProduct(context);
+                      // submitDailyNeedProduct();
                       _saveDailyNeedProductDetails();
                     },
                     child: Container(

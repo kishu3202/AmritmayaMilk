@@ -12,32 +12,6 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-// main() async {
-//   var headers = {
-//     'Content-Type': 'application/json',
-//     'X-API-KEY': 'amritmayamilk050512',
-//   };
-//   var http;
-//   var request = http.Request(
-//       'POST',
-//       Uri.parse(
-//           'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/login'));
-//   request.body = {
-//     'email': 'sahu@gmail.com',
-//     'password': '1234',
-//     // 'token': 'b6c6cb50a0149f4b',
-//   };
-//   request.headers.addAll(headers);
-//
-//   StreamedResponse response = await request.send();
-//
-//   if (response.statusCode == 200) {
-//     print(await response.stream.bytesToString());
-//   } else {
-//     print(response.reasonPhrase);
-//   }
-// }
-
 class _LoginScreenState extends State<LoginScreen> {
   final _formfield = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();

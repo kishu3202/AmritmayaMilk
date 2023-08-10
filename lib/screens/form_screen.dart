@@ -1,13 +1,17 @@
+import 'dart:convert';
+
 import 'package:amritmaya_milk/provider/dailyNeedProduct_Provider.dart';
 import 'package:amritmaya_milk/screens/productDetails_screen.dart';
 import 'package:amritmaya_milk/screens/product_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/dailyNeedProduct_data_model.dart';
 
 class FormScreen extends StatefulWidget {
   final String customerId;
+
   const FormScreen({required this.customerId, Key? key}) : super(key: key);
 
   @override
@@ -15,12 +19,25 @@ class FormScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<FormScreen> {
+  Map<String, dynamic>? submittedData;
   @override
   void initState() {
     super.initState();
     final dailyNeedProvider =
         Provider.of<DailyNeedProductProvider>(context, listen: false);
     dailyNeedProvider.getPostDailyNeedProduct(widget.customerId);
+    _loadSubmittedData();
+  }
+
+  Future<void> _loadSubmittedData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final storedData = prefs.getString('submittedData');
+    if (storedData != null) {
+      setState(() {
+        submittedData = json.decode(storedData);
+        print('Loaded submitted data from shared preferences: $submittedData');
+      });
+    }
   }
 
   @override
@@ -28,6 +45,7 @@ class _FormScreenState extends State<FormScreen> {
     final dailyNeedProvider =
         Provider.of<DailyNeedProductProvider>(context, listen: false);
     final dailyNeedList = dailyNeedProvider.dialNeedList;
+    final loading = dailyNeedProvider.loading;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Daily Need Product List'),
@@ -49,7 +67,7 @@ class _FormScreenState extends State<FormScreen> {
                     // physics: NeverScrollableScrollPhysics(),
                     itemCount: dailyNeedList.length,
                     itemBuilder: (context, index) {
-                      final DialNeedList dialNeed = dailyNeedList[index];
+                      final DialNeedList dialNeedList = dailyNeedList[index];
                       // final dialNeed = dailyNeedList[index];
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -81,7 +99,7 @@ class _FormScreenState extends State<FormScreen> {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: '${dialNeed.name ?? "N/A"}',
+                                        text: '${dialNeedList.name ?? "N/A"}',
                                         style: TextStyle(color: Colors.black87),
                                       ),
                                     ],
@@ -106,7 +124,7 @@ class _FormScreenState extends State<FormScreen> {
                                       ),
                                       TextSpan(
                                         text:
-                                            '${dialNeed.createdAt?.toString() ?? ""}',
+                                            '${dialNeedList.createdAt?.toString() ?? ""}',
                                         style: TextStyle(color: Colors.black87),
                                       ),
                                     ],
@@ -130,8 +148,8 @@ class _FormScreenState extends State<FormScreen> {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: '${dialNeed.orderId ?? ""}',
-                                        style: TextStyle(color: Colors.black87) ,
+                                        text: '${dialNeedList.orderId ?? ""}',
+                                        style: TextStyle(color: Colors.black87),
                                       ),
                                     ],
                                   ),
@@ -142,14 +160,22 @@ class _FormScreenState extends State<FormScreen> {
                                 SizedBox(
                                   height: 30,
                                   child: ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     ProductDetailScreen(
-                                                      dialNeed: dialNeed,
+                                                      dialNeed: dialNeedList,
                                                     )));
+                                        SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        final encodedDataList = dailyNeedList
+                                            .map((item) => item.toJson())
+                                            .toList();
+                                        await prefs.setString('dialNeedList',
+                                            json.encode(encodedDataList));
                                       },
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(
@@ -174,64 +200,37 @@ class _FormScreenState extends State<FormScreen> {
               },
             );
           }),
-
-      // body: SizedBox(
-      //   height: MediaQuery.of(context).size.height,
-      //   width: MediaQuery.of(context).size.width,
-      //   child: ListView.builder(
-      //     shrinkWrap: true,
-      //     physics: NeverScrollableScrollPhysics(),
-      //     itemCount: dailyNeedList.length,
-      //     itemBuilder: (context, index) {
-      //       final dialNeed = dailyNeedList[index];
-      //       return Padding(
-      //         padding: const EdgeInsets.all(8.0),
-      //         child: Card(
-      //           shape: RoundedRectangleBorder(
-      //               borderRadius: BorderRadius.circular(10.0)),
-      //           color: Colors.deepPurple.shade50,
-      //           child: Column(
-      //             children: [
-      //               SizedBox(
-      //                 height: 8.0,
-      //               ),
-      //               Text(dailyNeedProvider.dialNeedList[index].name ?? ""),
-      //               SizedBox(
-      //                 height: 5.0,
-      //               ),
-      //               Text(dailyNeedProvider.dialNeedList[index].createdAt
-      //                       .toString() ??
-      //                   ""),
-      //               SizedBox(
-      //                 height: 5.0,
-      //               ),
-      //               Text(
-      //                 dailyNeedProvider.dialNeedList[index].orderId ?? "",
-      //               ),
-      //               SizedBox(
-      //                 height: 5.0,
-      //               ),
-      //             ],
-      //           ),
-      //         ),
-      //       );
-      //     },
-      //   ),
-      // ),
       floatingActionButton: Container(
         height: 60,
         width: 220,
         child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProductListScreen(
-                  customerId: widget.customerId,
+          onPressed: () async {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            final savedData = prefs.getString('dialNeedList');
+            if (savedData != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductListScreen(
+                    customerId: widget.customerId,
+                    savedDialNeedList: savedData,
+                  ),
                 ),
-              ),
-            );
+              );
+              print('Saved data :${savedData}');
+            } else {
+              print("No saved data available.");
+            }
           },
+          //   Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //       builder: (context) => ProductListScreen(
+          //         customerId: widget.customerId,
+          //       ),
+          //     ),
+          //   );
+          // },
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           child: const Text(

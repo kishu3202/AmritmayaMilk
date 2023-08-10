@@ -38,7 +38,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       'name': 'Poonam',
       'number': '7276573202',
       'address': 'Karad',
-      'fromDate': '2/7,2023',
+      'fromDate': '2/7/2023',
       'toDate': '3/6/2023',
     },
     {
@@ -52,35 +52,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
       'name': 'Rahul',
       'number': '7276573202',
       'address': 'Satara',
-      'fromDate': '25/042023',
+      'fromDate': '25/04/2023',
       'toDate': '27/05/2023'
     },
     {
       'name': 'Rahul',
       'number': '7276573202',
       'address': 'Satara',
-      'fromDate': '25/042023',
+      'fromDate': '25/04/2023',
       'toDate': '27/05/2023'
     },
     {
       'name': 'Rahul',
       'number': '7276573202',
       'address': 'Satara',
-      'fromDate': '25/042023',
+      'fromDate': '25/04/2023',
       'toDate': '27/05/2023'
     },
     {
       'name': 'Rahul',
       'number': '7276573202',
       'address': 'Satara',
-      'fromDate': '25/042023',
+      'fromDate': '25/04/2023',
       'toDate': '27/05/2023'
     },
     {
       'name': 'Rahul',
       'number': '7276573202',
       'address': 'Satara',
-      'fromDate': '25/042023',
+      'fromDate': '25/04/2023',
       'toDate': '27/05/2023'
     },
   ];
@@ -120,7 +120,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           // ),
           centerTitle: true,
           title: const Text('Dashboard'),
-          // automaticallyImplyLeading: false,
+          automaticallyImplyLeading: false,
           actions: [
             IconButton(
               onPressed: () {
@@ -221,6 +221,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             padding: const EdgeInsets.all(5),
                             child: Container(
                               decoration: ShapeDecoration(
+                                color: Colors.deepPurple.shade50,
                                 shape: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide:

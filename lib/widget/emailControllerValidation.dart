@@ -1868,3 +1868,108 @@ class EmailValidator extends StatelessWidget {
 //     ),
 //   ),
 // ),
+
+// body: SizedBox(
+//   height: MediaQuery.of(context).size.height,
+//   width: MediaQuery.of(context).size.width,
+//   child: ListView.builder(
+//     shrinkWrap: true,
+//     physics: NeverScrollableScrollPhysics(),
+//     itemCount: dailyNeedList.length,
+//     itemBuilder: (context, index) {
+//       final dialNeed = dailyNeedList[index];
+//       return Padding(
+//         padding: const EdgeInsets.all(8.0),
+//         child: Card(
+//           shape: RoundedRectangleBorder(
+//               borderRadius: BorderRadius.circular(10.0)),
+//           color: Colors.deepPurple.shade50,
+//           child: Column(
+//             children: [
+//               SizedBox(
+//                 height: 8.0,
+//               ),
+//               Text(dailyNeedProvider.dialNeedList[index].name ?? ""),
+//               SizedBox(
+//                 height: 5.0,
+//               ),
+//               Text(dailyNeedProvider.dialNeedList[index].createdAt
+//                       .toString() ??
+//                   ""),
+//               SizedBox(
+//                 height: 5.0,
+//               ),
+//               Text(
+//                 dailyNeedProvider.dialNeedList[index].orderId ?? "",
+//               ),
+//               SizedBox(
+//                 height: 5.0,
+//               ),
+//             ],
+//           ),
+//         ),
+//       );
+//     },
+//   ),
+// ),
+
+// main() async {
+//   var headers = {
+//     'Content-Type': 'application/json',
+//     'X-API-KEY': 'amritmayamilk050512',
+//   };
+//   var http;
+//   var request = http.Request(
+//       'POST',
+//       Uri.parse(
+//           'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/login'));
+//   request.body = {
+//     'email': 'sahu@gmail.com',
+//     'password': '1234',
+//     // 'token': 'b6c6cb50a0149f4b',
+//   };
+//   request.headers.addAll(headers);
+//
+//   StreamedResponse response = await request.send();
+//
+//   if (response.statusCode == 200) {
+//     print(await response.stream.bytesToString());
+//   } else {
+//     print(response.reasonPhrase);
+//   }
+// }
+
+// Future<void> fetchRates(
+//     String productId, String unitId, String quantityId) async {
+//   try {
+//     final res = await http.get(
+//       Uri.parse(
+//           "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId"),
+//       headers: {
+//         "Content-Type": "application/json",
+//         "X-API-KEY": "amritmayamilk050512",
+//       },
+//     );
+//
+//     final response = json.decode(res.body) as Map<String, dynamic>;
+//     print('API Response - Fetch Rates: $response');
+//     if (res.statusCode == 200) {
+//       rateList.clear();
+//
+//       final rateData = response["productrateList"];
+//       if (rateData is Map<String, dynamic>) {
+//         rateData.forEach((key, value) {
+//           final rateValue = value;
+//           rateList.add(rateValue.toString());
+//         });
+//       }
+//       print('Fetched Rates: $rateList');
+//       notifyListeners();
+//     } else {
+//       throw Exception('Failed to fetch rates');
+//     }
+//   } catch (e) {
+//     print('Error fetching rates: $e');
+//     throw Exception('Failed to fetch rates');
+//   }
+// }
