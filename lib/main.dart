@@ -1,6 +1,6 @@
 import 'package:amritmaya_milk/provider/auth_Provider.dart';
 import 'package:amritmaya_milk/provider/customerList_Provider.dart';
-import 'package:amritmaya_milk/provider/dailyNeedProduct_Provider.dart';
+import 'package:amritmaya_milk/provider/dailyNeedList_Provider.dart';
 import 'package:amritmaya_milk/provider/productList_Provider.dart';
 import 'package:amritmaya_milk/provider/user_Provider.dart';
 import 'package:amritmaya_milk/screens/dashboard_screen.dart';

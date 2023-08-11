@@ -1,13 +1,14 @@
 import 'dart:convert';
 
-import 'package:amritmaya_milk/provider/dailyNeedProduct_Provider.dart';
+import 'package:amritmaya_milk/provider/dailyNeedList_Provider.dart';
 import 'package:amritmaya_milk/screens/productDetails_screen.dart';
 import 'package:amritmaya_milk/screens/product_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../data/dailyNeedProduct_data_model.dart';
+import '../data/dailyNeedList_data_model.dart';
 
 class FormScreen extends StatefulWidget {
   final String customerId;
@@ -57,7 +58,7 @@ class _FormScreenState extends State<FormScreen> {
           //     .getPostDailyNeedProduct(widget.customerId),
           builder: (context, snapshot) {
             return Consumer<DailyNeedProductProvider>(
-              builder: (context, dailyNeedProvider, child) {
+              builder: (context, dailyNeedProvider, _) {
                 final dailyNeedList = dailyNeedProvider.dialNeedList;
                 return SizedBox(
                   height: MediaQuery.of(context).size.height,
@@ -124,7 +125,8 @@ class _FormScreenState extends State<FormScreen> {
                                       ),
                                       TextSpan(
                                         text:
-                                            '${dialNeedList.createdAt?.toString() ?? ""}',
+                                            '${DateFormat('yyyy-MM-dd').format(dialNeedList.createdAt)}',
+                                        // text: '${dialNeedList.createdAt ?? ""}',
                                         style: TextStyle(color: Colors.black87),
                                       ),
                                     ],

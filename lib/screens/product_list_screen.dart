@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,7 +11,7 @@ import '../data/productList_data_model.dart';
 import '../data/productQuantity_data_model.dart';
 import '../data/productRate_data_model.dart';
 import '../data/productUnit_data_model.dart';
-import '../provider/dailyNeedProduct_Provider.dart';
+import '../provider/dailyNeedList_Provider.dart';
 import '../provider/productList_Provider.dart';
 
 class ProductListScreen extends StatefulWidget {
@@ -47,6 +48,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
   String? otherId;
   bool? selectedIds;
 
+  String userId = '';
+
+  String? selectedProductId;
+  int? selectedProductIndex;
+  int? selectedUnitIndex;
+  String? selectedUnitId;
+  int? selectedQuantityIndex;
+
   String productId = '';
   String unitId = '';
   String quantityId = '';
@@ -56,29 +65,20 @@ class _ProductListScreenState extends State<ProductListScreen> {
   void initState() {
     super.initState();
     cardAdd.add(addProductCard());
-    _loadDailyNeedProductDetails();
   }
 
-  Future<void> _loadDailyNeedProductDetails() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    selectedProduct = prefs.getString('selected_product') ?? null;
-    selectedUnit = prefs.getString('selected_unit') ?? null;
-    selectedQuantity = prefs.getString('selected_quantity') ?? null;
-    selectedRate = prefs.getString('selected_rate') ?? null;
-    selectedIds = prefs.getBool('polythene_small_checked') ?? false;
-    selectedIds = prefs.getBool('polythene_big_checked') ?? false;
-    selectedIds = prefs.getBool('delivery_checked') ?? false;
-    selectedIds = prefs.getBool('maintenance_checked') ?? false;
-    staffId = prefs.getString('staff_id') ?? null;
-    otherId = prefs.getString('other_id') ?? null;
-    setState(() {}); // Refresh the UI after loading the details
+  void fetchUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userId = prefs.getString('userId') ?? '';
+    });
+    print(userId);
   }
 
-  // Function to save customer daily need product details to SharedPreferences
   Future<void> _saveDailyNeedProductDetails() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('customer_id', widget.customerId);
-    prefs.setString('staff_id', staffId ?? '');
+    prefs.setString('staff_id', userId ?? '');
     prefs.setString('other_id', otherId ?? '');
     prefs.setString('selected_product', selectedProduct ?? '');
     prefs.setString('selected_unit', selectedUnit ?? '');
@@ -122,41 +122,43 @@ class _ProductListScreenState extends State<ProductListScreen> {
         );
       } else {
         try {
-          final requestData = {
-            'product_id[]': productData.selectedProduct,
-            'unit_id[]': productData.selectedUnit,
-            'qnt[]': productData.selectedQuantity,
-            'rate[]': productData.selectedRate,
-            'other_charges[]': productData.selectedIds,
-            'customer_id': widget.customerId,
-            'staff_id': productData.staffId,
-            'other_id[]': productData.otherId,
+          var headers = {
+            "Content-Type": "application/json",
+            'X-API-KEY': 'amritmayamilk050512',
           };
-          if (widget.savedDialNeedList != null) {
-            final savedDataList = json.decode(widget.savedDialNeedList);
-            if (savedDataList is List && savedDataList.isNotEmpty) {
-              final staffId = savedDataList[0]['productdetails'][0]['staff_id'];
-              requestData['staff_id'] = staffId;
 
-              final otherId =
-                  savedDataList[0]['other_charges'][0]['other_charges_id'];
-              requestData['other_id[]'] = otherId;
-            }
+          var uri = Uri.parse(
+              'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct');
+
+          var data = {
+            'customer_id': widget.customerId.toString(),
+            'staff_id': userId,
+          };
+
+          for (int i = 0; i < productData.selectedProduct!.length; i++) {
+            data['product_id[$i]'] = productData.selectedProduct![i];
+            data['unit_id[$i]'] = productData.selectedUnit![i];
+            data['qnt[$i]'] = productData.selectedQuantity![i];
+            data['rate[$i]'] = productData.selectedRate![i];
+            data['other_charges[$i]'] = productData.selectedIds[i];
           }
-          print('Request body: ${json.encode(requestData)}');
 
-          await productData.submitDailyNeedProduct();
-          _showToastMessage("Daily Need has been saved Successfully");
+          var response = await http.post(uri, headers: headers, body: data);
 
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('submittedData', json.encode(requestData));
-          print('Submitted data stored in shared preferences: $requestData');
+          if (response.statusCode == 200) {
+            final jsonData = json.decode(response.body);
+            print(jsonData);
+            print(jsonData["Success"]);
+            _showToastMessage("Daily Need has been saved Successfully");
 
-          // Now update the dailyNeedList in the provider with the submitted data
-          final dailyNeedProvider =
-              Provider.of<DailyNeedProductProvider>(context, listen: false);
-          await dailyNeedProvider.getPostDailyNeedProduct(widget.customerId);
-          dailyNeedProvider.notifyListeners();
+            final dailyNeedProvider =
+                Provider.of<DailyNeedProductProvider>(context, listen: false);
+            await dailyNeedProvider.getPostDailyNeedProduct(widget.customerId);
+            dailyNeedProvider.notifyListeners();
+          } else {
+            Fluttertoast.showToast(
+                msg: "Error Occurred", timeInSecForIosWeb: 25);
+          }
         } catch (e) {
           print('Error during data submission: $e');
           _showToastMessage('Failed to save Daily Need');
@@ -172,7 +174,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return WillPopScope(
       onWillPop: () async {
         Navigator.pop(context, widget.customerId);
-        return false;
+        return true;
       },
       child: Scaffold(
         appBar: AppBar(
@@ -350,8 +352,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       _submitDailyNeedProduct(context);
-                      // submitDailyNeedProduct();
                       _saveDailyNeedProductDetails();
+                      // submitDailyNeedProduct();
                     },
                     child: Container(
                       height: 50,
@@ -415,15 +417,25 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             items:
                                 productData.productNameList.map((String value) {
                               return DropdownMenuItem<String>(
-                                value: productData.productIdList[
-                                    productData.productNameList.indexOf(value)],
+                                value: value,
+                                // value: productData.productIdList[
+                                //     productData.productNameList.indexOf(value)],
                                 child: Text(value),
                               );
                             }).toList(),
                             onChanged: (String? selectedValue) {
-                              productData.setSelectedProduct(selectedValue!);
-                              productData
-                                  .fetchUnitIds(productData.selectedProduct!);
+                              setState(() {
+                                print(selectedValue);
+                                print(productData.productNameList);
+                                print(productData.productIdList);
+                                selectedProductIndex = productData
+                                    .productNameList
+                                    .indexOf(selectedValue!);
+                                selectedProductId = productData.productIdList
+                                    .elementAt(selectedProductIndex!);
+                                productData.setSelectedProduct(selectedValue!);
+                                productData.fetchUnitIds(selectedProductId!);
+                              });
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -455,172 +467,178 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     );
                   }),
                   SizedBox(height: 20),
-                  Consumer<ProductListProvider>(
-                    builder: (context, productData, _) {
-                      return DropdownButtonFormField<String>(
-                        hint: const Text(
-                          'Unit',
-                          style: TextStyle(fontSize: 15, color: Colors.black),
-                        ),
-                        value: productData.selectedUnit,
-                        items: productData.unitNameList.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: productData.unitIdList[
-                                productData.unitNameList.indexOf(value)],
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String? selectedValue) {
-                          selectedUnit = selectedValue!;
-                          productData.setSelectedUnitId(selectedValue!);
-                          productData.fetchQuantityIds(
-                            productData.selectedProduct!,
-                            productData.selectedUnit!,
-                          );
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select an option';
-                          }
-                          return null;
-                        },
-                        icon: const Icon(
-                          Icons.arrow_drop_down_circle,
-                          color: Colors.blue,
-                        ),
-                        dropdownColor: Colors.deepPurple.shade50,
-                        decoration: InputDecoration(
-                          labelText: "Unit",
-                          prefixIcon: const Icon(
-                            Icons.ad_units_outlined,
+                  FutureBuilder(builder: (context, snapshot) {
+                    return Consumer<ProductListProvider>(
+                      builder: (context, productData, _) {
+                        return DropdownButtonFormField<String>(
+                          hint: const Text(
+                            'Unit',
+                            style: TextStyle(fontSize: 15, color: Colors.black),
+                          ),
+                          value: productData.selectedUnit,
+                          items: productData.unitNameList.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              // value: productData.unitIdList[
+                              //     productData.unitNameList.indexOf(value)],
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String? selectedValue) {
+                            setState(() {
+                              print(selectedValue);
+                              print(productData.unitNameList);
+                              print(productData.unitIdList);
+                              selectedUnitIndex = productData.unitNameList
+                                  .indexOf(selectedValue!);
+                              selectedUnitId = productData.unitIdList
+                                  .elementAt(selectedUnitIndex!);
+                              productData.setSelectedUnitId(selectedValue!);
+                              productData.fetchQuantityIds(
+                                productData.selectedProduct!,
+                                productData.selectedUnit!,
+                              );
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select an option';
+                            }
+                            return null;
+                          },
+                          icon: const Icon(
+                            Icons.arrow_drop_down_circle,
                             color: Colors.blue,
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                              color: Colors.black87,
+                          dropdownColor: Colors.deepPurple.shade50,
+                          decoration: InputDecoration(
+                            labelText: "Unit",
+                            prefixIcon: const Icon(
+                              Icons.ad_units_outlined,
+                              color: Colors.blue,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: Colors.black87,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    );
+                  }),
                   SizedBox(height: 20),
-                  Consumer<ProductListProvider>(
-                    builder: (context, productData, _) {
-                      return DropdownButtonFormField<String>(
-                        hint: const Text(
-                          'Quantity',
-                          style: TextStyle(fontSize: 15, color: Colors.black),
-                        ),
-                        value: productData.selectedQuantity,
-                        items: productData.quantityList.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: productData.quantityList[
-                                productData.quantityList.indexOf(value)],
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String? selectedValue) {
-                          quantityId = selectedValue!;
-                          productData.setSelectedQuantityId(selectedValue);
-                          productData.fetchRates(
-                              productData.selectedProduct!,
-                              productData.selectedUnit!,
-                              productData.selectedQuantity!);
-                          print(selectedQuantity);
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select an option';
-                          }
-                          return null;
-                        },
-                        icon: const Icon(
-                          Icons.arrow_drop_down_circle,
-                          color: Colors.blue,
-                        ),
-                        dropdownColor: Colors.deepPurple.shade50,
-                        decoration: InputDecoration(
-                          labelText: "Quantity",
-                          prefixIcon: const Icon(
-                            Icons.production_quantity_limits,
+                  FutureBuilder(builder: (context, snapshot) {
+                    return Consumer<ProductListProvider>(
+                      builder: (context, productData, _) {
+                        return DropdownButtonFormField<String>(
+                          hint: const Text(
+                            'Quantity',
+                            style: TextStyle(fontSize: 15, color: Colors.black),
+                          ),
+                          value: productData.selectedQuantity,
+                          items: productData.quantityList.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              //  value: productData.quantityList[
+                              // productData.quantityList.indexOf(value)],
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String? selectedValue) {
+                            quantityId = selectedValue!;
+                            productData.setSelectedQuantityId(selectedValue!);
+                            productData.fetchRates(
+                                productData.selectedProduct!,
+                                productData.selectedUnit!,
+                                productData.selectedQuantity!);
+                            print(selectedQuantity);
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select an option';
+                            }
+                            return null;
+                          },
+                          icon: const Icon(
+                            Icons.arrow_drop_down_circle,
                             color: Colors.blue,
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                              color: Colors.black87,
+                          dropdownColor: Colors.deepPurple.shade50,
+                          decoration: InputDecoration(
+                            labelText: "Quantity",
+                            prefixIcon: const Icon(
+                              Icons.production_quantity_limits,
+                              color: Colors.blue,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: Colors.black87,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    );
+                  }),
                   SizedBox(height: 20),
-                  Consumer<ProductListProvider>(
-                    builder: (context, productData, _) {
-                      print('Rate List: ${productData.rateList}');
+                  FutureBuilder(builder: (context, snapshot) {
+                    return Consumer<ProductListProvider>(
+                      builder: (context, productData, _) {
+                        print('Rate List: ${productData.rateList}');
 
-                      return DropdownButtonFormField<String>(
-                        hint: const Text(
-                          'Rate',
-                          style: TextStyle(fontSize: 15, color: Colors.black),
-                        ),
-                        value: productData.selectedRate,
-                        items: productData.rateList.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String? selectedValue) async {
-                          if (selectedValue != null) {
-                            productData.setSelectedProduct(selectedValue);
-                            productData
-                                .fetchUnitIds(productData.selectedProduct!);
-                            await productData.fetchQuantityIds(
-                              productData.selectedProduct!,
-                              productData.selectedUnit!,
+                        return DropdownButtonFormField<String>(
+                          hint: const Text(
+                            'Rate',
+                            style: TextStyle(fontSize: 15, color: Colors.black),
+                          ),
+                          value: productData.selectedRate,
+                          items: productData.rateList.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
                             );
-                            await productData.fetchRates(
-                              productData.selectedProduct!,
-                              productData.selectedUnit!,
-                              productData.selectedQuantity!,
-                            );
-                          }
-                        },
-                        // onChanged: (String? selectedValue) {
-                        //   rate = selectedValue!;
-                        //   productData.setSelectedRateId(selectedValue!);
-                        // },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select an option';
-                          }
-                          return null;
-                        },
-                        icon: const Icon(
-                          Icons.arrow_drop_down_circle,
-                          color: Colors.blue,
-                        ),
-                        dropdownColor: Colors.deepPurple.shade50,
-                        decoration: InputDecoration(
-                          labelText: "Rate",
-                          prefixIcon: const Icon(
-                            Icons.monetization_on,
+                          }).toList(),
+                          onChanged: (String? selectedValue) async {
+                            if (selectedValue != null) {
+                              productData.setSelectedProduct(selectedValue);
+                              await productData.fetchRates(
+                                productData.selectedProduct!,
+                                productData.selectedUnit!,
+                                productData.selectedQuantity!,
+                              );
+                            }
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select an option';
+                            }
+                            return null;
+                          },
+                          icon: const Icon(
+                            Icons.arrow_drop_down_circle,
                             color: Colors.blue,
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                              color: Colors.black87,
+                          dropdownColor: Colors.deepPurple.shade50,
+                          decoration: InputDecoration(
+                            labelText: "Rate",
+                            prefixIcon: const Icon(
+                              Icons.monetization_on,
+                              color: Colors.blue,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: Colors.black87,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    );
+                  }),
                 ],
               ),
             ),
@@ -630,3 +648,20 @@ class _ProductListScreenState extends State<ProductListScreen> {
     );
   }
 }
+
+// Future<void> _loadDailyNeedProductDetails() async {
+//   final SharedPreferences prefs = await SharedPreferences.getInstance();
+//   selectedProduct = prefs.getString('selected_product') ?? null;
+//   selectedUnit = prefs.getString('selected_unit') ?? null;
+//   selectedQuantity = prefs.getString('selected_quantity') ?? null;
+//   selectedRate = prefs.getString('selected_rate') ?? null;
+//   selectedIds = prefs.getBool('polythene_small_checked') ?? false;
+//   selectedIds = prefs.getBool('polythene_big_checked') ?? false;
+//   selectedIds = prefs.getBool('delivery_checked') ?? false;
+//   selectedIds = prefs.getBool('maintenance_checked') ?? false;
+//   staffId = prefs.getString('staff_id') ?? null;
+//   otherId = prefs.getString('other_id') ?? null;
+//   setState(() {}); // Refresh the UI after loading the details
+// }
+
+// Function to save customer daily need product details to SharedPreferences

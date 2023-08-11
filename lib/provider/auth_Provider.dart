@@ -23,7 +23,7 @@ class AuthProvider extends ChangeNotifier {
       map['email'] = email;
       map['password'] = password;
       map['token'] = 'testing';
-      map['type'] = 'user';
+      map['type'] = 'delivery_boy';
       Response response = await post(
           Uri.parse(
               "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/login"),
@@ -37,7 +37,7 @@ class AuthProvider extends ChangeNotifier {
         // Save the login data using shared preferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('token', loginResponse['token']);
-        prefs.setString('id', loginResponse['id']);
+        prefs.setString('userid', loginResponse['id']);
         prefs.setString('name', loginResponse['name']);
         prefs.setString('contact', loginResponse['contact']);
         prefs.setString('email', loginResponse['email']);

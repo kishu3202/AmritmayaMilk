@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../data/dailyNeedProduct_data_model.dart';
+import '../data/dailyNeedList_data_model.dart';
 
 class DailyNeedProductProvider extends ChangeNotifier {
   List<DialNeedList> dialNeedList = [];
@@ -31,19 +31,17 @@ class DailyNeedProductProvider extends ChangeNotifier {
           "http://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedlist?customer_id=$customerId");
       if (response.statusCode == 200) {
         final item = await json.decode(response.body);
-        dialNeedList.clear(); // Clearing only when data is available
-
+        dialNeedList.clear();
         for (var product in item['dialNeedList']) {
           dialNeedList.add(DialNeedList.fromJson(product));
         }
-        print("product in daily need product ${dialNeedList}");
 
-        // Save the data
         SharedPreferences prefs = await SharedPreferences.getInstance();
         final encodedDataList =
             dialNeedList.map((item) => item.toJson()).toList();
         await prefs.setString('dialNeedList', json.encode(encodedDataList));
         final savedData = prefs.getString('dialNeedList');
+
         print("Saved DialNeedList from Shared Preferences: $savedData");
       } else {
         print(

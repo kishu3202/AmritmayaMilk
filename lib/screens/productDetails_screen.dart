@@ -1,4 +1,4 @@
-import 'package:amritmaya_milk/data/dailyNeedProduct_data_model.dart';
+import 'package:amritmaya_milk/data/dailyNeedList_data_model.dart';
 import 'package:flutter/material.dart';
 
 class ProductDetailScreen extends StatefulWidget {

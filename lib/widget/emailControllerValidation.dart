@@ -1973,3 +1973,102 @@ class EmailValidator extends StatelessWidget {
 //     throw Exception('Failed to fetch rates');
 //   }
 // }
+
+// Future<void> submitDailyNeedProduct() async {
+//   var headers = {
+//     "Content-Type": "application/json",
+//     'X-API-KEY': 'amritmayamilk050512',
+//   };
+//
+//   var request = http.MultipartRequest(
+//       'POST',
+//       Uri.parse(
+//           'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct'));
+//   request.fields.addAll({
+//     'customer_id': 'widget.customerId',
+//     'product_id[]': "selectedProduct",
+//     'qnt[]': 'selectedQuantity',
+//     'unit_id[]': 'selectedUnit',
+//     'rate[]': 'selectedRate',
+//     'staff_id': 'staffId',
+//     'other_charges[]': 'selectedIds',
+//     'other_id[]': 'otherId'
+//   });
+//   request.headers.addAll(headers);
+//   try {
+//     http.StreamedResponse response = await request.send();
+//
+//     if (response.statusCode == 200) {
+//       final jsonData = await response.stream.bytesToString();
+//       final decoded = jsonDecode(jsonData);
+//       print(decoded);
+//       print(decoded["Success"]);
+//     } else {
+//       print(response.reasonPhrase);
+//     }
+//   } catch (e) {
+//     debugPrint("cachedError${e.toString()}");
+//   }
+// }
+
+// Future<void> _submitDailyNeedProduct(BuildContext context) async {
+//   final productData =
+//       Provider.of<ProductListProvider>(context, listen: false);
+//
+//   if (!formKey.currentState!.validate()) {
+//     print('Please fill all the details');
+//   } else {
+//     if (productData.selectedIds.isEmpty) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(
+//           backgroundColor: Colors.red,
+//           content: Text(
+//             'Please select at least one checkbox',
+//             style: TextStyle(color: Colors.white),
+//           ),
+//         ),
+//       );
+//     } else {
+//       try {
+//         final requestData = {
+//           'product_id[]': productData.selectedProduct,
+//           'unit_id[]': productData.selectedUnit,
+//           'qnt[]': productData.selectedQuantity,
+//           'rate[]': productData.selectedRate,
+//           'other_charges[]': productData.selectedIds,
+//           'customer_id': widget.customerId,
+//           'staff_id': productData.staffId,
+//           'other_id[]': productData.otherId,
+//         };
+//         if (widget.savedDialNeedList != null) {
+//           final savedDataList = json.decode(widget.savedDialNeedList);
+//           if (savedDataList is List && savedDataList.isNotEmpty) {
+//             final staffId = savedDataList[0]['productdetails'][0]['staff_id'];
+//             requestData['staff_id'] = staffId;
+//
+//             final otherId =
+//                 savedDataList[0]['other_charges'][0]['other_charges_id'];
+//             requestData['other_id[]'] = otherId;
+//           }
+//         }
+//         print('Request body: ${json.encode(requestData)}');
+//
+//         await productData.submit();
+//         _showToastMessage("Daily Need has been saved Successfully");
+//
+//         SharedPreferences prefs = await SharedPreferences.getInstance();
+//         await prefs.setString('submittedData', json.encode(requestData));
+//         print('Submitted data stored in shared preferences: $requestData');
+//
+//         // Now update the dailyNeedList in the provider with the submitted data
+//         final dailyNeedProvider =
+//             Provider.of<DailyNeedProductProvider>(context, listen: false);
+//         await dailyNeedProvider.getPostDailyNeedProduct(widget.customerId);
+//         dailyNeedProvider.notifyListeners();
+//       } catch (e) {
+//         print('Error during data submission: $e');
+//         _showToastMessage('Failed to save Daily Need');
+//       }
+//     }
+//   }
+// }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
 class ProductListProvider extends ChangeNotifier {
@@ -8,7 +9,7 @@ class ProductListProvider extends ChangeNotifier {
   String? selectedUnit;
   String? selectedQuantity;
   String? selectedRate;
-  String? staffId;
+  String? userId;
   String? otherId;
 
   bool? polytheneSmallChecked = false;
@@ -56,6 +57,7 @@ class ProductListProvider extends ChangeNotifier {
           productIdList.add(product["id"]);
           productNameList.add(product["name"]);
         });
+
         notifyListeners();
       } else {
         throw Exception('Failed to fetch product names');
@@ -90,7 +92,6 @@ class ProductListProvider extends ChangeNotifier {
             unitNameList.add(unitName);
           }
         });
-
         notifyListeners();
       } else {
         throw Exception('Failed to fetch unit IDs');
@@ -110,6 +111,8 @@ class ProductListProvider extends ChangeNotifier {
           "X-API-KEY": "amritmayamilk050512",
         },
       );
+      print(
+          "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productqnt?product_id=$productId&unit_id=$unitId");
       final response = json.decode(res.body) as Map<String, dynamic>;
       print('API Response: $response');
       if (res.statusCode == 200) {
@@ -117,13 +120,13 @@ class ProductListProvider extends ChangeNotifier {
 
         final quantityData = response["productqntList"];
         print('Quantity Data: $quantityData');
-
         quantityData.forEach((quantity) {
           final quantityId = quantity["qnt"];
           if (!quantityList.contains(quantityId)) {
             quantityList.add(quantityId);
           }
         });
+
         notifyListeners();
       } else {
         throw Exception('Failed to fetch quantity IDs');
@@ -213,41 +216,38 @@ class ProductListProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> submitDailyNeedProduct() async {
+  Future<void> submit() async {
     var headers = {
       "Content-Type": "application/json",
       'X-API-KEY': 'amritmayamilk050512',
-      'Cookie': 'ci_session=6731fe4c932cf1389c94e708434f2ea9b7338335'
     };
+    var uri = Uri.parse(
+        'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct');
 
-    var request = http.MultipartRequest(
-        'POST',
-        Uri.parse(
-            'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct'));
-    request.fields.addAll({
-      'customer_id': 'customerId',
-      'product_id[]': "selectedProduct",
-      'qnt[]': 'selectedQuantity',
-      'unit_id[]': 'selectedUnit',
-      'rate[]': 'selectedRate',
-      'staff_id': 'staffId',
-      'other_charges[]': 'selectedIds',
-      'other_id[]': 'otherId'
-    });
-    request.headers.addAll(headers);
-    try {
-      http.StreamedResponse response = await request.send();
-
-      if (response.statusCode == 200) {
-        final jsonData = await response.stream.bytesToString();
-        final decoded = jsonDecode(jsonData);
-        print(decoded);
-        print(decoded["Success"]);
-      } else {
-        print(response.reasonPhrase);
-      }
-    } catch (e) {
-      debugPrint("cachedError${e.toString()}");
+    var data = {
+      'customer_id': 'widget.customerId',
+      'product_id[]': selectedProduct.toString(),
+      'qnt[]': selectedQuantity.toString(),
+      'unit_id[]': selectedUnit.toString(),
+      'rate[]': selectedRate.toString(),
+      'staff_id': userId,
+      'other_charges[]': selectedIds.toString(),
+      'other_id[]': otherId.toString()
+    };
+    for (int i = 0; i < selectedProduct!.length; i++) {
+      data.addAll({'product_id[$i]': selectedProduct![i]});
+      data.addAll({'qnt[$i]': selectedQuantity![i]});
+      data.addAll({'unit_id[$i]': selectedUnit![i]});
+      data.addAll({'rate[$i]': selectedRate![i]});
+      data.addAll({"other_charges[$i]": selectedIds[i]});
+    }
+    var response = await http.post(uri, headers: headers, body: data);
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      print(jsonData);
+      print(jsonData["Success"]);
+    } else {
+      Fluttertoast.showToast(msg: "Error Occurred", timeInSecForIosWeb: 25);
     }
   }
 
@@ -277,40 +277,3 @@ class ProductListProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-// Future<void> submitDailyNeedProduct() async {
-//   var headers = {
-//     'X-API-KEY': 'amritmayamilk050512',
-//     'Cookie': 'ci_session=6731fe4c932cf1389c94e708434f2ea9b7338335'
-//   };
-//   var request = http.MultipartRequest(
-//       'POST',
-//       Uri.parse(
-//           'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct'));
-//   request.fields.addAll({
-//     'customer_id': 'customerId',
-//     'product_id[]': "selectedProduct",
-//     'qnt[]': 'selectedQuantity',
-//     'unit_id[]': 'selectedUnit',
-//     'rate[]': 'selectedRate',
-//     'staff_id': '1',
-//     'other_charges[]': 'selectedIds',
-//     'other_id': '2'
-//   });
-//   request.headers.addAll(headers);
-//
-//   try {
-//     http.StreamedResponse response = await request.send();
-//
-//     if (response.statusCode == 200) {
-//       final jsonData = await response.stream.bytesToString();
-//       final decoded = jsonDecode(jsonData);
-//       print(decoded);
-//       print(decoded["Success"]);
-//     } else {
-//       print(response.reasonPhrase);
-//     }
-//   } catch (e) {
-//     debugPrint("cachedError${e.toString()}");
-//   }
-// }
