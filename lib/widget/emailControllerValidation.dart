@@ -2072,3 +2072,253 @@ class EmailValidator extends StatelessWidget {
 //     }
 //   }
 // }
+
+// Widget addProductCard() {
+//   return Card(
+//     shape: RoundedRectangleBorder(
+//         borderRadius: BorderRadius.circular(5.0),
+//         side: const BorderSide(
+//           color: Colors.black,
+//         )),
+//     child: Padding(
+//       padding: const EdgeInsets.all(10.0),
+//       child: Column(
+//         children: [
+//           Padding(
+//             padding: const EdgeInsets.all(10.0),
+//             child: Column(
+//               children: [
+//                 Builder(builder: (context) {
+//                   final productData = Provider.of<ProductListProvider>(
+//                       context,
+//                       listen: false);
+//                   return FutureBuilder(
+//                     future: productData.fetchProductNames(),
+//                     builder: (context, snapshot) {
+//                       if (snapshot.hasError) {
+//                         return Text('Error: ${snapshot.error}');
+//                       } else {
+//                         return DropdownButtonFormField<String>(
+//                           hint: const Text(
+//                             'Product Name',
+//                             style:
+//                             TextStyle(fontSize: 15, color: Colors.black),
+//                           ),
+//                           value: productData.selectedProduct,
+//                           items:
+//                           productData.productNameList.map((String value) {
+//                             return DropdownMenuItem<String>(
+//                               value: productData.productIdList[
+//                               productData.productNameList.indexOf(value)],
+//                               child: Text(value),
+//                             );
+//                           }).toList(),
+//                           onChanged: (String? selectedValue) {
+//                             productData.setSelectedProduct(selectedValue!);
+//                             productData
+//                                 .fetchUnitIds(productData.selectedProduct!);
+//                           },
+//                           validator: (value) {
+//                             if (value == null || value.isEmpty) {
+//                               return 'Please select an option';
+//                             }
+//                             return null;
+//                           },
+//                           icon: const Icon(
+//                             Icons.arrow_drop_down_circle,
+//                             color: Colors.blue,
+//                           ),
+//                           dropdownColor: Colors.deepPurple.shade50,
+//                           decoration: InputDecoration(
+//                             labelText: "Product Name",
+//                             prefixIcon: const Icon(
+//                               Icons.shopping_bag_outlined,
+//                               color: Colors.blue,
+//                             ),
+//                             border: OutlineInputBorder(
+//                               borderRadius: BorderRadius.circular(10),
+//                               borderSide: const BorderSide(
+//                                 color: Colors.black87,
+//                               ),
+//                             ),
+//                           ),
+//                         );
+//                       }
+//                     },
+//                   );
+//                 }),
+//                 SizedBox(height: 20),
+//                 Consumer<ProductListProvider>(
+//                   builder: (context, productData, _) {
+//                     return DropdownButtonFormField<String>(
+//                       hint: const Text(
+//                         'Unit',
+//                         style: TextStyle(fontSize: 15, color: Colors.black),
+//                       ),
+//                       value: productData.selectedUnit,
+//                       items: productData.unitNameList.map((String value) {
+//                         return DropdownMenuItem<String>(
+//                           value: productData.unitIdList[
+//                           productData.unitNameList.indexOf(value)],
+//                           child: Text(value),
+//                         );
+//                       }).toList(),
+//                       onChanged: (String? selectedValue) {
+//                         selectedUnit = selectedValue!;
+//                         productData.setSelectedUnitId(selectedValue!);
+//                         productData.fetchQuantityIds(
+//                           productData.selectedProduct!,
+//                           productData.selectedUnit!,
+//                         );
+//                       },
+//                       validator: (value) {
+//                         if (value == null || value.isEmpty) {
+//                           return 'Please select an option';
+//                         }
+//                         return null;
+//                       },
+//                       icon: const Icon(
+//                         Icons.arrow_drop_down_circle,
+//                         color: Colors.blue,
+//                       ),
+//                       dropdownColor: Colors.deepPurple.shade50,
+//                       decoration: InputDecoration(
+//                         labelText: "Unit",
+//                         prefixIcon: const Icon(
+//                           Icons.ad_units_outlined,
+//                           color: Colors.blue,
+//                         ),
+//                         border: OutlineInputBorder(
+//                           borderRadius: BorderRadius.circular(10),
+//                           borderSide: const BorderSide(
+//                             color: Colors.black87,
+//                           ),
+//                         ),
+//                       ),
+//                     );
+//                   },
+//                 ),
+//                 SizedBox(height: 20),
+//                 Consumer<ProductListProvider>(
+//                   builder: (context, productData, _) {
+//                     return DropdownButtonFormField<String>(
+//                       hint: const Text(
+//                         'Quantity',
+//                         style: TextStyle(fontSize: 15, color: Colors.black),
+//                       ),
+//                       value: productData.selectedQuantity,
+//                       items: productData.quantityList.map((String value) {
+//                         return DropdownMenuItem<String>(
+//                           value: productData.quantityList[
+//                           productData.quantityList.indexOf(value)],
+//                           child: Text(value),
+//                         );
+//                       }).toList(),
+//                       onChanged: (String? selectedValue) {
+//                         quantityId = selectedValue!;
+//                         productData.setSelectedQuantityId(selectedValue);
+//                         productData.fetchRates(
+//                             productData.selectedProduct!,
+//                             productData.selectedUnit!,
+//                             productData.selectedQuantity!);
+//                         print(selectedQuantity);
+//                       },
+//                       validator: (value) {
+//                         if (value == null || value.isEmpty) {
+//                           return 'Please select an option';
+//                         }
+//                         return null;
+//                       },
+//                       icon: const Icon(
+//                         Icons.arrow_drop_down_circle,
+//                         color: Colors.blue,
+//                       ),
+//                       dropdownColor: Colors.deepPurple.shade50,
+//                       decoration: InputDecoration(
+//                         labelText: "Quantity",
+//                         prefixIcon: const Icon(
+//                           Icons.production_quantity_limits,
+//                           color: Colors.blue,
+//                         ),
+//                         border: OutlineInputBorder(
+//                           borderRadius: BorderRadius.circular(10),
+//                           borderSide: const BorderSide(
+//                             color: Colors.black87,
+//                           ),
+//                         ),
+//                       ),
+//                     );
+//                   },
+//                 ),
+//                 SizedBox(height: 20),
+//                 Consumer<ProductListProvider>(
+//                   builder: (context, productData, _) {
+//                     print('Rate List: ${productData.rateList}');
+//
+//                     return DropdownButtonFormField<String>(
+//                       hint: const Text(
+//                         'Rate',
+//                         style: TextStyle(fontSize: 15, color: Colors.black),
+//                       ),
+//                       value: productData.selectedRate,
+//                       items: productData.rateList.map((String value) {
+//                         return DropdownMenuItem<String>(
+//                           value: value,
+//                           child: Text(value),
+//                         );
+//                       }).toList(),
+//                       onChanged: (String? selectedValue) async {
+//                         if (selectedValue != null) {
+//                           productData.setSelectedProduct(selectedValue);
+//                           productData
+//                               .fetchUnitIds(productData.selectedProduct!);
+//                           await productData.fetchQuantityIds(
+//                             productData.selectedProduct!,
+//                             productData.selectedUnit!,
+//                           );
+//                           await productData.fetchRates(
+//                             productData.selectedProduct!,
+//                             productData.selectedUnit!,
+//                             productData.selectedQuantity!,
+//                           );
+//                         }
+//                       },
+//                       // onChanged: (String? selectedValue) {
+//                       //   rate = selectedValue!;
+//                       //   productData.setSelectedRateId(selectedValue!);
+//                       // },
+//                       validator: (value) {
+//                         if (value == null || value.isEmpty) {
+//                           return 'Please select an option';
+//                         }
+//                         return null;
+//                       },
+//                       icon: const Icon(
+//                         Icons.arrow_drop_down_circle,
+//                         color: Colors.blue,
+//                       ),
+//                       dropdownColor: Colors.deepPurple.shade50,
+//                       decoration: InputDecoration(
+//                         labelText: "Rate",
+//                         prefixIcon: const Icon(
+//                           Icons.monetization_on,
+//                           color: Colors.blue,
+//                         ),
+//                         border: OutlineInputBorder(
+//                           borderRadius: BorderRadius.circular(10),
+//                           borderSide: const BorderSide(
+//                             color: Colors.black87,
+//                           ),
+//                         ),
+//                       ),
+//                     );
+//                   },
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     ),
+//   );
+// }

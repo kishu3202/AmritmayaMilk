@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductListProvider extends ChangeNotifier {
   String? selectedProduct;
@@ -12,10 +12,10 @@ class ProductListProvider extends ChangeNotifier {
   String? userId;
   String? otherId;
 
-  bool? polytheneSmallChecked = false;
-  bool? polytheneBigChecked = false;
-  bool? deliveryChecked = false;
-  bool? maintenanceChecked = false;
+  // bool? polytheneSmallChecked = false;
+  // bool? polytheneBigChecked = false;
+  // bool? deliveryChecked = false;
+  // bool? maintenanceChecked = false;
 
   List<String> productIdList = [];
   List<String> productNameList = [];
@@ -26,7 +26,7 @@ class ProductListProvider extends ChangeNotifier {
   List<String> idList = [];
   List<String> nameList = [];
   List<String> amountList = [];
-  List<String> selectedIds = [];
+  List<String> otherCharge = [];
 
   bool _loading = false;
 
@@ -122,9 +122,10 @@ class ProductListProvider extends ChangeNotifier {
         print('Quantity Data: $quantityData');
         quantityData.forEach((quantity) {
           final quantityId = quantity["qnt"];
-          if (!quantityList.contains(quantityId)) {
-            quantityList.add(quantityId);
-          }
+          quantityList.add(quantityId);
+          // if (!quantityList.contains(quantityId)) {
+          //   quantityList.add(quantityId);
+          // }
         });
 
         notifyListeners();
@@ -132,6 +133,7 @@ class ProductListProvider extends ChangeNotifier {
         throw Exception('Failed to fetch quantity IDs');
       }
     } catch (e) {
+      print('Error during fetching quantity IDs: $e');
       throw Exception('Failed to fetch quantity IDs');
     }
   }
@@ -187,6 +189,7 @@ class ProductListProvider extends ChangeNotifier {
       final response = json.decode(res.body) as Map<String, dynamic>;
       print('API Response - Fetch Other Charges: $response');
       if (res.statusCode == 200) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
         idList.clear();
         amountList.clear();
         nameList.clear();
@@ -206,6 +209,10 @@ class ProductListProvider extends ChangeNotifier {
             amountList.add(otherChargesAmount);
             nameList.add(otherChargesName);
           }
+
+          prefs.setString('otherChargesId', otherChargesId);
+          prefs.setString('otherChargesAmount', otherChargesAmount);
+          prefs.setString('otherChargesName', otherChargesName);
         });
         notifyListeners();
       } else {
@@ -216,40 +223,40 @@ class ProductListProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> submit() async {
-    var headers = {
-      "Content-Type": "application/json",
-      'X-API-KEY': 'amritmayamilk050512',
-    };
-    var uri = Uri.parse(
-        'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct');
-
-    var data = {
-      'customer_id': 'widget.customerId',
-      'product_id[]': selectedProduct.toString(),
-      'qnt[]': selectedQuantity.toString(),
-      'unit_id[]': selectedUnit.toString(),
-      'rate[]': selectedRate.toString(),
-      'staff_id': userId,
-      'other_charges[]': selectedIds.toString(),
-      'other_id[]': otherId.toString()
-    };
-    for (int i = 0; i < selectedProduct!.length; i++) {
-      data.addAll({'product_id[$i]': selectedProduct![i]});
-      data.addAll({'qnt[$i]': selectedQuantity![i]});
-      data.addAll({'unit_id[$i]': selectedUnit![i]});
-      data.addAll({'rate[$i]': selectedRate![i]});
-      data.addAll({"other_charges[$i]": selectedIds[i]});
-    }
-    var response = await http.post(uri, headers: headers, body: data);
-    if (response.statusCode == 200) {
-      final jsonData = json.decode(response.body);
-      print(jsonData);
-      print(jsonData["Success"]);
-    } else {
-      Fluttertoast.showToast(msg: "Error Occurred", timeInSecForIosWeb: 25);
-    }
-  }
+  // Future<void> submit() async {
+  //   var headers = {
+  //     "Content-Type": "application/json",
+  //     'X-API-KEY': 'amritmayamilk050512',
+  //   };
+  //   var uri = Uri.parse(
+  //       'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct');
+  //
+  //   var data = {
+  //     'customer_id': 'widget.customerId',
+  //     'product_id[]': selectedProduct.toString(),
+  //     'qnt[]': selectedQuantity.toString(),
+  //     'unit_id[]': selectedUnit.toString(),
+  //     'rate[]': selectedRate.toString(),
+  //     'staff_id': userId,
+  //     'other_charges[]': otherCharge.toString(),
+  //     'other_id[]': otherId.toString()
+  //   };
+  //   for (int i = 0; i < selectedProduct!.length; i++) {
+  //     data.addAll({'product_id[$i]': selectedProduct![i]});
+  //     data.addAll({'qnt[$i]': selectedQuantity![i]});
+  //     data.addAll({'unit_id[$i]': selectedUnit![i]});
+  //     data.addAll({'rate[$i]': selectedRate![i]});
+  //     data.addAll({"other_charges[$i]": otherCharge[i]});
+  //   }
+  //   var response = await http.post(uri, headers: headers, body: data);
+  //   if (response.statusCode == 200) {
+  //     final jsonData = json.decode(response.body);
+  //     print(jsonData);
+  //     print(jsonData["Success"]);
+  //   } else {
+  //     Fluttertoast.showToast(msg: "Error Occurred", timeInSecForIosWeb: 25);
+  //   }
+  // }
 
   void setSelectedProduct(String productId) {
     selectedProduct = productId;

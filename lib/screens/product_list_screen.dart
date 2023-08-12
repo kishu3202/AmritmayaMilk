@@ -16,12 +16,9 @@ import '../provider/productList_Provider.dart';
 
 class ProductListScreen extends StatefulWidget {
   final String customerId;
-  final String savedDialNeedList;
-
   const ProductListScreen({
     super.key,
     required this.customerId,
-    required this.savedDialNeedList,
   });
 
   @override
@@ -45,10 +42,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
   String? selectedQuantity;
   String? selectedRate;
   String? staffId;
-  String? otherId;
-  bool? selectedIds;
 
   String userId = '';
+  String otherId = '';
+  String otherCharge = '';
 
   String? selectedProductId;
   int? selectedProductIndex;
@@ -65,14 +62,30 @@ class _ProductListScreenState extends State<ProductListScreen> {
   void initState() {
     super.initState();
     cardAdd.add(addProductCard());
+    fetchOtherChargesId();
+    fetchOtherId();
+    fetchUserId();
   }
 
   void fetchUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      userId = prefs.getString('userId') ?? '';
+      userId = prefs.getString('id') ?? '';
     });
-    print(userId);
+  }
+
+  void fetchOtherId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      otherId = prefs.getString('otherChargesId') ?? '';
+    });
+  }
+
+  void fetchOtherChargesId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      otherCharge = prefs.getString('otherChargesAmount') ?? '';
+    });
   }
 
   Future<void> _saveDailyNeedProductDetails() async {
@@ -84,11 +97,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     prefs.setString('selected_unit', selectedUnit ?? '');
     prefs.setString('selected_quantity', selectedQuantity ?? '');
     prefs.setString('selected_rate', selectedRate ?? '');
-    prefs.setBool('polythene_small_checked', selectedIds ?? false);
-    prefs.setBool('polythene_big_checked', selectedIds ?? false);
-    prefs.setBool('delivery_checked', selectedIds ?? false);
-    prefs.setBool('maintenance_checked', selectedIds ?? false);
-
+    prefs.setString('other_charges_id', otherCharge ?? '');
     _showToastMessage("Daily need product details saved successfully");
     print('Daily need product saved successfully');
   }
@@ -110,7 +119,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     if (!formKey.currentState!.validate()) {
       print('Please fill all the details');
     } else {
-      if (productData.selectedIds.isEmpty) {
+      if (productData.otherCharge.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             backgroundColor: Colors.red,
@@ -123,7 +132,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
       } else {
         try {
           var headers = {
-            "Content-Type": "application/json",
+            // "Content-Type": "application/json",
             'X-API-KEY': 'amritmayamilk050512',
           };
 
@@ -140,14 +149,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
             data['unit_id[$i]'] = productData.selectedUnit![i];
             data['qnt[$i]'] = productData.selectedQuantity![i];
             data['rate[$i]'] = productData.selectedRate![i];
-            data['other_charges[$i]'] = productData.selectedIds[i];
+            data['other_charges[$i]'] = productData.otherCharge[i];
+            // data['other_id[$i]'] = productData.otherId![i];
           }
 
           var response = await http.post(uri, headers: headers, body: data);
 
           if (response.statusCode == 200) {
             final jsonData = json.decode(response.body);
-            print(jsonData);
+            print('Response JSON Data: $jsonData');
+            print('Success: ${jsonData["Success"]}');
             print(jsonData["Success"]);
             _showToastMessage("Daily Need has been saved Successfully");
 
@@ -321,14 +332,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                                     title: Text(productData
                                                         .nameList[index]),
                                                     value: productData
-                                                        .selectedIds
+                                                        .otherCharge
                                                         .contains(id),
                                                     onChanged: (value) {
                                                       if (value!) {
-                                                        productData.selectedIds
+                                                        productData.otherCharge
                                                             .add(id);
                                                       } else {
-                                                        productData.selectedIds
+                                                        productData.otherCharge
                                                             .remove(id);
                                                       }
                                                       productData
@@ -352,8 +363,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       _submitDailyNeedProduct(context);
-                      _saveDailyNeedProductDetails();
-                      // submitDailyNeedProduct();
+                      // _saveDailyNeedProductDetails();
                     },
                     child: Container(
                       height: 50,
@@ -417,26 +427,31 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             items:
                                 productData.productNameList.map((String value) {
                               return DropdownMenuItem<String>(
-                                value: value,
-                                // value: productData.productIdList[
-                                //     productData.productNameList.indexOf(value)],
+                                // value: value,
+                                value: productData.productIdList[
+                                    productData.productNameList.indexOf(value)],
                                 child: Text(value),
                               );
                             }).toList(),
                             onChanged: (String? selectedValue) {
-                              setState(() {
-                                print(selectedValue);
-                                print(productData.productNameList);
-                                print(productData.productIdList);
-                                selectedProductIndex = productData
-                                    .productNameList
-                                    .indexOf(selectedValue!);
-                                selectedProductId = productData.productIdList
-                                    .elementAt(selectedProductIndex!);
-                                productData.setSelectedProduct(selectedValue!);
-                                productData.fetchUnitIds(selectedProductId!);
-                              });
+                              productData.setSelectedProduct(selectedValue!);
+                              productData
+                                  .fetchUnitIds(productData.selectedProduct!);
                             },
+                            // onChanged: (String? selectedValue) {
+                            //   setState(() {
+                            //     print(selectedValue);
+                            //     print(productData.productNameList);
+                            //     print(productData.productIdList);
+                            //     selectedProductIndex = productData
+                            //         .productNameList
+                            //         .indexOf(selectedValue!);
+                            //     selectedProductId = productData.productIdList
+                            //         .elementAt(selectedProductIndex!);
+                            //     productData.setSelectedProduct(selectedValue!);
+                            //     productData.fetchUnitIds(selectedProductId!);
+                            //   });
+                            // },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please select an option';
@@ -478,28 +493,36 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           value: productData.selectedUnit,
                           items: productData.unitNameList.map((String value) {
                             return DropdownMenuItem<String>(
-                              value: value,
-                              // value: productData.unitIdList[
-                              //     productData.unitNameList.indexOf(value)],
+                              // value: value,
+                              value: productData.unitIdList[
+                                  productData.unitNameList.indexOf(value)],
                               child: Text(value),
                             );
                           }).toList(),
                           onChanged: (String? selectedValue) {
-                            setState(() {
-                              print(selectedValue);
-                              print(productData.unitNameList);
-                              print(productData.unitIdList);
-                              selectedUnitIndex = productData.unitNameList
-                                  .indexOf(selectedValue!);
-                              selectedUnitId = productData.unitIdList
-                                  .elementAt(selectedUnitIndex!);
-                              productData.setSelectedUnitId(selectedValue!);
-                              productData.fetchQuantityIds(
-                                productData.selectedProduct!,
-                                productData.selectedUnit!,
-                              );
-                            });
+                            selectedUnit = selectedValue!;
+                            productData.setSelectedUnitId(selectedValue!);
+                            productData.fetchQuantityIds(
+                              productData.selectedProduct!,
+                              productData.selectedUnit!,
+                            );
                           },
+                          // onChanged: (String? selectedValue) {
+                          //   setState(() {
+                          //     print(selectedValue);
+                          //     print(productData.unitNameList);
+                          //     print(productData.unitIdList);
+                          //     selectedUnitIndex = productData.unitNameList
+                          //         .indexOf(selectedValue!);
+                          //     selectedUnitId = productData.unitIdList
+                          //         .elementAt(selectedUnitIndex!);
+                          //     productData.setSelectedUnitId(selectedValue!);
+                          //     productData.fetchQuantityIds(
+                          //       productData.selectedProduct!,
+                          //       productData.selectedUnit!,
+                          //     );
+                          //   });
+                          // },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please select an option';
@@ -540,9 +563,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           value: productData.selectedQuantity,
                           items: productData.quantityList.map((String value) {
                             return DropdownMenuItem<String>(
-                              value: value,
-                              //  value: productData.quantityList[
-                              // productData.quantityList.indexOf(value)],
+                              // value: value,
+                              value: productData.quantityList[
+                                  productData.quantityList.indexOf(value)],
                               child: Text(value),
                             );
                           }).toList(),
@@ -604,6 +627,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           onChanged: (String? selectedValue) async {
                             if (selectedValue != null) {
                               productData.setSelectedProduct(selectedValue);
+                              productData
+                                  .fetchUnitIds(productData.selectedProduct!);
+                              await productData.fetchQuantityIds(
+                                productData.selectedProduct!,
+                                productData.selectedUnit!,
+                              );
                               await productData.fetchRates(
                                 productData.selectedProduct!,
                                 productData.selectedUnit!,
@@ -611,6 +640,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               );
                             }
                           },
+                          // onChanged: (String? selectedValue) async {
+                          //   if (selectedValue != null) {
+                          //     productData.setSelectedProduct(selectedValue);
+                          //     await productData.fetchRates(
+                          //       productData.selectedProduct!,
+                          //       productData.selectedUnit!,
+                          //       productData.selectedQuantity!,
+                          //     );
+                          //   }
+                          // },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please select an option';

@@ -20,26 +20,26 @@ class FormScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<FormScreen> {
-  Map<String, dynamic>? submittedData;
+  // Map<String, dynamic>? submittedData;
   @override
   void initState() {
     super.initState();
     final dailyNeedProvider =
         Provider.of<DailyNeedProductProvider>(context, listen: false);
     dailyNeedProvider.getPostDailyNeedProduct(widget.customerId);
-    _loadSubmittedData();
+    // _loadSubmittedData();
   }
 
-  Future<void> _loadSubmittedData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final storedData = prefs.getString('submittedData');
-    if (storedData != null) {
-      setState(() {
-        submittedData = json.decode(storedData);
-        print('Loaded submitted data from shared preferences: $submittedData');
-      });
-    }
-  }
+  // Future<void> _loadSubmittedData() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   final storedData = prefs.getString('submittedData');
+  //   if (storedData != null) {
+  //     setState(() {
+  //       submittedData = json.decode(storedData);
+  //       print('Loaded submitted data from shared preferences: $submittedData');
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -207,32 +207,15 @@ class _FormScreenState extends State<FormScreen> {
         width: 220,
         child: FloatingActionButton(
           onPressed: () async {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            final savedData = prefs.getString('dialNeedList');
-            if (savedData != null) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProductListScreen(
-                    customerId: widget.customerId,
-                    savedDialNeedList: savedData,
-                  ),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProductListScreen(
+                  customerId: widget.customerId,
                 ),
-              );
-              print('Saved data :${savedData}');
-            } else {
-              print("No saved data available.");
-            }
+              ),
+            );
           },
-          //   Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //       builder: (context) => ProductListScreen(
-          //         customerId: widget.customerId,
-          //       ),
-          //     ),
-          //   );
-          // },
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           child: const Text(
