@@ -70,7 +70,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         verticalAlignment: TableCellVerticalAlignment.middle,
                         child: Center(
                             child: Text(
-                          productDetail.unitName ?? 'N/A',
+                          productDetail.unitName ?? "",
                           style: TextStyle(fontSize: 16),
                         ))),
                     TableCell(
@@ -81,12 +81,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           style: TextStyle(fontSize: 16),
                         ))),
                     TableCell(
-                        verticalAlignment: TableCellVerticalAlignment.middle,
-                        child: Center(
-                            child: Text(
-                          productDetail.rate ?? 'N/A',
-                          style: TextStyle(fontSize: 16),
-                        ))),
+                      verticalAlignment: TableCellVerticalAlignment.middle,
+                      child: Center(
+                          child: Text(
+                        productDetail.rate ?? 'N/A',
+                        style: TextStyle(fontSize: 16),
+                      )),
+                    ),
                   ],
                 ),
             ],

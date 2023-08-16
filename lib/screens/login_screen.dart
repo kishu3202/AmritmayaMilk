@@ -1,8 +1,8 @@
 import 'package:amritmaya_milk/provider/auth_Provider.dart';
 import 'package:amritmaya_milk/screens/forget_password_screen.dart';
-import 'package:amritmaya_milk/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,6 +23,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool validateEmailIdFormat = false, validatePasswordIdFormat = false;
   RegExp? regExpEmail;
   AuthProvider? authProvider;
+  int selectOption = 0; // 0: Nothing selected, 1: Delivery boy, 2: user
+  bool termAccepted = false;
 
   Future<bool> exitApp(BuildContext context) async {
     SystemNavigator.pop();
@@ -48,11 +50,53 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Image.asset(
                     "image/amritmaya.jpeg",
-                    height: 300,
-                    width: 300,
+                    height: 280,
+                    width: 280,
                   ),
-                  const SizedBox(height: 30),
-                  // EmailValidator(),
+                  const SizedBox(height: 15),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Radio<int>(
+                          value: 1,
+                          groupValue: selectOption,
+                          onChanged: (value) {
+                            setState(() {
+                              selectOption = value!;
+                            });
+                          },
+                        ),
+                        const Text(
+                          "Deliver Boy",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Radio(
+                                value: 2,
+                                groupValue: selectOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectOption = value!;
+                                  });
+                                },
+                              ),
+                              Text(
+                                "User",
+                                style: TextStyle(fontSize: 16),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   TextFormField(
                     keyboardType: TextInputType.emailAddress,
                     controller: emailController,
@@ -112,47 +156,99 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const ForgetPasswordScreen()),
-                          );
-                        },
-                        child: const Text(
-                          "Forget Password",
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 16,
-                            fontStyle: FontStyle.italic,
+                  if (selectOption == 2)
+                    const SizedBox(
+                      height: 4,
+                    ),
+                  if (selectOption == 2)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ForgetPasswordScreen()),
+                            );
+                          },
+                          child: const Text(
+                            "Forget Password",
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 16,
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  SizedBox(
+                    height: 5,
                   ),
-
+                  if (selectOption == 2)
+                    Transform.translate(
+                      offset: Offset(-15, 0),
+                      child: CheckboxListTile(
+                          title: RichText(
+                            text: TextSpan(children: [
+                              TextSpan(
+                                text: "I accept all the",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              TextSpan(
+                                text: " Terms & Conditions",
+                                style: TextStyle(color: Colors.blue),
+                              ),
+                            ]),
+                          ),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          value: termAccepted,
+                          onChanged: (newValue) {
+                            setState(() {
+                              termAccepted = newValue!;
+                            });
+                          }),
+                    ),
                   const SizedBox(
-                    height: 50,
+                    height: 30,
                   ),
-
                   InkWell(
                     onTap: () {
                       setState(() {
                         final email = emailController.text;
                         final password = passwordController.text;
-                        if (email.isNotEmpty && password.isNotEmpty) {
-                          authProvider.login(context, email, password);
+                        if (selectOption == 2 && !termAccepted) {
+                          Fluttertoast.showToast(
+                            msg: "Please check the checkbox before logging in.",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0,
+                          );
+                        } else if (email.isNotEmpty && password.isNotEmpty) {
+                          if (selectOption == 1) {
+                            authProvider.DeliveryBoylogin(
+                                context, email, password);
+                          } else if (selectOption == 2) {
+                            authProvider.Userlogin(context, email, password);
+                          }
                         } else if (!_formfield.currentState!.validate()) {
                           print('Login Failed.');
                         }
+                        // if (email.isNotEmpty && password.isNotEmpty) {
+                        //   if (selectOption == 1) {
+                        //     authProvider.DeliveryBoylogin(
+                        //         context, email, password);
+                        //   } else if (selectOption == 2) {
+                        //     authProvider.Userlogin(context, email, password);
+                        //   }
+                        // } else if (!_formfield.currentState!.validate()) {
+                        //   print('Login Failed.');
+                        // }
                       });
                     },
                     child: Container(
@@ -162,53 +258,54 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
-                        child: authProvider.loading
-                            ? const CircularProgressIndicator(
-                                color: Colors.white,
-                              )
-                            : const Text(
-                                "Log In",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Create a new Account !!",
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.black87,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const RegistrationScreen()));
-                          });
-                        },
-                        child: const Text(
-                          "Sign Up",
+                        // child: authProvider.loading
+                        //     ? const CircularProgressIndicator(
+                        //         color: Colors.white,
+                        //       )
+                        child: Text(
+                          "Log In",
                           style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 20,
+                            color: Colors.white,
+                            fontSize: 30,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
+                  // if (selectOption == 2)
+                  //   Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: [
+                  //       const Text(
+                  //         "Create a new Account !!",
+                  //         style: TextStyle(
+                  //           fontSize: 17,
+                  //           color: Colors.black87,
+                  //           fontStyle: FontStyle.italic,
+                  //         ),
+                  //       ),
+                  //       TextButton(
+                  //         onPressed: () {
+                  //           setState(() {
+                  //             Navigator.push(
+                  //                 context,
+                  //                 MaterialPageRoute(
+                  //                     builder: (context) =>
+                  //                         const RegistrationScreen()));
+                  //           });
+                  //         },
+                  //         child: const Text(
+                  //           "Sign Up",
+                  //           style: TextStyle(
+                  //             color: Colors.blue,
+                  //             fontSize: 20,
+                  //             fontWeight: FontWeight.bold,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
                 ],
               ),
             ),

@@ -16,6 +16,7 @@ class AmritmayaMilk extends StatelessWidget {
   const AmritmayaMilk({super.key});
 
   final isLoggedIn = true;
+  final isLoggedOut = true;
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +30,18 @@ class AmritmayaMilk extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        // initialRoute: 'login',
-        // routes: {
-        //   'login': (context) => const LoginScreen(),
-        //   'register': (context) => const RegistrationScreen(),
-        // },
-        home: isLoggedIn ? const DashboardScreen() : const LoginScreen(),
+        // home: isLoggedIn ? const DashboardScreen() : const LoginScreen(),
+        home: Consumer<AuthProvider>(
+          builder: (context, authProvider, _) {
+            if (authProvider.isLoggedIn) {
+              // User is logged in, show DashboardScreen
+              return const DashboardScreen();
+            } else {
+              // User is not logged in, show LoginScreen
+              return const LoginScreen();
+            }
+          },
+        ),
       ),
     );
   }

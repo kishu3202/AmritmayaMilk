@@ -275,6 +275,7 @@ class _ScanScreenState extends State<ScanScreen> {
                   if (selectedOption == 1 && (value == null || value.isEmpty)) {
                     return 'Please enter a valid mobile number';
                   }
+                  return null;
                 },
               ),
             ),

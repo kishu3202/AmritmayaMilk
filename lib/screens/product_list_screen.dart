@@ -26,7 +26,7 @@ class ProductListScreen extends StatefulWidget {
 }
 
 class _ProductListScreenState extends State<ProductListScreen> {
-  final formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final ProductListProvider productListProvider = ProductListProvider();
   List<Widget> cardAdd = [];
@@ -51,7 +51,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
   int? selectedProductIndex;
   int? selectedUnitIndex;
   String? selectedUnitId;
-  int? selectedQuantityIndex;
 
   String productId = '';
   String unitId = '';
@@ -65,6 +64,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     fetchOtherChargesId();
     fetchOtherId();
     fetchUserId();
+    _formKey.currentState?.reset();
   }
 
   void fetchUserId() async {
@@ -77,14 +77,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
   void fetchOtherId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      otherId = prefs.getString('otherChargesId') ?? '';
+      otherId = prefs.getString('otherChargesIds') ?? '';
     });
   }
 
   void fetchOtherChargesId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      otherCharge = prefs.getString('otherChargesAmount') ?? '';
+      otherCharge = prefs.getString('otherChargesAmounts') ?? '';
     });
   }
 
@@ -93,8 +93,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
     prefs.setString('customer_id', widget.customerId);
     prefs.setString('staff_id', userId ?? '');
     prefs.setString('other_id', otherId ?? '');
-    prefs.setString('selected_product', selectedProduct ?? '');
-    prefs.setString('selected_unit', selectedUnit ?? '');
+    prefs.setString('selected_product', selectedProductId ?? '');
+    prefs.setString('selected_unit', selectedUnitId ?? '');
     prefs.setString('selected_quantity', selectedQuantity ?? '');
     prefs.setString('selected_rate', selectedRate ?? '');
     prefs.setString('other_charges_id', otherCharge ?? '');
@@ -116,7 +116,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     final productData =
         Provider.of<ProductListProvider>(context, listen: false);
 
-    if (!formKey.currentState!.validate()) {
+    if (!_formKey.currentState!.validate()) {
       print('Please fill all the details');
     } else {
       if (productData.otherCharge.isEmpty) {
@@ -135,26 +135,28 @@ class _ProductListScreenState extends State<ProductListScreen> {
             // "Content-Type": "application/json",
             'X-API-KEY': 'amritmayamilk050512',
           };
-
           var uri = Uri.parse(
               'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct');
-
           var data = {
             'customer_id': widget.customerId.toString(),
             'staff_id': userId,
           };
+          print('Selected Product List: ${selectedProductId}');
+          print('Selected Unit List: ${selectedUnitId}');
+          print('Selected Quantity List: ${productData.selectedQuantity}');
+          print('Selected Rate List: ${productData.selectedRate}');
+          print('Other Charge List: ${productData.otherCharge}');
+          print('Other ID List: ${otherId}');
 
-          for (int i = 0; i < productData.selectedProduct!.length; i++) {
-            data['product_id[$i]'] = productData.selectedProduct![i];
-            data['unit_id[$i]'] = productData.selectedUnit![i];
+          for (int i = 0; i < selectedProductId!.length; i++) {
+            data['product_id[$i]'] = selectedProductId![i];
+            data['unit_id[$i]'] = selectedUnitId![i];
             data['qnt[$i]'] = productData.selectedQuantity![i];
             data['rate[$i]'] = productData.selectedRate![i];
             data['other_charges[$i]'] = productData.otherCharge[i];
-            // data['other_id[$i]'] = productData.otherId![i];
+            data['other_id[$i]'] = otherId[i];
           }
-
           var response = await http.post(uri, headers: headers, body: data);
-
           if (response.statusCode == 200) {
             final jsonData = json.decode(response.body);
             print('Response JSON Data: $jsonData');
@@ -185,7 +187,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return WillPopScope(
       onWillPop: () async {
         Navigator.pop(context, widget.customerId);
-        return true;
+        return false;
       },
       child: Scaffold(
         appBar: AppBar(
@@ -194,7 +196,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
         ),
         body: SingleChildScrollView(
           child: Form(
-            key: formKey,
+            key: _formKey,
             child: Column(
               children: [
                 const Padding(
@@ -363,7 +365,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       _submitDailyNeedProduct(context);
-                      // _saveDailyNeedProductDetails();
+                      _saveDailyNeedProductDetails();
                     },
                     child: Container(
                       height: 50,
@@ -427,31 +429,23 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             items:
                                 productData.productNameList.map((String value) {
                               return DropdownMenuItem<String>(
-                                // value: value,
-                                value: productData.productIdList[
-                                    productData.productNameList.indexOf(value)],
+                                value: value,
+                                // value: productData.productIdList[
+                                //     productData.productNameList.indexOf(value)],
                                 child: Text(value),
                               );
                             }).toList(),
                             onChanged: (String? selectedValue) {
-                              productData.setSelectedProduct(selectedValue!);
-                              productData
-                                  .fetchUnitIds(productData.selectedProduct!);
+                              setState(() {
+                                selectedProductIndex = productData
+                                    .productNameList
+                                    .indexOf(selectedValue!);
+                                selectedProductId = productData.productIdList
+                                    .elementAt(selectedProductIndex!);
+                                // productData.setSelectedProduct(selectedValue!);
+                                productData.fetchUnitIds(selectedProductId!);
+                              });
                             },
-                            // onChanged: (String? selectedValue) {
-                            //   setState(() {
-                            //     print(selectedValue);
-                            //     print(productData.productNameList);
-                            //     print(productData.productIdList);
-                            //     selectedProductIndex = productData
-                            //         .productNameList
-                            //         .indexOf(selectedValue!);
-                            //     selectedProductId = productData.productIdList
-                            //         .elementAt(selectedProductIndex!);
-                            //     productData.setSelectedProduct(selectedValue!);
-                            //     productData.fetchUnitIds(selectedProductId!);
-                            //   });
-                            // },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please select an option';
@@ -493,36 +487,23 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           value: productData.selectedUnit,
                           items: productData.unitNameList.map((String value) {
                             return DropdownMenuItem<String>(
-                              // value: value,
-                              value: productData.unitIdList[
-                                  productData.unitNameList.indexOf(value)],
+                              value: value,
+                              // value: productData.unitIdList[
+                              //     productData.unitNameList.indexOf(value)],
                               child: Text(value),
                             );
                           }).toList(),
                           onChanged: (String? selectedValue) {
-                            selectedUnit = selectedValue!;
-                            productData.setSelectedUnitId(selectedValue!);
-                            productData.fetchQuantityIds(
-                              productData.selectedProduct!,
-                              productData.selectedUnit!,
-                            );
+                            setState(() {
+                              selectedUnitIndex = productData.unitNameList
+                                  .indexOf(selectedValue!);
+                              selectedUnitId = productData.unitIdList
+                                  .elementAt(selectedUnitIndex!);
+                              productData.setSelectedUnitId(selectedValue);
+                              productData.fetchQuantityIds(
+                                  selectedProductId!, selectedUnitId!);
+                            });
                           },
-                          // onChanged: (String? selectedValue) {
-                          //   setState(() {
-                          //     print(selectedValue);
-                          //     print(productData.unitNameList);
-                          //     print(productData.unitIdList);
-                          //     selectedUnitIndex = productData.unitNameList
-                          //         .indexOf(selectedValue!);
-                          //     selectedUnitId = productData.unitIdList
-                          //         .elementAt(selectedUnitIndex!);
-                          //     productData.setSelectedUnitId(selectedValue!);
-                          //     productData.fetchQuantityIds(
-                          //       productData.selectedProduct!,
-                          //       productData.selectedUnit!,
-                          //     );
-                          //   });
-                          // },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please select an option';
@@ -563,20 +544,19 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           value: productData.selectedQuantity,
                           items: productData.quantityList.map((String value) {
                             return DropdownMenuItem<String>(
-                              // value: value,
-                              value: productData.quantityList[
-                                  productData.quantityList.indexOf(value)],
+                              value: value,
+                              // value: productData.quantityList[
+                              //     productData.quantityList.indexOf(value)],
                               child: Text(value),
                             );
                           }).toList(),
                           onChanged: (String? selectedValue) {
-                            quantityId = selectedValue!;
-                            productData.setSelectedQuantityId(selectedValue!);
-                            productData.fetchRates(
-                                productData.selectedProduct!,
-                                productData.selectedUnit!,
-                                productData.selectedQuantity!);
-                            print(selectedQuantity);
+                            setState(() {
+                              selectedQuantity = selectedValue;
+                              productData.setSelectedQuantityId(selectedValue!);
+                              productData.fetchRates(selectedProductId!,
+                                  selectedUnitId!, selectedQuantity!);
+                            });
                           },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -611,7 +591,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     return Consumer<ProductListProvider>(
                       builder: (context, productData, _) {
                         print('Rate List: ${productData.rateList}');
-
                         return DropdownButtonFormField<String>(
                           hint: const Text(
                             'Rate',
@@ -640,16 +619,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               );
                             }
                           },
-                          // onChanged: (String? selectedValue) async {
-                          //   if (selectedValue != null) {
-                          //     productData.setSelectedProduct(selectedValue);
-                          //     await productData.fetchRates(
-                          //       productData.selectedProduct!,
-                          //       productData.selectedUnit!,
-                          //       productData.selectedQuantity!,
-                          //     );
-                          //   }
-                          // },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please select an option';

@@ -89,14 +89,14 @@ class Productdetail {
   String customerId;
   String productId;
   String qnt;
-  dynamic staffId;
-  String unitId;
+  dynamic userId;
+  String? unitId;
   String rate;
   String raiseDispute;
   String status;
   DateTime createdAt;
   DateTime updatedAt;
-  String unitName;
+  String? unitName;
   dynamic productName;
 
   Productdetail({
@@ -105,7 +105,7 @@ class Productdetail {
     required this.customerId,
     required this.productId,
     required this.qnt,
-    this.staffId,
+    this.userId,
     required this.unitId,
     required this.rate,
     required this.raiseDispute,
@@ -122,7 +122,7 @@ class Productdetail {
         customerId: json["customer_id"],
         productId: json["product_id"],
         qnt: json["qnt"],
-        staffId: json["staff_id"],
+        userId: json["staff_id"],
         unitId: json["unit_id"],
         rate: json["rate"],
         raiseDispute: json["raise_dispute"],
@@ -139,7 +139,7 @@ class Productdetail {
         "customer_id": customerId,
         "product_id": productId,
         "qnt": qnt,
-        "staff_id": staffId,
+        "staff_id": userId,
         "unit_id": unitId,
         "rate": rate,
         "raise_dispute": raiseDispute,

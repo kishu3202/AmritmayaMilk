@@ -77,6 +77,8 @@ class ProductListProvider extends ChangeNotifier {
           "X-API-KEY": "amritmayamilk050512",
         },
       );
+      print(
+          "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productunit?product_id=$productId");
       final response = json.decode(res.body) as Map<String, dynamic>;
       if (res.statusCode == 200) {
         unitIdList.clear();
@@ -111,10 +113,13 @@ class ProductListProvider extends ChangeNotifier {
           "X-API-KEY": "amritmayamilk050512",
         },
       );
+      print("productId: ${productId}");
+      print(unitId);
       print(
           "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productqnt?product_id=$productId&unit_id=$unitId");
       final response = json.decode(res.body) as Map<String, dynamic>;
       print('API Response: $response');
+
       if (res.statusCode == 200) {
         quantityList.clear();
 
@@ -150,7 +155,8 @@ class ProductListProvider extends ChangeNotifier {
           "X-API-KEY": "amritmayamilk050512",
         },
       );
-
+      print(
+          "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId");
       final response = json.decode(res.body) as Map<String, dynamic>;
       print('API Response - Fetch Rates: $response');
       if (res.statusCode == 200) {
@@ -210,10 +216,14 @@ class ProductListProvider extends ChangeNotifier {
             nameList.add(otherChargesName);
           }
 
-          prefs.setString('otherChargesId', otherChargesId);
-          prefs.setString('otherChargesAmount', otherChargesAmount);
-          prefs.setString('otherChargesName', otherChargesName);
+          prefs.setString('otherChargesIds', otherChargesId);
+          prefs.setString('otherChargesAmounts', otherChargesAmount);
+          prefs.setString('otherChargesNames', otherChargesName);
         });
+        print('Saved Ids: ${prefs.getString('otherChargesIds')}');
+        print('Saved Amounts: ${prefs.getString('otherChargesAmounts')}');
+        print('Saved Names: ${prefs.getString('otherChargesNames')}');
+
         notifyListeners();
       } else {
         throw Exception('Failed to fetch other charges');
@@ -222,41 +232,6 @@ class ProductListProvider extends ChangeNotifier {
       throw Exception('Failed to fetch other charges');
     }
   }
-
-  // Future<void> submit() async {
-  //   var headers = {
-  //     "Content-Type": "application/json",
-  //     'X-API-KEY': 'amritmayamilk050512',
-  //   };
-  //   var uri = Uri.parse(
-  //       'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct');
-  //
-  //   var data = {
-  //     'customer_id': 'widget.customerId',
-  //     'product_id[]': selectedProduct.toString(),
-  //     'qnt[]': selectedQuantity.toString(),
-  //     'unit_id[]': selectedUnit.toString(),
-  //     'rate[]': selectedRate.toString(),
-  //     'staff_id': userId,
-  //     'other_charges[]': otherCharge.toString(),
-  //     'other_id[]': otherId.toString()
-  //   };
-  //   for (int i = 0; i < selectedProduct!.length; i++) {
-  //     data.addAll({'product_id[$i]': selectedProduct![i]});
-  //     data.addAll({'qnt[$i]': selectedQuantity![i]});
-  //     data.addAll({'unit_id[$i]': selectedUnit![i]});
-  //     data.addAll({'rate[$i]': selectedRate![i]});
-  //     data.addAll({"other_charges[$i]": otherCharge[i]});
-  //   }
-  //   var response = await http.post(uri, headers: headers, body: data);
-  //   if (response.statusCode == 200) {
-  //     final jsonData = json.decode(response.body);
-  //     print(jsonData);
-  //     print(jsonData["Success"]);
-  //   } else {
-  //     Fluttertoast.showToast(msg: "Error Occurred", timeInSecForIosWeb: 25);
-  //   }
-  // }
 
   void setSelectedProduct(String productId) {
     selectedProduct = productId;
@@ -271,11 +246,6 @@ class ProductListProvider extends ChangeNotifier {
   void setSelectedQuantityId(String quantityId) {
     selectedQuantity = quantityId;
     print('Selected Quantity ID: $selectedQuantity');
-    fetchRates(
-      selectedProduct!,
-      selectedUnit!,
-      selectedQuantity!,
-    );
     notifyListeners();
   }
 

@@ -20,26 +20,27 @@ class FormScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<FormScreen> {
-  // Map<String, dynamic>? submittedData;
+  Map<String, dynamic>? submittedData;
   @override
   void initState() {
     super.initState();
     final dailyNeedProvider =
         Provider.of<DailyNeedProductProvider>(context, listen: false);
     dailyNeedProvider.getPostDailyNeedProduct(widget.customerId);
-    // _loadSubmittedData();
+    print("Init State: Fetching data for customer ID: ${widget.customerId}");
+    _loadSubmittedData();
   }
 
-  // Future<void> _loadSubmittedData() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   final storedData = prefs.getString('submittedData');
-  //   if (storedData != null) {
-  //     setState(() {
-  //       submittedData = json.decode(storedData);
-  //       print('Loaded submitted data from shared preferences: $submittedData');
-  //     });
-  //   }
-  // }
+  Future<void> _loadSubmittedData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final storedData = prefs.getString('submittedData');
+    if (storedData != null) {
+      setState(() {
+        submittedData = json.decode(storedData);
+        print('Loaded submitted data from shared preferences: $submittedData');
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +58,7 @@ class _FormScreenState extends State<FormScreen> {
           // future: Provider.of<DailyNeedProductProvider>(context)
           //     .getPostDailyNeedProduct(widget.customerId),
           builder: (context, snapshot) {
+            print("FutureBuilder - DailyNeedProductProvider loading: $loading");
             return Consumer<DailyNeedProductProvider>(
               builder: (context, dailyNeedProvider, _) {
                 final dailyNeedList = dailyNeedProvider.dialNeedList;
@@ -69,7 +71,7 @@ class _FormScreenState extends State<FormScreen> {
                     itemCount: dailyNeedList.length,
                     itemBuilder: (context, index) {
                       final DialNeedList dialNeedList = dailyNeedList[index];
-                      // final dialNeed = dailyNeedList[index];
+
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Card(
@@ -217,7 +219,7 @@ class _FormScreenState extends State<FormScreen> {
             );
           },
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
           child: const Text(
             'Add Daily Need Products',
             style: TextStyle(fontSize: 15),
