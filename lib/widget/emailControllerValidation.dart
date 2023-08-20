@@ -20,7 +20,7 @@ class EmailValidator extends StatelessWidget {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
-        prefixIcon: Icon(Icons.email),
+        prefixIcon: const Icon(Icons.email),
       ),
       onChanged: (value) {
         if (value.isEmpty) {
@@ -28,7 +28,6 @@ class EmailValidator extends StatelessWidget {
         } else if (!validateEmailFormat(value)) {
           print('Please enter a valid email format: test@gmail.com');
         }
-        return null;
       },
     );
   }

@@ -7,16 +7,36 @@ import 'package:amritmaya_milk/screens/dashboard_screen.dart';
 import 'package:amritmaya_milk/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const AmritmayaMilk());
 }
 
-class AmritmayaMilk extends StatelessWidget {
+class AmritmayaMilk extends StatefulWidget {
   const AmritmayaMilk({super.key});
 
-  final isLoggedIn = true;
-  final isLoggedOut = true;
+  @override
+  State<AmritmayaMilk> createState() => _AmritmayaMilkState();
+}
+
+class _AmritmayaMilkState extends State<AmritmayaMilk> {
+  var isLoggedIn = true;
+
+  void checkIsUserLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('email') == null) {
+      setState(() {
+        isLoggedIn = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkIsUserLoggedIn();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +53,7 @@ class AmritmayaMilk extends StatelessWidget {
         // home: isLoggedIn ? const DashboardScreen() : const LoginScreen(),
         home: Consumer<AuthProvider>(
           builder: (context, authProvider, _) {
-            if (authProvider.isLoggedIn) {
+            if (isLoggedIn) {
               // User is logged in, show DashboardScreen
               return const DashboardScreen();
             } else {

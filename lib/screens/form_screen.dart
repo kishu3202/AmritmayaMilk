@@ -46,7 +46,7 @@ class _FormScreenState extends State<FormScreen> {
   Widget build(BuildContext context) {
     final dailyNeedProvider =
         Provider.of<DailyNeedProductProvider>(context, listen: false);
-    final dailyNeedList = dailyNeedProvider.dialNeedList;
+    // final dailyNeedList = dailyNeedProvider.dialNeedList;
     final loading = dailyNeedProvider.loading;
     return Scaffold(
       appBar: AppBar(
@@ -84,17 +84,17 @@ class _FormScreenState extends State<FormScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   height: 8.0,
                                 ),
                                 RichText(
                                   text: TextSpan(
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       color: Colors.black,
                                     ),
                                     children: [
-                                      TextSpan(
+                                      const TextSpan(
                                         text: 'Customer Name: ',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -103,22 +103,22 @@ class _FormScreenState extends State<FormScreen> {
                                       ),
                                       TextSpan(
                                         text: '${dialNeedList.name ?? "N/A"}',
-                                        style: TextStyle(color: Colors.black87),
+                                        style: const TextStyle(color: Colors.black87),
                                       ),
                                     ],
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 5.0,
                                 ),
                                 RichText(
                                   text: TextSpan(
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       color: Colors.black,
                                     ),
                                     children: [
-                                      TextSpan(
+                                      const TextSpan(
                                         text: 'Created Date: ',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -129,22 +129,22 @@ class _FormScreenState extends State<FormScreen> {
                                         text:
                                             '${DateFormat('yyyy-MM-dd').format(dialNeedList.createdAt)}',
                                         // text: '${dialNeedList.createdAt ?? ""}',
-                                        style: TextStyle(color: Colors.black87),
+                                        style: const TextStyle(color: Colors.black87),
                                       ),
                                     ],
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 5.0,
                                 ),
                                 RichText(
                                   text: TextSpan(
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       color: Colors.black,
                                     ),
                                     children: [
-                                      TextSpan(
+                                      const TextSpan(
                                         text: 'Order ID: ',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -153,12 +153,12 @@ class _FormScreenState extends State<FormScreen> {
                                       ),
                                       TextSpan(
                                         text: '${dialNeedList.orderId ?? ""}',
-                                        style: TextStyle(color: Colors.black87),
+                                        style: const TextStyle(color: Colors.black87),
                                       ),
                                     ],
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 5.0,
                                 ),
                                 SizedBox(
@@ -187,7 +187,7 @@ class _FormScreenState extends State<FormScreen> {
                                               BorderRadius.circular(15.0),
                                         ),
                                       ),
-                                      child: Text(
+                                      child: const Text(
                                         "View",
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 16),

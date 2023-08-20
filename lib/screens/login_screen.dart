@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           "Deliver Boy",
                           style: TextStyle(fontSize: 16),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Padding(
@@ -87,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   });
                                 },
                               ),
-                              Text(
+                              const Text(
                                 "User",
                                 style: TextStyle(fontSize: 16),
                               )
@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 5,
                   ),
                   const SizedBox(
@@ -184,15 +184,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-                  SizedBox(
+                  const SizedBox(
                     height: 5,
                   ),
                   if (selectOption == 2)
                     Transform.translate(
-                      offset: Offset(-15, 0),
+                      offset: const Offset(-15, 0),
                       child: CheckboxListTile(
                           title: RichText(
-                            text: TextSpan(children: [
+                            text: const TextSpan(children: [
                               TextSpan(
                                 text: "I accept all the",
                                 style: TextStyle(color: Colors.black),
@@ -231,9 +231,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         } else if (email.isNotEmpty && password.isNotEmpty) {
                           if (selectOption == 1) {
+                            authProvider.setSelectOption(1);
                             authProvider.DeliveryBoylogin(
                                 context, email, password);
                           } else if (selectOption == 2) {
+                            authProvider.setSelectOption(2);
                             authProvider.Userlogin(context, email, password);
                           }
                         } else if (!_formfield.currentState!.validate()) {
@@ -257,7 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.blue,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Center(
+                      child: const Center(
                         // child: authProvider.loading
                         //     ? const CircularProgressIndicator(
                         //         color: Colors.white,

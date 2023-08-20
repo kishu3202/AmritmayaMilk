@@ -43,6 +43,9 @@ dependencies:
   fluttertoast: ^8.2.2
   shared_preferences: ^2.2.0
   intl: ^0.18.1
+  text_scroll: ^0.2.0
+  scroll_loop_auto_scroll: ^0.0.5
+  dio: ^5.3.2
 
 
 

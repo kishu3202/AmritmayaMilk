@@ -36,12 +36,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
   List<ProductqntList> productqntList = [];
   ProductrateList? productrateList;
 
-  // Initialize dropdown values to null
-  String? selectedProduct;
-  String? selectedUnit;
-  String? selectedQuantity;
-  String? selectedRate;
-  String? staffId;
+  late int productIdLength;
+  late int unitIdLength;
+  late int quantityLength;
+  late int rateLength;
+  late int otherChargesLength;
+  late int otherIdLength;
 
   String userId = '';
   String otherId = '';
@@ -51,6 +51,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
   int? selectedProductIndex;
   int? selectedUnitIndex;
   String? selectedUnitId;
+  String? selectedQuantity;
+  String? selectedRate;
+  String? staffId;
 
   String productId = '';
   String unitId = '';
@@ -131,8 +134,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
         );
       } else {
         try {
+          // await productData.submit(context, selectedProductId, selectedUnitId,
+          //     selectedQuantity, selectedRate, otherCharge, otherId);
           var headers = {
-            // "Content-Type": "application/json",
             'X-API-KEY': 'amritmayamilk050512',
           };
           var uri = Uri.parse(
@@ -149,12 +153,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
           print('Other ID List: ${otherId}');
 
           for (int i = 0; i < selectedProductId!.length; i++) {
-            data['product_id[$i]'] = selectedProductId![i];
-            data['unit_id[$i]'] = selectedUnitId![i];
-            data['qnt[$i]'] = productData.selectedQuantity![i];
-            data['rate[$i]'] = productData.selectedRate![i];
-            data['other_charges[$i]'] = productData.otherCharge[i];
-            data['other_id[$i]'] = otherId[i];
+            data['product_id[]'] = selectedProductId![i];
+            data['unit_id[]'] = selectedUnitId![i];
+            data['qnt[]'] = productData.selectedQuantity![i];
+            data['rate[]'] = productData.selectedRate![i];
+            data['other_charges[]'] = productData.otherCharge[i];
+            data['other_id[]'] = otherId[i];
           }
           var response = await http.post(uri, headers: headers, body: data);
           if (response.statusCode == 200) {
@@ -425,7 +429,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               style:
                                   TextStyle(fontSize: 15, color: Colors.black),
                             ),
-                            value: productData.selectedProduct,
+                            value: productData.selectedProductId,
                             items:
                                 productData.productNameList.map((String value) {
                               return DropdownMenuItem<String>(
@@ -442,8 +446,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                     .indexOf(selectedValue!);
                                 selectedProductId = productData.productIdList
                                     .elementAt(selectedProductIndex!);
-                                // productData.setSelectedProduct(selectedValue!);
                                 productData.fetchUnitIds(selectedProductId!);
+                                print("selected Product: $selectedProductId");
                               });
                             },
                             validator: (value) {
@@ -484,7 +488,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             'Unit',
                             style: TextStyle(fontSize: 15, color: Colors.black),
                           ),
-                          value: productData.selectedUnit,
+                          value: productData.selectedUnitId,
                           items: productData.unitNameList.map((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
@@ -499,9 +503,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                   .indexOf(selectedValue!);
                               selectedUnitId = productData.unitIdList
                                   .elementAt(selectedUnitIndex!);
-                              productData.setSelectedUnitId(selectedValue);
                               productData.fetchQuantityIds(
                                   selectedProductId!, selectedUnitId!);
+                              print('selected unit: $selectedUnitId');
                             });
                           },
                           validator: (value) {
@@ -552,10 +556,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           }).toList(),
                           onChanged: (String? selectedValue) {
                             setState(() {
-                              selectedQuantity = selectedValue;
-                              productData.setSelectedQuantityId(selectedValue!);
+                              selectedQuantity = selectedValue!;
+                              // productData.setSelectedQuantityId(selectedValue!);
                               productData.fetchRates(selectedProductId!,
                                   selectedUnitId!, selectedQuantity!);
+                              print('selected quantity: $selectedQuantity');
                             });
                           },
                           validator: (value) {
@@ -604,20 +609,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             );
                           }).toList(),
                           onChanged: (String? selectedValue) async {
-                            if (selectedValue != null) {
-                              productData.setSelectedProduct(selectedValue);
-                              productData
-                                  .fetchUnitIds(productData.selectedProduct!);
-                              await productData.fetchQuantityIds(
-                                productData.selectedProduct!,
-                                productData.selectedUnit!,
-                              );
-                              await productData.fetchRates(
-                                productData.selectedProduct!,
-                                productData.selectedUnit!,
-                                productData.selectedQuantity!,
-                              );
-                            }
+                            productData.fetchProductNames();
+                            productData
+                                .fetchUnitIds(productData.selectedProductId!);
+                            await productData.fetchQuantityIds(
+                              productData.selectedProductId!,
+                              productData.selectedUnitId!,
+                            );
                           },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -657,19 +655,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 }
 
-// Future<void> _loadDailyNeedProductDetails() async {
-//   final SharedPreferences prefs = await SharedPreferences.getInstance();
-//   selectedProduct = prefs.getString('selected_product') ?? null;
-//   selectedUnit = prefs.getString('selected_unit') ?? null;
-//   selectedQuantity = prefs.getString('selected_quantity') ?? null;
-//   selectedRate = prefs.getString('selected_rate') ?? null;
-//   selectedIds = prefs.getBool('polythene_small_checked') ?? false;
-//   selectedIds = prefs.getBool('polythene_big_checked') ?? false;
-//   selectedIds = prefs.getBool('delivery_checked') ?? false;
-//   selectedIds = prefs.getBool('maintenance_checked') ?? false;
-//   staffId = prefs.getString('staff_id') ?? null;
-//   otherId = prefs.getString('other_id') ?? null;
-//   setState(() {}); // Refresh the UI after loading the details
-// }
+Widget addCards() {
+  return Container();
+}
 
-// Function to save customer daily need product details to SharedPreferences
+Widget removeCards() {
+  return Container();
+}

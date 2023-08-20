@@ -15,6 +15,12 @@ class AuthProvider extends ChangeNotifier {
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
 
+  int selectOption = 0;
+  void setSelectOption(int option) {
+    selectOption = option;
+    notifyListeners();
+  }
+
   void setLoading(bool value) {
     _loading = value;
     notifyListeners();
@@ -61,7 +67,7 @@ class AuthProvider extends ChangeNotifier {
             textColor: Colors.white);
         print("Succssful");
 
-        _isLoggedIn = true;
+        loginUser();
 
         Navigator.push(
           context,
@@ -116,13 +122,14 @@ class AuthProvider extends ChangeNotifier {
         prefs.setString('address', loginResponse['address']);
 
         Fluttertoast.showToast(
-            msg: 'User Login Successfully',
+            msg: 'Delivery Boy Login Successfully',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 2,
             backgroundColor: Colors.green,
             textColor: Colors.white);
         print("Succssful");
+        loginUser();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const DashboardScreen()),
