@@ -30,18 +30,19 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   final ProductListProvider productListProvider = ProductListProvider();
   List<Widget> cardAdd = [];
+
   // List to store fetched data
   List<ProductListElement> productList = [];
   List<ProductunitList> productunitList = [];
   List<ProductqntList> productqntList = [];
   ProductrateList? productrateList;
 
-  late int productIdLength;
-  late int unitIdLength;
-  late int quantityLength;
-  late int rateLength;
-  late int otherChargesLength;
-  late int otherIdLength;
+  int? productIdLength;
+  int? unitIdLength;
+  int? quantityLength;
+  int? rateLength;
+  int? otherChargesLength;
+  int? otherIdLength;
 
   String userId = '';
   String otherId = '';
@@ -134,8 +135,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
         );
       } else {
         try {
-          // await productData.submit(context, selectedProductId, selectedUnitId,
-          //     selectedQuantity, selectedRate, otherCharge, otherId);
+          // await productData.submit(
+          //     context,
+          //     selectedProductId!,
+          //     selectedUnitId!,
+          //     selectedQuantity!,
+          //     selectedRate!,
+          //     otherCharge,
+          //     otherId,
+          //     userId,
+          //     widget.customerId);
           var headers = {
             'X-API-KEY': 'amritmayamilk050512',
           };
@@ -158,7 +167,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
             data['qnt[]'] = productData.selectedQuantity![i];
             data['rate[]'] = productData.selectedRate![i];
             data['other_charges[]'] = productData.otherCharge[i];
-            data['other_id[]'] = otherId[i];
+            // data['other_id[]'] = otherId[i];
+            if (i < otherId.length) {
+              data['other_id[]'] = otherId[i];
+            } else {
+              data['other_id[]'] = ''; // Or any default value
+            }
           }
           var response = await http.post(uri, headers: headers, body: data);
           if (response.statusCode == 200) {
@@ -196,7 +210,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text("Add Daily Need Pro3ducts"),
+          title: const Text("Add Daily Need Products"),
         ),
         body: SingleChildScrollView(
           child: Form(
@@ -556,11 +570,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           }).toList(),
                           onChanged: (String? selectedValue) {
                             setState(() {
-                              selectedQuantity = selectedValue!;
+                              productData.selectedQuantity = selectedValue!;
                               // productData.setSelectedQuantityId(selectedValue!);
-                              productData.fetchRates(selectedProductId!,
-                                  selectedUnitId!, selectedQuantity!);
-                              print('selected quantity: $selectedQuantity');
+                              productData.fetchRates(
+                                  selectedProductId!,
+                                  selectedUnitId!,
+                                  productData.selectedQuantity!);
+                              print(
+                                  'selected quantity: $productData.selectedQuantity');
                             });
                           },
                           validator: (value) {
