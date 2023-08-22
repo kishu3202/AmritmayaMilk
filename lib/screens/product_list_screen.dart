@@ -37,6 +37,17 @@ class _ProductListScreenState extends State<ProductListScreen> {
   List<ProductqntList> productqntList = [];
   ProductrateList? productrateList;
 
+  List<String> productIdList = [];
+  List<String> productNameList = [];
+  List<String> unitIdList = [];
+  List<String> unitNameList = [];
+  List<String> quantityList = [];
+  List<String> rateList = [];
+  List<String> idList = [];
+  List<String> nameList = [];
+  List<String> amountList = [];
+  List<String> otherCharge = [];
+
   int? productIdLength;
   int? unitIdLength;
   int? quantityLength;
@@ -46,7 +57,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   String userId = '';
   String otherId = '';
-  String otherCharge = '';
+  // String otherCharge = '';
 
   String? selectedProductId;
   int? selectedProductIndex;
@@ -68,7 +79,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
     fetchOtherChargesId();
     fetchOtherId();
     fetchUserId();
-    _formKey.currentState?.reset();
   }
 
   void fetchUserId() async {
@@ -88,7 +98,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
   void fetchOtherChargesId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      otherCharge = prefs.getString('otherChargesAmounts') ?? '';
+      otherCharge =
+          (prefs.getString('otherChargesAmounts') ?? '') as List<String>;
     });
   }
 
@@ -101,7 +112,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     prefs.setString('selected_unit', selectedUnitId ?? '');
     prefs.setString('selected_quantity', selectedQuantity ?? '');
     prefs.setString('selected_rate', selectedRate ?? '');
-    prefs.setString('other_charges_id', otherCharge ?? '');
+    // prefs.setStringList('other_charges_id', otherCharge ?? );
     _showToastMessage("Daily need product details saved successfully");
     print('Daily need product saved successfully');
   }
@@ -145,6 +156,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           //     otherId,
           //     userId,
           //     widget.customerId);
+
           var headers = {
             'X-API-KEY': 'amritmayamilk050512',
           };
@@ -160,12 +172,22 @@ class _ProductListScreenState extends State<ProductListScreen> {
           print('Selected Rate List: ${productData.selectedRate}');
           print('Other Charge List: ${productData.otherCharge}');
           print('Other ID List: ${otherId}');
+          Map<String, dynamic> listParam = {
+            //list parameters add
+            "product_id[]": '',
+            "unit_id[]": '',
+            "qnt[]": '',
+            "rate[]": '',
+            "other_charges[]": '',
+            "other_id[]": '',
+            "customer_id": '',
+          };
 
           for (int i = 0; i < selectedProductId!.length; i++) {
             data['product_id[]'] = selectedProductId![i];
             data['unit_id[]'] = selectedUnitId![i];
-            data['qnt[]'] = productData.selectedQuantity![i];
-            data['rate[]'] = productData.selectedRate![i];
+            data['qnt[]'] = selectedQuantity![i];
+            data['rate[]'] = selectedRate![i];
             data['other_charges[]'] = productData.otherCharge[i];
             // data['other_id[]'] = otherId[i];
             if (i < otherId.length) {
@@ -173,6 +195,24 @@ class _ProductListScreenState extends State<ProductListScreen> {
             } else {
               data['other_id[]'] = ''; // Or any default value
             }
+            Map<String, dynamic> remainingParam = {
+              // without list parametr
+              "staff_id": userId,
+            };
+            Map<String, dynamic> allParams = {
+              // all parameter
+              "staff_id": userId,
+              "product_id[]": selectedProductId,
+              "unit_id[]": selectedUnitId,
+              "qnt[]": selectedQuantity,
+              "rate[]": selectedRate,
+              "other_charges[]": otherCharge,
+              "other_id[]": otherId,
+              "customer_id": widget.customerId,
+            };
+            listParam.addAll(data);
+            remainingParam.addAll(data);
+            allParams.addAll(data);
           }
           var response = await http.post(uri, headers: headers, body: data);
           if (response.statusCode == 200) {
@@ -494,61 +534,70 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     );
                   }),
                   SizedBox(height: 20),
-                  FutureBuilder(builder: (context, snapshot) {
-                    return Consumer<ProductListProvider>(
-                      builder: (context, productData, _) {
-                        return DropdownButtonFormField<String>(
-                          hint: const Text(
-                            'Unit',
-                            style: TextStyle(fontSize: 15, color: Colors.black),
-                          ),
-                          value: productData.selectedUnitId,
-                          items: productData.unitNameList.map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              // value: productData.unitIdList[
-                              //     productData.unitNameList.indexOf(value)],
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String? selectedValue) {
-                            setState(() {
-                              selectedUnitIndex = productData.unitNameList
-                                  .indexOf(selectedValue!);
-                              selectedUnitId = productData.unitIdList
-                                  .elementAt(selectedUnitIndex!);
-                              productData.fetchQuantityIds(
-                                  selectedProductId!, selectedUnitId!);
-                              print('selected unit: $selectedUnitId');
-                            });
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please select an option';
-                            }
-                            return null;
-                          },
-                          icon: const Icon(
-                            Icons.arrow_drop_down_circle,
-                            color: Colors.blue,
-                          ),
-                          dropdownColor: Colors.deepPurple.shade50,
-                          decoration: InputDecoration(
-                            labelText: "Unit",
-                            prefixIcon: const Icon(
-                              Icons.ad_units_outlined,
-                              color: Colors.blue,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
+                  Builder(builder: (context) {
+                    final productData = Provider.of<ProductListProvider>(
+                        context,
+                        listen: false);
+                    return FutureBuilder(
+                        future: productData.fetchUnitIds(productId),
+                        builder: (context, snapshot) {
+                          return Consumer<ProductListProvider>(
+                            builder: (context, productData, _) {
+                              return DropdownButtonFormField<String>(
+                                hint: const Text(
+                                  'Unit',
+                                  style: TextStyle(
+                                      fontSize: 15, color: Colors.black),
+                                ),
+                                value: productData.selectedUnitId,
+                                items: productData.unitNameList
+                                    .map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    // value: productData.unitIdList[
+                                    //     productData.unitNameList.indexOf(value)],
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String? selectedValue) {
+                                  setState(() {
+                                    selectedUnitIndex = productData.unitNameList
+                                        .indexOf(selectedValue!);
+                                    selectedUnitId = productData.unitIdList
+                                        .elementAt(selectedUnitIndex!);
+                                    productData.fetchQuantityIds(
+                                        selectedProductId!, selectedUnitId!);
+                                    print('selected unit: $selectedUnitId');
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please select an option';
+                                  }
+                                  return null;
+                                },
+                                icon: const Icon(
+                                  Icons.arrow_drop_down_circle,
+                                  color: Colors.blue,
+                                ),
+                                dropdownColor: Colors.deepPurple.shade50,
+                                decoration: InputDecoration(
+                                  labelText: "Unit",
+                                  prefixIcon: const Icon(
+                                    Icons.ad_units_outlined,
+                                    color: Colors.blue,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        });
                   }),
                   SizedBox(height: 20),
                   FutureBuilder(builder: (context, snapshot) {
@@ -570,14 +619,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           }).toList(),
                           onChanged: (String? selectedValue) {
                             setState(() {
-                              productData.selectedQuantity = selectedValue!;
-                              // productData.setSelectedQuantityId(selectedValue!);
-                              productData.fetchRates(
-                                  selectedProductId!,
-                                  selectedUnitId!,
-                                  productData.selectedQuantity!);
-                              print(
-                                  'selected quantity: $productData.selectedQuantity');
+                              selectedQuantity = selectedValue!;
+                              productData.fetchRates(selectedProductId!,
+                                  selectedUnitId!, selectedQuantity!);
+                              print('selected quantity: $selectedQuantity');
                             });
                           },
                           validator: (value) {
@@ -626,6 +671,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             );
                           }).toList(),
                           onChanged: (String? selectedValue) async {
+                            selectedRate = selectedValue;
                             productData.fetchProductNames();
                             productData
                                 .fetchUnitIds(productData.selectedProductId!);

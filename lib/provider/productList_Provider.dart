@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
@@ -174,7 +175,7 @@ class ProductListProvider extends ChangeNotifier {
           });
         }
         print('Fetched Rates: $rateList');
-        setSelectedRateId(rateList.first);
+        // setSelectedRateId(rateList.first);
         notifyListeners();
       } else {
         throw Exception('Failed to fetch rates');
@@ -235,148 +236,112 @@ class ProductListProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> submit(
-      BuildContext context,
-      String selectedProductId,
-      String selectedUnitId,
-      String selectedQuantity,
-      String selectedRate,
-      String otherCharge,
-      String otherId,
-      String userId,
-      String customerId) async {
+  Future<void> submit(BuildContext context, selectedProductId, selectedUnitId,
+      selectedQuantity, selectedRate, otherCharge, otherId) async {
     setLoading(true);
     try {
-      var map = new Map<String, dynamic>();
-      map['product_id[]'] = selectedProductId;
-      map['unit_id[]'] = selectedUnitId;
-      map['qnt[]'] = selectedQuantity;
-      map['rate[]'] = selectedRate;
-      map['other_charges[]'] = otherCharge;
-      map['other_id[]'] = otherId;
-      map['staff_id'] = userId;
-      map['customer_id'] = customerId;
-      Response response = await post(
-          Uri.parse(
-              "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct"),
-          headers: {'X-API-KEY': 'amritmayamilk050512'},
-          body: map);
-      Map<String, dynamic> res = json.decode(response.body);
-      print(res['Success']);
-      if (res['Success'] == true) {
-        print("Succssful submitted");
+      Map<String, dynamic> listParam = {
+        //list parameters add
+        "product_id[]": '',
+        "unit_id[]": '',
+        "qnt[]": '',
+        "rate[]": '',
+        "other_charges[]": '',
+        "other_id[]": '',
+        "customer_id": '',
+      };
+      print("**********************************************************");
+      // if(productNameIdLength==0){} else{
+      //   for(int i=0;i<productNameIdLength!;i++){
+      //     listParam ={
+      //       "product_id[]": productNameIdList![i].toString(),
+      //     };
+      //   }
+      // }
+      if (selectedProductId == 0) {
+      } else {
+        for (int i = 0; i < selectedProductId!.length; i++) {
+          print("Adding product ID: ${productIdList[i]}");
+          listParam = {
+            "product_id[]": productIdList[i].toString(),
+          };
+        }
       }
+      if (selectedUnitId == 0) {
+      } else {
+        for (int i = 0; i < selectedUnitId!.length; i++) {
+          print("Adding unit ID: ${unitIdList[i]}");
+          listParam = {
+            "unit_id[]": unitIdList[i].toString(),
+          };
+        }
+      }
+      if (selectedQuantity == 0) {
+      } else {
+        for (int i = 0; i < selectedQuantity!.length; i++) {
+          print("Adding quantity: ${quantityList[i]}");
+          listParam = {
+            "qnt[]": quantityList[i].toString(),
+          };
+        }
+      }
+      if (selectedRate == 0) {
+      } else {
+        for (int i = 0; i < selectedRate!.length; i++) {
+          print("Adding rate: ${rateList[i]}");
+          listParam = {
+            "rate[]": rateList[i].toString(),
+          };
+        }
+      }
+      if (otherCharge == 0) {
+      } else {
+        for (int i = 0; i < otherCharge.length; i++) {
+          print("Adding other charges: ${idList[i]}");
+          listParam = {
+            "other_charges[]": idList[i].toString(),
+          };
+        }
+      }
+      if (otherId == 0) {
+      } else {
+        for (int i = 0; i < otherId.length; i++) {
+          print("Adding other ID: ${otherId[i]}");
+          listParam = {
+            "other_id[]": otherId[i].toString(),
+          };
+        }
+      }
+      Map<String, dynamic> remainingParam = {
+        // without list parametr
+        "staff_id": userId,
+      };
+      Map<String, dynamic> allParams = {
+        // all parameter
+        "staff_id": userId,
+        "product_id[]": selectedProductId,
+        "unit_id[]": selectedUnitId,
+        "qnt[]": selectedQuantity,
+        "rate[]": selectedRate,
+        "other_charges[]": otherCharge,
+        "other_id[]": otherId,
+        "customer_id": customerId,
+      };
+      allParams.addAll(remainingParam);
+      allParams.addAll(listParam);
+      FormData formData = FormData.fromMap(allParams);
+      print("FormData Values : ${formData.fields}");
+      final response = await post(
+          Uri.parse(
+              'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct'),
+          headers: {'X-API-KEY': 'amritmayamilk050512'},
+          body: formData);
+      Map<String, dynamic> res = json.decode(response.body);
+      print("Response Success: ${res['Success']}");
     } catch (e) {
-      print(e.toString());
+      print('Error during data submission 1: $e');
     }
   }
-
-  // Future<void> submit(BuildContext context, selectedProductId, selectedUnitId,
-  //     selectedQuantity, selectedRate, otherCharge, otherId) async {
-  //   setLoading(true);
-  //   try {
-  //     Map<String, dynamic> listParam = {
-  //       //list parameters add
-  //       "product_id[]": '',
-  //       "unit_id[]": '',
-  //       "qnt[]": '',
-  //       "rate[]": '',
-  //       "other_charges[]": '',
-  //       "other_id[]": '',
-  //       "customer_id": '',
-  //     };
-  //     print("**********************************************************");
-  //     // if(productNameIdLength==0){} else{
-  //     //   for(int i=0;i<productNameIdLength!;i++){
-  //     //     listParam ={
-  //     //       "product_id[]": productNameIdList![i].toString(),
-  //     //     };
-  //     //   }
-  //     // }
-  //     if (selectedProductId == 0) {
-  //     } else {
-  //       for (int i = 0; i < selectedProductId!.length; i++) {
-  //         print("Adding product ID: ${productIdList[i]}");
-  //         listParam = {
-  //           "product_id[]": productIdList[i].toString(),
-  //         };
-  //       }
-  //     }
-  //     if (selectedUnitId == 0) {
-  //     } else {
-  //       for (int i = 0; i < selectedUnitId!.length; i++) {
-  //         print("Adding unit ID: ${unitIdList[i]}");
-  //         listParam = {
-  //           "unit_id[]": unitIdList[i].toString(),
-  //         };
-  //       }
-  //     }
-  //     if (selectedQuantity == 0) {
-  //     } else {
-  //       for (int i = 0; i < selectedQuantity!.length; i++) {
-  //         print("Adding quantity: ${quantityList[i]}");
-  //         listParam = {
-  //           "qnt[]": quantityList[i].toString(),
-  //         };
-  //       }
-  //     }
-  //     if (selectedRate == 0) {
-  //     } else {
-  //       for (int i = 0; i < selectedRate!.length; i++) {
-  //         print("Adding rate: ${rateList[i]}");
-  //         listParam = {
-  //           "rate[]": rateList[i].toString(),
-  //         };
-  //       }
-  //     }
-  //     if (otherCharge == 0) {
-  //     } else {
-  //       for (int i = 0; i < otherCharge.length; i++) {
-  //         print("Adding other charges: ${idList[i]}");
-  //         listParam = {
-  //           "other_charges[]": idList[i].toString(),
-  //         };
-  //       }
-  //     }
-  //     if (otherId == 0) {
-  //     } else {
-  //       for (int i = 0; i < otherId.length; i++) {
-  //         print("Adding other ID: ${otherId[i]}");
-  //         listParam = {
-  //           "other_id[]": otherId[i].toString(),
-  //         };
-  //       }
-  //     }
-  //     Map<String, dynamic> remainingParam = {
-  //       // without list parametr
-  //       "staff_id": userId,
-  //     };
-  //     Map<String, dynamic> allParams = {
-  //       // all parameter
-  //       "staff_id": userId,
-  //       "product_id[]": selectedProductId,
-  //       "unit_id[]": selectedUnitId,
-  //       "qnt[]": selectedQuantity,
-  //       "rate[]": selectedRate,
-  //       "other_charges[]": otherCharge,
-  //       "other_id[]": otherId,
-  //       "customer_id": customerId,
-  //     };
-  //     allParams.addAll(remainingParam);
-  //     allParams.addAll(listParam);
-  //     FormData formData = FormData.fromMap(allParams);
-  //     print("FormData Values : ${formData.fields}");
-  //     final response = await post(
-  //         Uri.parse(
-  //             'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct'),
-  //         headers: {'X-API-KEY': 'amritmayamilk050512'},
-  //         body: formData);
-  //     Map<String, dynamic> res = json.decode(response.body);
-  //     print("Response Success: ${res['Success']}");
-  //   } catch (e) {
-  //     print('Error during data submission 1: $e');
-  //   }
-  // }
 
   void setSelectedRateId(String rate) {
     selectedRate = rate;

@@ -88,10 +88,10 @@ class Productdetail {
   String orderId;
   String customerId;
   String productId;
-  String qnt;
+  dynamic qnt;
   dynamic userId;
   String? unitId;
-  String rate;
+  dynamic rate;
   String raiseDispute;
   String status;
   DateTime createdAt;
