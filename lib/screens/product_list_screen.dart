@@ -534,70 +534,61 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     );
                   }),
                   SizedBox(height: 20),
-                  Builder(builder: (context) {
-                    final productData = Provider.of<ProductListProvider>(
-                        context,
-                        listen: false);
-                    return FutureBuilder(
-                        future: productData.fetchUnitIds(productId),
-                        builder: (context, snapshot) {
-                          return Consumer<ProductListProvider>(
-                            builder: (context, productData, _) {
-                              return DropdownButtonFormField<String>(
-                                hint: const Text(
-                                  'Unit',
-                                  style: TextStyle(
-                                      fontSize: 15, color: Colors.black),
-                                ),
-                                value: productData.selectedUnitId,
-                                items: productData.unitNameList
-                                    .map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    // value: productData.unitIdList[
-                                    //     productData.unitNameList.indexOf(value)],
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                                onChanged: (String? selectedValue) {
-                                  setState(() {
-                                    selectedUnitIndex = productData.unitNameList
-                                        .indexOf(selectedValue!);
-                                    selectedUnitId = productData.unitIdList
-                                        .elementAt(selectedUnitIndex!);
-                                    productData.fetchQuantityIds(
-                                        selectedProductId!, selectedUnitId!);
-                                    print('selected unit: $selectedUnitId');
-                                  });
-                                },
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please select an option';
-                                  }
-                                  return null;
-                                },
-                                icon: const Icon(
-                                  Icons.arrow_drop_down_circle,
-                                  color: Colors.blue,
-                                ),
-                                dropdownColor: Colors.deepPurple.shade50,
-                                decoration: InputDecoration(
-                                  labelText: "Unit",
-                                  prefixIcon: const Icon(
-                                    Icons.ad_units_outlined,
-                                    color: Colors.blue,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        });
+                  FutureBuilder(builder: (context, snapshot) {
+                    return Consumer<ProductListProvider>(
+                      builder: (context, productData, _) {
+                        return DropdownButtonFormField<String>(
+                          hint: const Text(
+                            'Unit',
+                            style: TextStyle(fontSize: 15, color: Colors.black),
+                          ),
+                          value: productData.selectedUnitId,
+                          items: productData.unitNameList.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              // value: productData.unitIdList[
+                              //     productData.unitNameList.indexOf(value)],
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String? selectedValue) {
+                            setState(() {
+                              selectedUnitIndex = productData.unitNameList
+                                  .indexOf(selectedValue!);
+                              selectedUnitId = productData.unitIdList
+                                  .elementAt(selectedUnitIndex!);
+                              productData.fetchQuantityIds(
+                                  selectedProductId!, selectedUnitId!);
+                              print('selected unit: $selectedUnitId');
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select an option';
+                            }
+                            return null;
+                          },
+                          icon: const Icon(
+                            Icons.arrow_drop_down_circle,
+                            color: Colors.blue,
+                          ),
+                          dropdownColor: Colors.deepPurple.shade50,
+                          decoration: InputDecoration(
+                            labelText: "Unit",
+                            prefixIcon: const Icon(
+                              Icons.ad_units_outlined,
+                              color: Colors.blue,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
                   }),
                   SizedBox(height: 20),
                   FutureBuilder(builder: (context, snapshot) {
