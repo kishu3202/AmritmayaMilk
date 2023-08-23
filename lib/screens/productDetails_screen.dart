@@ -15,7 +15,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Product Details"),
+        title: const Text("Product Details"),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -25,13 +25,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           child: Table(
             border: TableBorder.all(),
             columnWidths: {
-              0: FlexColumnWidth(3),
-              1: FlexColumnWidth(2),
-              2: FlexColumnWidth(2),
-              3: FlexColumnWidth(2),
+              0: const FlexColumnWidth(3),
+              1: const FlexColumnWidth(2),
+              2: const FlexColumnWidth(2),
+              3: const FlexColumnWidth(2),
             },
             children: [
-              TableRow(
+              const TableRow(
                 children: [
                   TableCell(
                       child: Center(
@@ -64,28 +64,28 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         child: Center(
                             child: Text(
                           productDetail.productName ?? 'N/A',
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                         ))),
                     TableCell(
                         verticalAlignment: TableCellVerticalAlignment.middle,
                         child: Center(
                             child: Text(
                           productDetail.unitName ?? "",
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                         ))),
                     TableCell(
                         verticalAlignment: TableCellVerticalAlignment.middle,
                         child: Center(
                             child: Text(
                           productDetail.qnt ?? '',
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                         ))),
                     TableCell(
                       verticalAlignment: TableCellVerticalAlignment.middle,
                       child: Center(
                           child: Text(
                         productDetail.rate ?? '',
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                       )),
                     ),
                   ],

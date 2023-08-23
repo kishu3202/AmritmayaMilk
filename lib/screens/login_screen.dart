@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -25,10 +26,19 @@ class _LoginScreenState extends State<LoginScreen> {
   AuthProvider? authProvider;
   int selectOption = 0; // 0: Nothing selected, 1: Delivery boy, 2: user
   bool termAccepted = false;
+  String userId = '';
 
   Future<bool> exitApp(BuildContext context) async {
     SystemNavigator.pop();
     return true;
+  }
+
+  void fetchUserID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userId = prefs.getString('id') ?? '';
+    });
+    print("user staff id: ${userId}");
   }
 
   @override

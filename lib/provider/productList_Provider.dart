@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,9 +12,9 @@ class ProductListProvider extends ChangeNotifier {
   String? selectedUnitId;
   String? selectedQuantity;
   String? selectedRate;
-  String? userId;
-  String? otherId;
-  String? customerId;
+  String userId = '';
+  String otherId = '';
+  String customerId = '';
 
   List<String> productIdList = [];
   List<String> productNameList = [];
@@ -25,13 +26,6 @@ class ProductListProvider extends ChangeNotifier {
   List<String> nameList = [];
   List<String> amountList = [];
   List<String> otherCharge = [];
-
-  int? productIdLength;
-  int? unitIdLength;
-  int? quantityLength;
-  int? rateLength;
-  int? otherChargesLength;
-  int? otherIdLength;
 
   bool _loading = false;
 
@@ -200,7 +194,6 @@ class ProductListProvider extends ChangeNotifier {
       final response = json.decode(res.body) as Map<String, dynamic>;
       print('API Response - Fetch Other Charges: $response');
       if (res.statusCode == 200) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
         idList.clear();
         amountList.clear();
         nameList.clear();
@@ -212,20 +205,21 @@ class ProductListProvider extends ChangeNotifier {
           final otherChargesName = other['name'];
           final otherChargesAmount = other['amount'];
 
-          if (!idList.contains(otherChargesId)) {
-            idList.add(otherChargesId);
-            amountList.add(otherChargesAmount);
-            nameList.add(otherChargesName);
-          }
+          // if (!idList.contains(otherChargesId)) {
+          idList.add(otherChargesId);
+          amountList.add(otherChargesAmount);
+          nameList.add(otherChargesName);
+          // }
         });
         // Save lists to SharedPreferences
-        prefs.setStringList('otherChargesIds', idList);
-        prefs.setStringList('otherChargesAmounts', amountList);
-        prefs.setStringList('otherChargesNames', nameList);
+        SharedPreferences pref = await SharedPreferences.getInstance();
+        pref.setStringList('otherChargesIds', idList);
+        pref.setStringList('otherChargesAmounts', amountList);
+        pref.setStringList('otherChargesNames', nameList);
 
-        print('Saved Ids: ${prefs.getStringList('otherChargesIds')}');
-        print('Saved Amounts: ${prefs.getStringList('otherChargesAmounts')}');
-        print('Saved Names: ${prefs.getStringList('otherChargesNames')}');
+        print('Saved Ids: ${pref.getStringList('otherChargesIds')}');
+        print('Saved Amounts: ${pref.getStringList('otherChargesAmounts')}');
+        print('Saved Names: ${pref.getStringList('otherChargesNames')}');
 
         notifyListeners();
       } else {
@@ -236,8 +230,16 @@ class ProductListProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> submit(BuildContext context, selectedProductId, selectedUnitId,
-      selectedQuantity, selectedRate, otherCharge, otherId) async {
+  Future<void> submit(
+      BuildContext context,
+      List selectedProductIdList,
+      List selectedUnitIdList,
+      List selectedQuantityNameList,
+      List selectedRateList,
+      otherCharge,
+      otherId,
+      String userId,
+      String customerId) async {
     setLoading(true);
     try {
       Map<String, dynamic> listParam = {
@@ -258,36 +260,36 @@ class ProductListProvider extends ChangeNotifier {
       //     };
       //   }
       // }
-      if (selectedProductId == 0) {
+      if (selectedProductIdList == 0) {
       } else {
-        for (int i = 0; i < selectedProductId!.length; i++) {
+        for (int i = 0; i < selectedProductIdList.length; i++) {
           print("Adding product ID: ${productIdList[i]}");
           listParam = {
             "product_id[]": productIdList[i].toString(),
           };
         }
       }
-      if (selectedUnitId == 0) {
+      if (selectedUnitIdList == 0) {
       } else {
-        for (int i = 0; i < selectedUnitId!.length; i++) {
+        for (int i = 0; i < selectedUnitIdList.length; i++) {
           print("Adding unit ID: ${unitIdList[i]}");
           listParam = {
             "unit_id[]": unitIdList[i].toString(),
           };
         }
       }
-      if (selectedQuantity == 0) {
+      if (selectedQuantityNameList == 0) {
       } else {
-        for (int i = 0; i < selectedQuantity!.length; i++) {
+        for (int i = 0; i < selectedQuantityNameList.length; i++) {
           print("Adding quantity: ${quantityList[i]}");
           listParam = {
             "qnt[]": quantityList[i].toString(),
           };
         }
       }
-      if (selectedRate == 0) {
+      if (selectedRateList == 0) {
       } else {
-        for (int i = 0; i < selectedRate!.length; i++) {
+        for (int i = 0; i < selectedRateList.length; i++) {
           print("Adding rate: ${rateList[i]}");
           listParam = {
             "rate[]": rateList[i].toString(),
@@ -297,18 +299,18 @@ class ProductListProvider extends ChangeNotifier {
       if (otherCharge == 0) {
       } else {
         for (int i = 0; i < otherCharge.length; i++) {
-          print("Adding other charges: ${idList[i]}");
+          print("Adding other charges: ${amountList[i]}");
           listParam = {
-            "other_charges[]": idList[i].toString(),
+            "other_charges[]": amountList[i].toString(),
           };
         }
       }
       if (otherId == 0) {
       } else {
         for (int i = 0; i < otherId.length; i++) {
-          print("Adding other ID: ${otherId[i]}");
+          print("Adding other ID: ${idList[i]}");
           listParam = {
-            "other_id[]": otherId[i].toString(),
+            "other_id[]": idList[i].toString(),
           };
         }
       }
@@ -319,10 +321,10 @@ class ProductListProvider extends ChangeNotifier {
       Map<String, dynamic> allParams = {
         // all parameter
         "staff_id": userId,
-        "product_id[]": selectedProductId,
-        "unit_id[]": selectedUnitId,
-        "qnt[]": selectedQuantity,
-        "rate[]": selectedRate,
+        "product_id[]": selectedProductIdList,
+        "unit_id[]": selectedUnitIdList,
+        "qnt[]": selectedQuantityNameList,
+        "rate[]": selectedRateList,
         "other_charges[]": otherCharge,
         "other_id[]": otherId,
         "customer_id": customerId,
@@ -338,8 +340,22 @@ class ProductListProvider extends ChangeNotifier {
           body: formData);
       Map<String, dynamic> res = json.decode(response.body);
       print("Response Success: ${res['Success']}");
+      Fluttertoast.showToast(
+          msg: 'Daily Need have been save Successfully',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 2,
+          backgroundColor: Colors.green,
+          textColor: Colors.white);
     } catch (e) {
       print('Error during data submission 1: $e');
+      Fluttertoast.showToast(
+          msg: 'Failed to submit data',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 2,
+          backgroundColor: Colors.red,
+          textColor: Colors.white);
     }
   }
 

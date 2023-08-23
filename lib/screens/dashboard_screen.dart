@@ -365,7 +365,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             color: Colors.blue,
                             borderRadius: BorderRadius.circular(10.0),
                           ),
-                          child: Column(
+                          child: const Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -398,7 +398,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Expanded(
@@ -409,7 +409,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             color: Colors.blue,
                             borderRadius: BorderRadius.circular(10.0),
                           ),
-                          child: Column(
+                          child: const Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -444,12 +444,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       )
                     ],
                   ),
-                SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  child: ScrollLoopAutoScroll(
+                  child: const ScrollLoopAutoScroll(
                       child: Text(
                         "Payment of Milk should not be paid to the delivery staff (दूध का पैसा डिलीवरी स्टाफ को देना मना).",
                         style: TextStyle(fontSize: 20, color: Colors.green),
@@ -464,14 +464,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       delayAfterScrollInput: Duration(seconds: 1)),
                 ),
                 if (isUser)
-                  SizedBox(
+                  const SizedBox(
                     height: 40,
                   ),
                 if (isUser)
                   GridView(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
@@ -480,7 +481,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     children: [
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.deepPurple.shade100,
+                            backgroundColor: Colors.deepPurple.shade100,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -489,9 +490,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => BillScreen()));
+                                    builder: (context) => const BillScreen()));
                           },
-                          child: Text(
+                          child: const Text(
                             "Bill",
                             style: TextStyle(
                               color: Colors.white, // Set the text color
@@ -500,7 +501,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           )),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.deepPurple.shade100,
+                              backgroundColor: Colors.deepPurple.shade100,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               )),
@@ -509,9 +510,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        DailyNeedListScreen()));
+                                        const DailyNeedListScreen()));
                           },
-                          child: Text(
+                          child: const Text(
                             "Daily Need List",
                             style: TextStyle(
                               color: Colors.white, // Set the text color
@@ -528,9 +529,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => IntimationScreen()));
+                                    builder: (context) =>
+                                        const IntimationScreen()));
                           },
-                          child: Text(
+                          child: const Text(
                             "Intimation",
                             style: TextStyle(
                               color: Colors.white, // Set the text color
@@ -547,9 +549,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => MyQRScreen()));
+                                    builder: (context) => const MyQRScreen()));
                           },
-                          child: Text(
+                          child: const Text(
                             "My QR",
                             style: TextStyle(
                               color: Colors.white, // Set the text color
@@ -566,9 +568,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ProductScreen()));
+                                    builder: (context) =>
+                                        const ProductScreen()));
                           },
-                          child: Text(
+                          child: const Text(
                             "Products",
                             style: TextStyle(
                               color: Colors.white, // Set the text color
@@ -585,9 +588,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SupportScreen()));
+                                    builder: (context) =>
+                                        const SupportScreen()));
                           },
-                          child: Text(
+                          child: const Text(
                             "Support",
                             style: TextStyle(
                               color: Colors.white, // Set the text color
@@ -607,7 +611,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     builder: (context) =>
                                         const PersonalDetails()));
                           },
-                          child: Text(
+                          child: const Text(
                             "Profile",
                             style: TextStyle(
                               color: Colors.white, // Set the text color
@@ -625,9 +629,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        ChangePasswordScreen()));
+                                        const ChangePasswordScreen()));
                           },
-                          child: Text(
+                          child: const Text(
                             "Change Password",
                             style: TextStyle(
                               color: Colors.white, // Set the text color

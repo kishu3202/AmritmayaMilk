@@ -32,6 +32,88 @@ class EmailValidator extends StatelessWidget {
     );
   }
 }
+
+//// submit data api
+// var headers = {
+//   'X-API-KEY': 'amritmayamilk050512',
+// };
+// var uri = Uri.parse(
+//     'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct');
+// var data = {
+//   'customer_id': widget.customerId.toString(),
+//   'staff_id': userId,
+// };
+// print('Selected Product List: ${selectedProductId}');
+// print('Selected Unit List: ${selectedUnitId}');
+// print('Selected Quantity List: ${productData.selectedQuantity}');
+// print('Selected Rate List: ${productData.selectedRate}');
+// print('Other Charge List: ${productData.otherCharge}');
+// print('Other ID List: ${otherId}');
+// Map<String, dynamic> listParam = {
+// //list parameters add
+// "product_id[]": '',
+// "unit_id[]": '',
+// "qnt[]": '',
+// "rate[]": '',
+// "other_charges[]": '',
+// "other_id[]": '',
+// "customer_id": '',
+// };
+//
+// for (int i = 0; i < selectedProductId!.length; i++) {
+// data['product_id[]'] = selectedProductId![i];
+// data['unit_id[]'] = selectedUnitId![i];
+// data['qnt[]'] = selectedQuantity![i];
+// data['rate[]'] = selectedRate![i];
+// data['other_charges[]'] = productData.otherCharge[i];
+// // data['other_id[]'] = otherId[i];
+// if (i < otherId.length) {
+// data['other_id[]'] = otherId[i];
+// } else {
+// data['other_id[]'] = ''; // Or any default value
+// }
+// Map<String, dynamic> remainingParam = {
+// // without list parametr
+// "staff_id": userId,
+// };
+// Map<String, dynamic> allParams = {
+// // all parameter
+// "staff_id": userId,
+// "product_id[]": selectedProductId,
+// "unit_id[]": selectedUnitId,
+// "qnt[]": selectedQuantity,
+// "rate[]": selectedRate,
+// "other_charges[]": otherCharge,
+// "other_id[]": otherId,
+// "customer_id": widget.customerId,
+// };
+// listParam.addAll(data);
+// remainingParam.addAll(data);
+// allParams.addAll(data);
+// }
+// var response = await http.post(uri, headers: headers, body: data);
+// if (response.statusCode == 200) {
+// final jsonData = json.decode(response.body);
+// print('Response JSON Data: $jsonData');
+// print('Success: ${jsonData["Success"]}');
+// print(jsonData["Success"]);
+// _showToastMessage("Daily Need has been saved Successfully");
+//
+// final dailyNeedProvider =
+// Provider.of<DailyNeedProductProvider>(context, listen: false);
+// await dailyNeedProvider.getPostDailyNeedProduct(widget.customerId);
+// dailyNeedProvider.notifyListeners();
+// } else {
+// Fluttertoast.showToast(
+// msg: "Error Occurred", timeInSecForIosWeb: 25);
+// }
+// } catch (e) {
+// print('Error during data submission: $e');
+// _showToastMessage('Failed to save Daily Need');
+// }
+// }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // validator: (value) {
 //   validateEmail = RegExp(
 //           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")

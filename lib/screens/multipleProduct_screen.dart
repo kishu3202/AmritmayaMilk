@@ -67,7 +67,7 @@ class _MultipleProductScreenState extends State<MultipleProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Multiple Product")),
+      appBar: AppBar(title: const Text("Multiple Product")),
       body: Column(
         children: [
           Padding(
@@ -82,7 +82,7 @@ class _MultipleProductScreenState extends State<MultipleProductScreen> {
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
                       onPressed: addProduct,
-                      child: Text(
+                      child: const Text(
                         "Add More",
                         style: TextStyle(fontSize: 17),
                       ),
@@ -95,7 +95,7 @@ class _MultipleProductScreenState extends State<MultipleProductScreen> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 30,
                 ),
                 Flexible(
@@ -104,7 +104,7 @@ class _MultipleProductScreenState extends State<MultipleProductScreen> {
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
                       onPressed: () => showProducts(),
-                      child: Text("Show", style: TextStyle(fontSize: 17)),
+                      child: const Text("Show", style: TextStyle(fontSize: 17)),
                       style: ElevatedButton.styleFrom(
                         primary: Colors.green,
                         shape: RoundedRectangleBorder(
@@ -209,9 +209,9 @@ class _ProductCardState extends State<ProductCard> {
       ),
       color: Colors.deepPurple.shade50,
       shadowColor: Color.alphaBlend(Colors.black87, Colors.black12),
-      margin: EdgeInsets.all(10),
+      margin: const EdgeInsets.all(10),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             TextField(
@@ -270,7 +270,7 @@ class _ProductCardState extends State<ProductCard> {
                           _quantityController.text,
                           _rateController.text,
                         ),
-                        child: Text(
+                        child: const Text(
                           "Add",
                           style: TextStyle(fontSize: 16),
                         ),
@@ -292,7 +292,7 @@ class _ProductCardState extends State<ProductCard> {
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                         onPressed: widget.onRemove,
-                        child: Text(
+                        child: const Text(
                           "Remove",
                           style: TextStyle(fontSize: 16),
                         ),
@@ -323,7 +323,7 @@ class ShowProductsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Saved Products")),
+      appBar: AppBar(title: const Text("Saved Products")),
       body: ListView.builder(
         itemCount: products.length,
         itemBuilder: (context, index) {
