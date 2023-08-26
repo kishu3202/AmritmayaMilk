@@ -19,7 +19,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../provider/auth_Provider.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  final bool isDeliveryBoy;
+  const DashboardScreen({super.key, required this.isDeliveryBoy});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -105,10 +106,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     bool isDeliveryBoy = false;
     bool isUser = false;
 
-    if (authProvider.selectOption == 1) {
+    if (widget.isDeliveryBoy) {
       appBarTitle = "Delivery Boy Dashboard";
       isDeliveryBoy = true;
-    } else if (authProvider.selectOption == 2) {
+    } else {
       appBarTitle = "Dashborad";
       showNotificationIcon = true;
       isUser = true;
@@ -365,7 +366,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             color: Colors.blue,
                             borderRadius: BorderRadius.circular(10.0),
                           ),
-                          child: const Column(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -398,7 +399,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(
+                      SizedBox(
                         width: 10,
                       ),
                       Expanded(
@@ -409,7 +410,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             color: Colors.blue,
                             borderRadius: BorderRadius.circular(10.0),
                           ),
-                          child: const Column(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -444,12 +445,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       )
                     ],
                   ),
-                const SizedBox(
+                SizedBox(
                   height: 40,
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  child: const ScrollLoopAutoScroll(
+                  child: ScrollLoopAutoScroll(
                       child: Text(
                         "Payment of Milk should not be paid to the delivery staff (दूध का पैसा डिलीवरी स्टाफ को देना मना).",
                         style: TextStyle(fontSize: 20, color: Colors.green),
@@ -464,15 +465,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       delayAfterScrollInput: Duration(seconds: 1)),
                 ),
                 if (isUser)
-                  const SizedBox(
+                  SizedBox(
                     height: 40,
                   ),
                 if (isUser)
                   GridView(
                     shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
@@ -481,7 +481,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     children: [
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple.shade100,
+                            primary: Colors.deepPurple.shade100,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -490,9 +490,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const BillScreen()));
+                                    builder: (context) => BillScreen()));
                           },
-                          child: const Text(
+                          child: Text(
                             "Bill",
                             style: TextStyle(
                               color: Colors.white, // Set the text color
@@ -501,7 +501,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           )),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepPurple.shade100,
+                              primary: Colors.deepPurple.shade100,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               )),
@@ -510,9 +510,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const DailyNeedListScreen()));
+                                        DailyNeedListScreen()));
                           },
-                          child: const Text(
+                          child: Text(
                             "Daily Need List",
                             style: TextStyle(
                               color: Colors.white, // Set the text color
@@ -529,10 +529,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        const IntimationScreen()));
+                                    builder: (context) => IntimationScreen()));
                           },
-                          child: const Text(
+                          child: Text(
                             "Intimation",
                             style: TextStyle(
                               color: Colors.white, // Set the text color
@@ -549,9 +548,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const MyQRScreen()));
+                                    builder: (context) => MyQRScreen()));
                           },
-                          child: const Text(
+                          child: Text(
                             "My QR",
                             style: TextStyle(
                               color: Colors.white, // Set the text color
@@ -568,10 +567,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ProductScreen()));
+                                    builder: (context) => ProductScreen()));
                           },
-                          child: const Text(
+                          child: Text(
                             "Products",
                             style: TextStyle(
                               color: Colors.white, // Set the text color
@@ -588,10 +586,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SupportScreen()));
+                                    builder: (context) => SupportScreen()));
                           },
-                          child: const Text(
+                          child: Text(
                             "Support",
                             style: TextStyle(
                               color: Colors.white, // Set the text color
@@ -611,7 +608,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     builder: (context) =>
                                         const PersonalDetails()));
                           },
-                          child: const Text(
+                          child: Text(
                             "Profile",
                             style: TextStyle(
                               color: Colors.white, // Set the text color
@@ -629,9 +626,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const ChangePasswordScreen()));
+                                        ChangePasswordScreen()));
                           },
-                          child: const Text(
+                          child: Text(
                             "Change Password",
                             style: TextStyle(
                               color: Colors.white, // Set the text color

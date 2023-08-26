@@ -236,127 +236,135 @@ class ProductListProvider extends ChangeNotifier {
       List selectedUnitIdList,
       List selectedQuantityNameList,
       List selectedRateList,
-      otherCharge,
-      otherId,
+      List otherCharge,
+      List otherId,
       String userId,
       String customerId) async {
     setLoading(true);
-    try {
-      Map<String, dynamic> listParam = {
-        //list parameters add
-        "product_id[]": '',
-        "unit_id[]": '',
-        "qnt[]": '',
-        "rate[]": '',
-        "other_charges[]": '',
-        "other_id[]": '',
-        "customer_id": '',
-      };
-      print("**********************************************************");
-      // if(productNameIdLength==0){} else{
-      //   for(int i=0;i<productNameIdLength!;i++){
-      //     listParam ={
-      //       "product_id[]": productNameIdList![i].toString(),
-      //     };
-      //   }
-      // }
-      if (selectedProductIdList == 0) {
-      } else {
-        for (int i = 0; i < selectedProductIdList.length; i++) {
-          print("Adding product ID: ${productIdList[i]}");
-          listParam = {
-            "product_id[]": productIdList[i].toString(),
-          };
-        }
+    // try {
+    Dio dio = Dio();
+    Map<String, dynamic> listParam = {
+      //list parameters add
+      "product_id[]": '',
+      "unit_id[]": '',
+      "qnt[]": '',
+      "rate[]": '',
+      "other_charges[]": '',
+      "other_id[]": '',
+      "customer_id": '',
+    };
+    print("**********************************************************");
+    // if(productNameIdLength==0){} else{
+    //   for(int i=0;i<productNameIdLength!;i++){
+    //     listParam ={
+    //       "product_id[]": productNameIdList![i].toString(),
+    //     };
+    //   }
+    // }
+    if (selectedProductIdList == 0) {
+    } else {
+      for (int i = 0; i < selectedProductIdList.length; i++) {
+        print("Adding product ID: ${productIdList[i]}");
+        listParam = {
+          "product_id[]": productIdList[i].toString(),
+        };
       }
-      if (selectedUnitIdList == 0) {
-      } else {
-        for (int i = 0; i < selectedUnitIdList.length; i++) {
-          print("Adding unit ID: ${unitIdList[i]}");
-          listParam = {
-            "unit_id[]": unitIdList[i].toString(),
-          };
-        }
-      }
-      if (selectedQuantityNameList == 0) {
-      } else {
-        for (int i = 0; i < selectedQuantityNameList.length; i++) {
-          print("Adding quantity: ${quantityList[i]}");
-          listParam = {
-            "qnt[]": quantityList[i].toString(),
-          };
-        }
-      }
-      if (selectedRateList == 0) {
-      } else {
-        for (int i = 0; i < selectedRateList.length; i++) {
-          print("Adding rate: ${rateList[i]}");
-          listParam = {
-            "rate[]": rateList[i].toString(),
-          };
-        }
-      }
-      if (otherCharge == 0) {
-      } else {
-        for (int i = 0; i < otherCharge.length; i++) {
-          print("Adding other charges: ${amountList[i]}");
-          listParam = {
-            "other_charges[]": amountList[i].toString(),
-          };
-        }
-      }
-      if (otherId == 0) {
-      } else {
-        for (int i = 0; i < otherId.length; i++) {
-          print("Adding other ID: ${idList[i]}");
-          listParam = {
-            "other_id[]": idList[i].toString(),
-          };
-        }
-      }
-      Map<String, dynamic> remainingParam = {
-        // without list parametr
-        "staff_id": userId,
-      };
-      Map<String, dynamic> allParams = {
-        // all parameter
-        "staff_id": userId,
-        "product_id[]": selectedProductIdList,
-        "unit_id[]": selectedUnitIdList,
-        "qnt[]": selectedQuantityNameList,
-        "rate[]": selectedRateList,
-        "other_charges[]": otherCharge,
-        "other_id[]": otherId,
-        "customer_id": customerId,
-      };
-      allParams.addAll(remainingParam);
-      allParams.addAll(listParam);
-      FormData formData = FormData.fromMap(allParams);
-      print("FormData Values : ${formData.fields}");
-      final response = await post(
-          Uri.parse(
-              'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct'),
-          headers: {'X-API-KEY': 'amritmayamilk050512'},
-          body: formData);
-      Map<String, dynamic> res = json.decode(response.body);
-      print("Response Success: ${res['Success']}");
-      Fluttertoast.showToast(
-          msg: 'Daily Need have been save Successfully',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 2,
-          backgroundColor: Colors.green,
-          textColor: Colors.white);
-    } catch (e) {
-      print('Error during data submission 1: $e');
-      Fluttertoast.showToast(
-          msg: 'Failed to submit data',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 2,
-          backgroundColor: Colors.red,
-          textColor: Colors.white);
     }
+    if (selectedUnitIdList == 0) {
+    } else {
+      for (int i = 0; i < selectedUnitIdList.length; i++) {
+        print("Adding unit ID: ${unitIdList[i]}");
+        listParam = {
+          "unit_id[]": unitIdList[i].toString(),
+        };
+      }
+    }
+    if (selectedQuantityNameList == 0) {
+    } else {
+      for (int i = 0; i < selectedQuantityNameList.length; i++) {
+        print("Adding quantity: ${quantityList[i]}");
+        listParam = {
+          "qnt[]": quantityList[i].toString(),
+        };
+      }
+    }
+    if (selectedRateList == 0) {
+    } else {
+      for (int i = 0; i < selectedRateList.length; i++) {
+        print("Adding rate: ${rateList[i]}");
+        listParam = {
+          "rate[]": rateList[i].toString(),
+        };
+      }
+    }
+    if (otherCharge == 0) {
+    } else {
+      for (int i = 0; i < otherCharge.length; i++) {
+        print("Adding other charges: ${amountList[i]}");
+        listParam = {
+          "other_charges[]": amountList[i].toString(),
+        };
+      }
+    }
+    if (otherId == 0) {
+    } else {
+      for (int i = 0; i < otherId.length; i++) {
+        print("Adding other ID: ${idList[i]}");
+        listParam = {
+          "other_id[]": idList[i].toString(),
+        };
+      }
+    }
+    Map<String, dynamic> remainingParam = {
+      // without list parametr
+      "staff_id": userId,
+    };
+    Map<String, dynamic> allParams = {
+      // all parameter
+      "staff_id": userId,
+      "product_id[]": selectedProductIdList,
+      "unit_id[]": selectedUnitIdList,
+      "qnt[]": selectedQuantityNameList,
+      "rate[]": selectedRateList,
+      "other_charges[]": otherCharge,
+      "other_id[]": otherId,
+      "customer_id": customerId,
+    };
+    allParams.addAll(remainingParam);
+    allParams.addAll(listParam);
+    FormData formData = FormData.fromMap(allParams);
+    print("FormData Values : ${formData.fields}");
+    // final response = await dio.post(
+    //   'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct',
+    //   data: json.encode(allParams),
+    //   options: Options(
+    //     headers: {'X-API-KEY': 'amritmayamilk050512'},
+    //   ),
+    // );
+    final response = await post(
+        Uri.parse(
+            'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct'),
+        headers: {'X-API-KEY': 'amritmayamilk050512'},
+        body: json.encode(allParams));
+    Map<String, dynamic> res = json.decode(response.body);
+    print("Response Success: ${res['Success']}");
+    Fluttertoast.showToast(
+        msg: 'Daily Need have been save Successfully',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 2,
+        backgroundColor: Colors.green,
+        textColor: Colors.white);
+    // } catch (e) {
+    //   print('Error during data submission 1: $e');
+    //   Fluttertoast.showToast(
+    //       msg: 'Failed to submit data',
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.BOTTOM,
+    //       timeInSecForIosWeb: 2,
+    //       backgroundColor: Colors.red,
+    //       textColor: Colors.white);
+    // }
   }
 
   void setSelectedRateId(String rate) {

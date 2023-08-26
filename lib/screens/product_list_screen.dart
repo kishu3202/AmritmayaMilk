@@ -24,8 +24,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
   final ProductListProvider productListProvider = ProductListProvider();
   List<Widget> cardAdd = [];
   String userId = '';
-  String otherId = '';
-  String otherCharge = '';
 
   String? selectedProductId;
   int? selectedProductIndex;
@@ -40,12 +38,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
   List<String> selectedUnitIdList = [""];
   List<String> selectedQuantityNameList = [""];
   List<String> selectedRateList = [""];
+  List<String> otherCharge = [""];
+  List<String> otherId = [""];
 
   @override
   void initState() {
     super.initState();
     // cardAdd.add(addProductCard());
-    fetchOtherChargesId();
+    // fetchOtherChargesId();
     fetchOtherId();
     fetchUserId();
   }
@@ -60,25 +60,23 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   void fetchOtherId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      otherId = prefs.getString('otherChargesIds') ?? '';
-    });
-    print("Otherrrrr id: ${otherId}");
+    otherCharge = prefs.getStringList('otherChargeId') ?? [];
+    print('other Chargeeee: ${otherCharge}');
   }
 
-  void fetchOtherChargesId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      otherCharge = prefs.getString('otherChargesAmounts') ?? '';
-    });
-    print("otherChargeeeee: ${otherCharge}");
-  }
+  // void fetchOtherChargesId() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     otherCharge = prefs.getString('otherChargesAmounts') ?? '';
+  //   });
+  //   print("otherChargeeeee: ${otherCharge}");
+  // }
 
   Future<void> _saveDailyNeedProductDetails() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('customer_id', widget.customerId);
     prefs.setString('staff_id', userId ?? '');
-    prefs.setString('other_id', otherId ?? '');
+    // prefs.setString('other_id', otherId ?? '');
     prefs.setString('selected_product', selectedProductId ?? '');
     prefs.setString('selected_unit', selectedUnitId ?? '');
     prefs.setString('selected_quantity', selectedQuantity ?? '');
@@ -116,20 +114,20 @@ class _ProductListScreenState extends State<ProductListScreen> {
           ),
         );
       } else {
-        try {
-          await productData.submit(
-              context,
-              selectedProductIdList,
-              selectedUnitIdList,
-              selectedQuantityNameList,
-              selectedRateList,
-              otherCharge,
-              otherId,
-              userId,
-               widget.customerId);
-        } catch (e) {
-          print("Error during data submission: ${e}");
-        }
+        // try {
+        await productData.submit(
+            context,
+            selectedProductIdList,
+            selectedUnitIdList,
+            selectedQuantityNameList,
+            selectedRateList,
+            productData.otherCharge,
+            otherId,
+            userId,
+            widget.customerId);
+        // } catch (e) {
+        //   print("Error during data submission: ${e}");
+        // }
       }
     }
   }
@@ -280,11 +278,27 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                                     value: productData
                                                         .otherCharge
                                                         .contains(id),
-                                                    onChanged: (value) {
+                                                    onChanged: (value) async {
+                                                      print(
+                                                          "Checkbox onChanged - Value: $value");
                                                       if (value!) {
+                                                        print(
+                                                            "Adding ID: $id to otherCharge list");
                                                         productData.otherCharge
                                                             .add(id);
+                                                        SharedPreferences
+                                                            prefs =
+                                                            await SharedPreferences
+                                                                .getInstance();
+                                                        await prefs.setStringList(
+                                                            'otherChargeId',
+                                                            productData
+                                                                .otherCharge);
+                                                        print(
+                                                            "Saved otherChargeId in SharedPreferences: ${productData.otherCharge}");
                                                       } else {
+                                                        print(
+                                                            "Removing ID: $id from otherCharge list");
                                                         productData.otherCharge
                                                             .remove(id);
                                                       }

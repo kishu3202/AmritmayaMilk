@@ -26,9 +26,11 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void loginUser() {
+  Future<void> loginUser() async {
     _isLoggedIn = true;
     notifyListeners();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', true);
   }
 
   void Userlogin(BuildContext context, String email, String password) async {
@@ -57,6 +59,7 @@ class AuthProvider extends ChangeNotifier {
         prefs.setString('contact', loginResponse['contact']);
         prefs.setString('email', loginResponse['email']);
         prefs.setString('address', loginResponse['address']);
+        prefs.setBool('isDeliveryBoy', false);
 
         Fluttertoast.showToast(
             msg: 'User Login Successfully',
@@ -71,7 +74,10 @@ class AuthProvider extends ChangeNotifier {
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const DashboardScreen()),
+          MaterialPageRoute(
+              builder: (context) => DashboardScreen(
+                    isDeliveryBoy: false,
+                  )),
         );
         setLoading(false);
       } else {
@@ -120,6 +126,7 @@ class AuthProvider extends ChangeNotifier {
         prefs.setString('contact', loginResponse['contact']);
         prefs.setString('email', loginResponse['email']);
         prefs.setString('address', loginResponse['address']);
+        prefs.setBool('isDeliveryBoy', true);
 
         Fluttertoast.showToast(
             msg: 'Delivery Boy Login Successfully',
@@ -132,7 +139,8 @@ class AuthProvider extends ChangeNotifier {
         loginUser();
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const DashboardScreen()),
+          MaterialPageRoute(
+              builder: (context) => DashboardScreen(isDeliveryBoy: true)),
         );
         setLoading(false);
       } else {

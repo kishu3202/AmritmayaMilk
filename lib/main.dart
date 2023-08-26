@@ -22,12 +22,18 @@ class AmritmayaMilk extends StatefulWidget {
 
 class _AmritmayaMilkState extends State<AmritmayaMilk> {
   var isLoggedIn = true;
+  var isDeliveryBoy = false;
 
   void checkIsUserLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    print(prefs.getString('email'));
     if (prefs.getString('email') == null) {
       setState(() {
         isLoggedIn = false;
+      });
+    } else {
+      setState(() {
+        isDeliveryBoy = prefs.getBool("isDeliveryBoy") ?? false;
       });
     }
   }
@@ -55,7 +61,7 @@ class _AmritmayaMilkState extends State<AmritmayaMilk> {
           builder: (context, authProvider, _) {
             if (isLoggedIn) {
               // User is logged in, show DashboardScreen
-              return const DashboardScreen();
+              return DashboardScreen(isDeliveryBoy: isDeliveryBoy);
             } else {
               // User is not logged in, show LoginScreen
               return const LoginScreen();
