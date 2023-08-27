@@ -40,8 +40,9 @@ class DialNeedList {
   String email;
   String address;
   String orderId;
-  List<dynamic> otherCharges;
+  // List<dynamic> otherCharges;
   List<Productdetail> productdetails;
+  List<OtherCharge> otherCharges;
 
   DialNeedList({
     required this.customerId,
@@ -63,7 +64,9 @@ class DialNeedList {
         email: json["email"],
         address: json["address"],
         orderId: json["order_id"],
-        otherCharges: List<dynamic>.from(json["other_charges"].map((x) => x)),
+        // otherCharges: List<dynamic>.from(json["other_charges"].map((x) => x)),
+        otherCharges: List<OtherCharge>.from(
+            json["other_charges"].map((x) => OtherCharge.fromJson(x))),
         productdetails: List<Productdetail>.from(
             json["productdetails"].map((x) => Productdetail.fromJson(x))),
       );
@@ -77,7 +80,14 @@ class DialNeedList {
         "email": email,
         "address": address,
         "order_id": orderId,
-        "other_charges": List<dynamic>.from(otherCharges.map((x) => x)),
+        // "other_charges":
+        //     List<dynamic>.from(otherCharges.map((x) => x.toJson())),
+        "other_charges": List<dynamic>.from(otherCharges.map((x) => {
+              "other_charges_id": x.otherId,
+              "name": x.name,
+              "amount": x.amount,
+            })),
+
         "productdetails":
             List<dynamic>.from(productdetails.map((x) => x.toJson())),
       };
@@ -150,4 +160,22 @@ class Productdetail {
         "unit_name": unitName,
         "product_name": productName,
       };
+}
+
+class OtherCharge {
+  String? otherId;
+  String? name;
+  String? amount;
+
+  OtherCharge({
+    required this.otherId,
+    required this.name,
+    required this.amount,
+  });
+
+  factory OtherCharge.fromJson(Map<String, dynamic> json) => OtherCharge(
+        otherId: json["other_charges_id"],
+        name: json["name"],
+        amount: json["amount"],
+      );
 }

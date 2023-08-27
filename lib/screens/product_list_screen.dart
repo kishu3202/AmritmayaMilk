@@ -23,6 +23,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   final ProductListProvider productListProvider = ProductListProvider();
   List<Widget> cardAdd = [];
+
+  bool isFirstCardFilled = false;
+
   String userId = '';
 
   String? selectedProductId;
@@ -46,7 +49,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     super.initState();
     // cardAdd.add(addProductCard());
     // fetchOtherChargesId();
-    fetchOtherId();
+    // fetchOtherId();
     fetchUserId();
   }
 
@@ -58,16 +61,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
     print("stafffff id: ${userId}");
   }
 
-  void fetchOtherId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    otherCharge = prefs.getStringList('otherChargeId') ?? [];
-    print('other Chargeeee: ${otherCharge}');
-  }
-
+  // void fetchOtherId() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   otherId = prefs.getStringList('otherChargeId') ?? [];
+  //   print('other Chargeeee: ${otherCharge}');
+  // }
+  //
   // void fetchOtherChargesId() async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   setState(() {
-  //     otherCharge = prefs.getString('otherChargesAmounts') ?? '';
+  //     otherCharge = (prefs.getString('otherChargesAmounts') ?? '') as List<String>;
   //   });
   //   print("otherChargeeeee: ${otherCharge}");
   // }
@@ -103,7 +106,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     if (!_formKey.currentState!.validate()) {
       print('Please fill all the details');
     } else {
-      if (productData.otherCharge.isEmpty) {
+      if (productData.otherId.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             backgroundColor: Colors.red,
@@ -114,20 +117,20 @@ class _ProductListScreenState extends State<ProductListScreen> {
           ),
         );
       } else {
-        // try {
-        await productData.submit(
-            context,
-            selectedProductIdList,
-            selectedUnitIdList,
-            selectedQuantityNameList,
-            selectedRateList,
-            productData.otherCharge,
-            otherId,
-            userId,
-            widget.customerId);
-        // } catch (e) {
-        //   print("Error during data submission: ${e}");
-        // }
+        try {
+          await productData.submit(
+              context,
+              selectedProductIdList,
+              selectedUnitIdList,
+              selectedQuantityNameList,
+              selectedRateList,
+              productData.otherCharge,
+              productData.otherId,
+              userId,
+              widget.customerId);
+        } catch (e) {
+          print("Error during data submission: ${e}");
+        }
       }
     }
   }
@@ -178,21 +181,33 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         children: [
                           ElevatedButton(
                             onPressed: () {
-                              setState(() {
-                                // cardAdd.add(addProductCard());
-                                selectedProductNameList.insert(
-                                    selectedProductNameList.length, "");
-                                selectedProductIdList.insert(
-                                    selectedProductIdList.length, "");
-                                selectedUnitNameList.insert(
-                                    selectedUnitNameList.length, "");
-                                selectedUnitIdList.insert(
-                                    selectedUnitIdList.length, "");
-                                selectedQuantityNameList.insert(
-                                    selectedQuantityNameList.length, "");
-                                selectedRateList.insert(
-                                    selectedRateList.length, "");
-                              });
+                              if (isFirstCardFilled) {
+                                setState(() {
+                                  // cardAdd.add(addProductCard());
+                                  selectedProductNameList.insert(
+                                      selectedProductNameList.length, "");
+                                  selectedProductIdList.insert(
+                                      selectedProductIdList.length, "");
+                                  selectedUnitNameList.insert(
+                                      selectedUnitNameList.length, "");
+                                  selectedUnitIdList.insert(
+                                      selectedUnitIdList.length, "");
+                                  selectedQuantityNameList.insert(
+                                      selectedQuantityNameList.length, "");
+                                  selectedRateList.insert(
+                                      selectedRateList.length, "");
+                                  isFirstCardFilled = false;
+                                });
+                              } else {
+                                Fluttertoast.showToast(
+                                  msg:
+                                      "Please fill the details before add another card",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                );
+                              }
                             },
                             child: Text(
                               'Add More',
@@ -257,6 +272,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                           final name =
                                               productData.nameList[index];
                                           final id = productData.idList[index];
+                                          final amount =
+                                              productData.amountList[index];
                                           return Container(
                                             decoration: BoxDecoration(
                                               color: Colors.deepPurple.shade50,
@@ -275,32 +292,48 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                                             .leading,
                                                     title: Text(productData
                                                         .nameList[index]),
-                                                    value: productData
-                                                        .otherCharge
+                                                    value: productData.otherId
                                                         .contains(id),
                                                     onChanged: (value) async {
                                                       print(
                                                           "Checkbox onChanged - Value: $value");
                                                       if (value!) {
                                                         print(
-                                                            "Adding ID: $id to otherCharge list");
-                                                        productData.otherCharge
+                                                            "Adding ID: $id to otherId list");
+                                                        print(
+                                                            "Adding amount: $amount to otherCharge list");
+                                                        productData.otherId
                                                             .add(id);
+                                                        productData.otherCharge
+                                                            .add(amount);
                                                         SharedPreferences
                                                             prefs =
                                                             await SharedPreferences
                                                                 .getInstance();
-                                                        await prefs.setStringList(
-                                                            'otherChargeId',
+                                                        await prefs
+                                                            .setStringList(
+                                                                'otherChargeId',
+                                                                productData
+                                                                    .otherId);
+                                                        SharedPreferences
+                                                            prefss =
+                                                            await SharedPreferences
+                                                                .getInstance();
+                                                        await prefss.setStringList(
+                                                            'otherChargesAmount',
                                                             productData
                                                                 .otherCharge);
                                                         print(
-                                                            "Saved otherChargeId in SharedPreferences: ${productData.otherCharge}");
+                                                            "Saved otherChargeId in SharedPreferences: ${productData.otherId}");
+                                                        print(
+                                                            "Saved otherChargeAmount in SharedPreferences: ${productData.otherCharge}");
                                                       } else {
                                                         print(
                                                             "Removing ID: $id from otherCharge list");
-                                                        productData.otherCharge
+                                                        productData.otherId
                                                             .remove(id);
+                                                        productData.otherCharge
+                                                            .remove(amount);
                                                       }
                                                       productData
                                                           .notifyListeners();
@@ -412,8 +445,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                           selectedProductId!;
                                       productData.fetchUnitIds(
                                           selectedProductIdList[index]);
-                                      print(
-                                          "selected Product: ${selectedProductIdList[index]}");
+                                      // print(
+                                      //     "selected Product: ${selectedProductIdList[index]}");
+
+                                      bool allDetailsFilled = true;
+                                      if (allDetailsFilled &&
+                                          index ==
+                                              selectedProductNameList.length -
+                                                  1) {
+                                        isFirstCardFilled = true;
+                                      }
                                     });
                                   },
                                   validator: (value) {
@@ -429,7 +470,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                   dropdownColor: Colors.deepPurple.shade50,
                                   decoration: InputDecoration(
                                     labelText: "Product Name",
-                                    hintText: selectedProductNameList[index],
+                                    // hintText: selectedProductNameList[index],
                                     prefixIcon: const Icon(
                                       Icons.shopping_bag_outlined,
                                       color: Colors.blue,
@@ -480,6 +521,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                         selectedUnitIdList[index]);
                                     print(
                                         'selected unit: ${selectedUnitIdList[index]}');
+
+                                    bool allDetailsFilled = true;
+                                    if (allDetailsFilled &&
+                                        index ==
+                                            selectedUnitNameList.length - 1) {
+                                      isFirstCardFilled = true;
+                                    }
                                   });
                                 },
                                 validator: (value) {
@@ -495,7 +543,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                 dropdownColor: Colors.deepPurple.shade50,
                                 decoration: InputDecoration(
                                   labelText: "Unit",
-                                  hintText: selectedUnitNameList[index],
+                                  // hintText: selectedUnitNameList[index],
                                   prefixIcon: const Icon(
                                     Icons.ad_units_outlined,
                                     color: Colors.blue,
@@ -542,6 +590,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                         selectedQuantityNameList[index]);
                                     print(
                                         'selected quantity: ${selectedQuantityNameList[index]}');
+
+                                    bool allDetailsFilled = true;
+                                    if (allDetailsFilled &&
+                                        index ==
+                                            selectedQuantityNameList.length -
+                                                1) {
+                                      isFirstCardFilled = true;
+                                    }
                                   });
                                 },
                                 validator: (value) {
@@ -557,7 +613,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                 dropdownColor: Colors.deepPurple.shade50,
                                 decoration: InputDecoration(
                                   labelText: "Quantity",
-                                  hintText: selectedQuantityNameList[index],
+                                  // hintText: selectedQuantityNameList[index],
                                   prefixIcon: const Icon(
                                     Icons.production_quantity_limits,
                                     color: Colors.blue,
@@ -584,6 +640,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                   style: TextStyle(
                                       fontSize: 15, color: Colors.black),
                                 ),
+                                // isExpanded: true,
                                 value: productData.selectedRate,
                                 items: productData.rateList.map((String value) {
                                   return DropdownMenuItem<String>(
@@ -602,6 +659,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                     //   productData.selectedProductId!,
                                     //   productData.selectedUnitId!,
                                     // );
+
+                                    bool allDetailsFilled = true;
+                                    if (allDetailsFilled &&
+                                        index == selectedRateList.length - 1) {
+                                      isFirstCardFilled = true;
+                                    }
                                   });
                                 },
                                 validator: (value) {
@@ -617,7 +680,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                 dropdownColor: Colors.deepPurple.shade50,
                                 decoration: InputDecoration(
                                   labelText: "Rate",
-                                  hintText: selectedRateList[index],
+                                  // hintText: selectedRateList[index],
                                   prefixIcon: const Icon(
                                     Icons.monetization_on,
                                     color: Colors.blue,

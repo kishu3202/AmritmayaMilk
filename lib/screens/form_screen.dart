@@ -46,7 +46,7 @@ class _FormScreenState extends State<FormScreen> {
   Widget build(BuildContext context) {
     final dailyNeedProvider =
         Provider.of<DailyNeedProductProvider>(context, listen: false);
-    // final dailyNeedList = dailyNeedProvider.dialNeedList;
+    final dailyNeedList = dailyNeedProvider.dialNeedList;
     final loading = dailyNeedProvider.loading;
     return Scaffold(
       appBar: AppBar(
@@ -103,7 +103,8 @@ class _FormScreenState extends State<FormScreen> {
                                       ),
                                       TextSpan(
                                         text: '${dialNeedList.name ?? "N/A"}',
-                                        style: const TextStyle(color: Colors.black87),
+                                        style: const TextStyle(
+                                            color: Colors.black87),
                                       ),
                                     ],
                                   ),
@@ -129,7 +130,8 @@ class _FormScreenState extends State<FormScreen> {
                                         text:
                                             '${DateFormat('yyyy-MM-dd').format(dialNeedList.createdAt)}',
                                         // text: '${dialNeedList.createdAt ?? ""}',
-                                        style: const TextStyle(color: Colors.black87),
+                                        style: const TextStyle(
+                                            color: Colors.black87),
                                       ),
                                     ],
                                   ),
@@ -153,7 +155,8 @@ class _FormScreenState extends State<FormScreen> {
                                       ),
                                       TextSpan(
                                         text: '${dialNeedList.orderId ?? ""}',
-                                        style: const TextStyle(color: Colors.black87),
+                                        style: const TextStyle(
+                                            color: Colors.black87),
                                       ),
                                     ],
                                   ),
