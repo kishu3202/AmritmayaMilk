@@ -1,3 +1,4 @@
+import 'package:amritmaya_milk/provider/userProvider/outstandingAmount_Provider.dart';
 import 'package:amritmaya_milk/screens/customer_list_screen.dart';
 import 'package:amritmaya_milk/screens/login_screen.dart';
 import 'package:amritmaya_milk/screens/scan_screen.dart';
@@ -14,13 +15,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:scroll_loop_auto_scroll/scroll_loop_auto_scroll.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../provider/auth_Provider.dart';
+import '../provider/deliveryBoyProvider/auth_Provider.dart';
 
 class DashboardScreen extends StatefulWidget {
+  final String customerId;
   final bool isDeliveryBoy;
-  const DashboardScreen({super.key, required this.isDeliveryBoy});
+  const DashboardScreen({
+    super.key,
+    required this.isDeliveryBoy,
+    required this.customerId,
+  });
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -31,6 +38,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   QRViewController? controller;
   bool scanEnabled = false;
   String selectedMobileNumber = '';
+  String customerId = '';
 
   final List customers = [
     {
@@ -99,8 +107,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      getAmount();
+    });
+  }
+
+  void getAmount() async {
+    final outamountProvider =
+        Provider.of<OutStandingAmountProvider>(context, listen: false);
+    try {
+      await outamountProvider.fetchAmount(widget.customerId);
+      final outstandingAmount = outamountProvider.outstandingamount;
+      final paidAmount = outamountProvider.totalpayamount;
+      print("amount id: ${widget.customerId}");
+      print('Outstanding Amount: $outstandingAmount');
+      print('Paid Amount: $paidAmount');
+    } catch (error) {
+      print('Error fetching amount: $error');
+    }
+  }
+
+  Future<void> fetchCustomerID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      customerId = prefs.getString('id') ?? '';
+    });
+    print('customer id for user: ${customerId}');
+  }
+
+  @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final amountProvider =
+        Provider.of<OutStandingAmountProvider>(context, listen: true);
     String appBarTitle = "Dashboard";
     bool showNotificationIcon = false;
     bool isDeliveryBoy = false;
@@ -175,279 +216,276 @@ class _DashboardScreenState extends State<DashboardScreen> {
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
-            child: Column(
-              children: [
+              child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (isDeliveryBoy)
+                    Flexible(
+                      child: SizedBox(
+                        height: 60,
+                        width: MediaQuery.of(context).size.width,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const ScanScreen()),
+                            );
+                          },
+                          child: const Text(
+                            'QR Scanner',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (isDeliveryBoy)
+                    const SizedBox(
+                      width: 16,
+                    ),
+                  if (isDeliveryBoy)
+                    Flexible(
+                      child: SizedBox(
+                        height: 60,
+                        width: MediaQuery.of(context).size.width,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const CustomerList()),
+                            );
+                          },
+                          child: const Text(
+                            'Customer List',
+                            style: TextStyle(fontSize: 17),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              if (isDeliveryBoy)
+                const SizedBox(
+                  height: 20,
+                ),
+              if (isDeliveryBoy)
+                const Column(
+                  children: [
+                    Text(
+                      "Intimation List",
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                  ],
+                ),
+              if (isDeliveryBoy)
+                const SizedBox(
+                  height: 20,
+                ),
+              if (isDeliveryBoy)
+                Container(
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: customers.length,
+                        itemBuilder: (context, index) {
+                          // final customer = customers[index];
+                          return Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Container(
+                              decoration: ShapeDecoration(
+                                color: Colors.deepPurple.shade50,
+                                shape: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide:
+                                      const BorderSide(color: Colors.grey),
+                                ),
+                              ),
+                              child: ListTile(
+                                title: Text(
+                                  customers[index]['name'],
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        RichText(
+                                          text: TextSpan(
+                                            style: DefaultTextStyle.of(context)
+                                                .style,
+                                            children: [
+                                              const TextSpan(
+                                                text: 'Contact Number: ',
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontStyle: FontStyle.normal,
+                                                    color: Colors.black),
+                                              ),
+                                              TextSpan(
+                                                text: customers[index]
+                                                    ['number'],
+                                                style: const TextStyle(
+                                                    fontSize: 15,
+                                                    fontStyle: FontStyle.normal,
+                                                    color: Colors.black87),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 15,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            openDialPad(
+                                                customers[index]['number']);
+                                          },
+                                          child: const CircleAvatar(
+                                            radius: 10,
+                                            backgroundColor: Colors.green,
+                                            child: Icon(
+                                              Icons.phone,
+                                              color: Colors.white,
+                                              size: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      'Address: ${customers[index]['address']}',
+                                      style: const TextStyle(
+                                          fontSize: 15,
+                                          fontStyle: FontStyle.normal,
+                                          color: Colors.black87),
+                                    ),
+                                    Text(
+                                      'From Date: ${customers[index]['fromDate']}',
+                                      style: const TextStyle(
+                                          fontSize: 15,
+                                          fontStyle: FontStyle.normal,
+                                          color: Colors.black87),
+                                    ),
+                                    Text(
+                                      'To Date: ${customers[index]['toDate']}',
+                                      style: const TextStyle(
+                                          fontSize: 15,
+                                          fontStyle: FontStyle.normal,
+                                          color: Colors.black87),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        })),
+              if (isUser)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (isDeliveryBoy)
-                      Flexible(
-                        child: SizedBox(
-                          height: 60,
-                          width: MediaQuery.of(context).size.width,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const ScanScreen()),
-                              );
-                            },
-                            child: const Text(
-                              'QR Scanner',
-                              style: TextStyle(fontSize: 18),
+                    Expanded(
+                      child: Container(
+                        height: 80,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 10,
                             ),
-                          ),
+                            Center(
+                              child: Text(
+                                "Outstanding Amount",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Center(
+                              child: Text(
+                                "${amountProvider.outstandingamount ?? "N/A"}",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                       ),
-                    if (isDeliveryBoy)
-                      const SizedBox(
-                        width: 16,
-                      ),
-                    if (isDeliveryBoy)
-                      Flexible(
-                        child: SizedBox(
-                          height: 60,
-                          width: MediaQuery.of(context).size.width,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const CustomerList()),
-                              );
-                            },
-                            child: const Text(
-                              'Customer List',
-                              style: TextStyle(fontSize: 17),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Container(
+                        height: 80,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 10,
                             ),
-                          ),
+                            Center(
+                              child: Text(
+                                "Paid Amount",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Center(
+                              child: Text(
+                                "${amountProvider.totalpayamount ?? "N/A"}",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                       ),
+                    )
                   ],
                 ),
-                if (isDeliveryBoy)
-                  const SizedBox(
-                    height: 20,
-                  ),
-                if (isDeliveryBoy)
-                  const Column(
-                    children: [
-                      Text(
-                        "Intimation List",
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
-                      ),
-                    ],
-                  ),
-                if (isDeliveryBoy)
-                  const SizedBox(
-                    height: 20,
-                  ),
-                if (isDeliveryBoy)
-                  Container(
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: customers.length,
-                          itemBuilder: (context, index) {
-                            // final customer = customers[index];
-                            return Padding(
-                              padding: const EdgeInsets.all(5),
-                              child: Container(
-                                decoration: ShapeDecoration(
-                                  color: Colors.deepPurple.shade50,
-                                  shape: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide:
-                                        const BorderSide(color: Colors.grey),
-                                  ),
-                                ),
-                                child: ListTile(
-                                  title: Text(
-                                    customers[index]['name'],
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black87),
-                                  ),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          RichText(
-                                            text: TextSpan(
-                                              style:
-                                                  DefaultTextStyle.of(context)
-                                                      .style,
-                                              children: [
-                                                const TextSpan(
-                                                  text: 'Contact Number: ',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontStyle:
-                                                          FontStyle.normal,
-                                                      color: Colors.black),
-                                                ),
-                                                TextSpan(
-                                                  text: customers[index]
-                                                      ['number'],
-                                                  style: const TextStyle(
-                                                      fontSize: 15,
-                                                      fontStyle:
-                                                          FontStyle.normal,
-                                                      color: Colors.black87),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            width: 15,
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              openDialPad(
-                                                  customers[index]['number']);
-                                            },
-                                            child: const CircleAvatar(
-                                              radius: 10,
-                                              backgroundColor: Colors.green,
-                                              child: Icon(
-                                                Icons.phone,
-                                                color: Colors.white,
-                                                size: 13,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Text(
-                                        'Address: ${customers[index]['address']}',
-                                        style: const TextStyle(
-                                            fontSize: 15,
-                                            fontStyle: FontStyle.normal,
-                                            color: Colors.black87),
-                                      ),
-                                      Text(
-                                        'From Date: ${customers[index]['fromDate']}',
-                                        style: const TextStyle(
-                                            fontSize: 15,
-                                            fontStyle: FontStyle.normal,
-                                            color: Colors.black87),
-                                      ),
-                                      Text(
-                                        'To Date: ${customers[index]['toDate']}',
-                                        style: const TextStyle(
-                                            fontSize: 15,
-                                            fontStyle: FontStyle.normal,
-                                            color: Colors.black87),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          })),
-                if (isUser)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: 80,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Center(
-                                child: Text(
-                                  "Outstanding Amount",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 8,
-                              ),
-                              Center(
-                                child: Text(
-                                  "\$500",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: Container(
-                          height: 80,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Center(
-                                child: Text(
-                                  "Paid Amount",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 8,
-                              ),
-                              Center(
-                                child: Text(
-                                  "\$300",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                SizedBox(
-                  height: 40,
-                ),
+              SizedBox(
+                height: 40,
+              ),
+              if (isUser)
                 Container(
                   width: MediaQuery.of(context).size.width,
                   child: ScrollLoopAutoScroll(
@@ -464,182 +502,187 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       enableScrollInput: true,
                       delayAfterScrollInput: Duration(seconds: 1)),
                 ),
-                if (isUser)
-                  SizedBox(
-                    height: 40,
+              if (isUser)
+                SizedBox(
+                  height: 40,
+                ),
+              if (isUser)
+                GridView(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    mainAxisExtent: 80,
                   ),
-                if (isUser)
-                  GridView(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      mainAxisExtent: 80,
-                    ),
-                    children: [
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.deepPurple.shade100,
+                  children: [
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BillScreen(
+                                        customerId: widget.customerId,
+                                      )));
+                        },
+                        child: Text(
+                          "Bill",
+                          style: TextStyle(
+                            color: Colors.white, // Set the text color
+                            fontSize: 16,
+                          ),
+                        )),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.blue,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
-                            ),
+                            )),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DailyNeedListScreen(
+                                        customerId: widget.customerId,
+                                      )));
+                        },
+                        child: Text(
+                          "Daily Need List",
+                          style: TextStyle(
+                            color: Colors.white, // Set the text color
+                            fontSize: 16,
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => BillScreen()));
-                          },
-                          child: Text(
-                            "Bill",
-                            style: TextStyle(
-                              color: Colors.white, // Set the text color
-                              fontSize: 16,
-                            ),
-                          )),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              primary: Colors.deepPurple.shade100,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              )),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        DailyNeedListScreen()));
-                          },
-                          child: Text(
-                            "Daily Need List",
-                            style: TextStyle(
-                              color: Colors.white, // Set the text color
-                              fontSize: 16,
-                            ),
-                          )),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              primary: Colors.deepPurple.shade100,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              )),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => IntimationScreen()));
-                          },
-                          child: Text(
-                            "Intimation",
-                            style: TextStyle(
-                              color: Colors.white, // Set the text color
-                              fontSize: 16,
-                            ),
-                          )),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              primary: Colors.deepPurple.shade100,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              )),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MyQRScreen()));
-                          },
-                          child: Text(
-                            "My QR",
-                            style: TextStyle(
-                              color: Colors.white, // Set the text color
-                              fontSize: 16,
-                            ),
-                          )),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              primary: Colors.deepPurple.shade100,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              )),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ProductScreen()));
-                          },
-                          child: Text(
-                            "Products",
-                            style: TextStyle(
-                              color: Colors.white, // Set the text color
-                              fontSize: 16,
-                            ),
-                          )),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              primary: Colors.deepPurple.shade100,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              )),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SupportScreen()));
-                          },
-                          child: Text(
-                            "Support",
-                            style: TextStyle(
-                              color: Colors.white, // Set the text color
-                              fontSize: 16,
-                            ),
-                          )),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              primary: Colors.deepPurple.shade100,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              )),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const PersonalDetails()));
-                          },
-                          child: Text(
-                            "Profile",
-                            style: TextStyle(
-                              color: Colors.white, // Set the text color
-                              fontSize: 16,
-                            ),
-                          )),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              primary: Colors.deepPurple.shade100,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              )),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ChangePasswordScreen()));
-                          },
-                          child: Text(
-                            "Change Password",
-                            style: TextStyle(
-                              color: Colors.white, // Set the text color
-                              fontSize: 16,
-                            ),
-                          )),
-                    ],
-                  ),
-              ],
-            ),
-          ),
+                        )),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            )),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => IntimationScreen(
+                                        customerId: widget.customerId,
+                                      )));
+                        },
+                        child: Text(
+                          "Intimation",
+                          style: TextStyle(
+                            color: Colors.white, // Set the text color
+                            fontSize: 16,
+                          ),
+                        )),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            )),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MyQRScreen()));
+                        },
+                        child: Text(
+                          "My QR",
+                          style: TextStyle(
+                            color: Colors.white, // Set the text color
+                            fontSize: 16,
+                          ),
+                        )),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            )),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProductScreen()));
+                        },
+                        child: Text(
+                          "Products",
+                          style: TextStyle(
+                            color: Colors.white, // Set the text color
+                            fontSize: 16,
+                          ),
+                        )),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            )),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SupportScreen()));
+                        },
+                        child: Text(
+                          "Support",
+                          style: TextStyle(
+                            color: Colors.white, // Set the text color
+                            fontSize: 16,
+                          ),
+                        )),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            )),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const PersonalDetails()));
+                        },
+                        child: Text(
+                          "Profile",
+                          style: TextStyle(
+                            color: Colors.white, // Set the text color
+                            fontSize: 16,
+                          ),
+                        )),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            )),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ChangePasswordScreen(
+                                        customerId: widget.customerId,
+                                      )));
+                        },
+                        child: Text(
+                          "Change Password",
+                          style: TextStyle(
+                            color: Colors.white, // Set the text color
+                            fontSize: 16,
+                          ),
+                        )),
+                  ],
+                ),
+            ],
+          )),
         ),
       ),
     );

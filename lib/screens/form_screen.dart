@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:amritmaya_milk/provider/dailyNeedList_Provider.dart';
+import 'package:amritmaya_milk/provider/deliveryBoyProvider/dailyNeedList_Provider.dart';
 import 'package:amritmaya_milk/screens/productDetails_screen.dart';
 import 'package:amritmaya_milk/screens/product_list_screen.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../data/dailyNeedList_data_model.dart';
+import '../data/deliverBoy_data_model/dailyNeedList_data_model.dart';
 
 class FormScreen extends StatefulWidget {
   final String customerId;
@@ -37,9 +37,17 @@ class _FormScreenState extends State<FormScreen> {
     if (storedData != null) {
       setState(() {
         submittedData = json.decode(storedData);
-        print('Loaded submitted data from shared preferences: $submittedData');
+        // print('Loaded submitted data from shared preferences: $submittedData');
       });
     }
+  }
+
+  void reloadPreviousScreen() {
+    final dailyNeedProvider =
+        Provider.of<DailyNeedProductProvider>(context, listen: false);
+    dailyNeedProvider.getPostDailyNeedProduct(widget.customerId);
+    print(
+        "Reloading previous screen data for customer ID: ${widget.customerId}");
   }
 
   @override
@@ -216,8 +224,8 @@ class _FormScreenState extends State<FormScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) => ProductListScreen(
-                  customerId: widget.customerId,
-                ),
+                    customerId: widget.customerId,
+                    onNavigateBack: reloadPreviousScreen),
               ),
             );
           },

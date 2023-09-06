@@ -5,8 +5,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../screens/dashboard_screen.dart';
-import '../screens/login_screen.dart';
+import '../../screens/dashboard_screen.dart';
+import '../../screens/login_screen.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool _loading = false;
@@ -77,6 +77,7 @@ class AuthProvider extends ChangeNotifier {
           MaterialPageRoute(
               builder: (context) => DashboardScreen(
                     isDeliveryBoy: false,
+                    customerId: '',
                   )),
         );
         setLoading(false);
@@ -140,7 +141,10 @@ class AuthProvider extends ChangeNotifier {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => DashboardScreen(isDeliveryBoy: true)),
+              builder: (context) => DashboardScreen(
+                    isDeliveryBoy: true,
+                    customerId: '',
+                  )),
         );
         setLoading(false);
       } else {

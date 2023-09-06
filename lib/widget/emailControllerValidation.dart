@@ -2403,3 +2403,258 @@ class EmailValidator extends StatelessWidget {
 //     ),
 //   );
 // }
+
+///////////////////product scree api code
+// Future<void> fetchUnitIds(String productId) async {
+//   final List<ProductunitList> unitList = [];
+//   try {
+//     final res = await http.get(
+//       Uri.parse(
+//           "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productunit?product_id=$productId"),
+//       headers: {
+//         "Content-Type": "application/json",
+//         "X-API-KEY": "amritmayamilk050512",
+//       },
+//     );
+//     print(
+//         "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productunit?product_id=$productId");
+//     final response = json.decode(res.body) as Map<String, dynamic>;
+//     if (res.statusCode == 200) {
+//       // unitIdList.clear();
+//       // unitNameList.clear();
+//
+//       final unitData = response["productunitList"];
+//       // unitData.forEach((unit) {
+//       for (var unit in unitData) {
+//         // final unitId = unit["unit_id"];
+//         // final unitName = unit["name"];
+//         unitList.add(ProductunitList.fromJson(unit));
+//         // unitIdList.add(unitId);
+//         // unitNameList.add(unitName);
+//         // });
+//       }
+//       unitListDataMap[productCardId] = unitData;
+//       notifyListeners();
+//     } else {
+//       throw Exception('Failed to fetch unit IDs');
+//     }
+//   } catch (e) {
+//     throw Exception('Failed to fetch unit IDs');
+//   }
+// }
+//
+// Future<void> fetchQuantityIds(String productId, String unitId) async {
+//   final List<ProductqntList> quantityList = [];
+//   try {
+//     final res = await http.get(
+//       Uri.parse(
+//           "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productqnt?product_id=$productId&unit_id=$unitId"),
+//       headers: {
+//         "Content-Type": "application/json",
+//         "X-API-KEY": "amritmayamilk050512",
+//       },
+//     );
+//     print(unitId);
+//     print(
+//         "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productqnt?product_id=$productId&unit_id=$unitId");
+//     final response = json.decode(res.body) as Map<String, dynamic>;
+//     print('API Response: $response');
+//
+//     if (res.statusCode == 200) {
+//       // quantityList.clear();
+//
+//       final quantityData = response["productqntList"];
+//       print('Quantity Data: $quantityData');
+//       for (var quantity in quantityData) {
+//         quantityList.add(ProductqntList.fromJson(quantity));
+//       }
+//
+//       // quantityData.forEach((quantity) {
+//       //   final quantityId = quantity["qnt"];
+//       //   // quantityList.add(quantityId);
+//       // });
+//       quantityListDataMap[productCardId] = quantityData;
+//       notifyListeners();
+//     } else {
+//       throw Exception('Failed to fetch quantity IDs');
+//     }
+//   } catch (e) {
+//     print('Error during fetching quantity IDs: $e');
+//     throw Exception('Failed to fetch quantity IDs');
+//   }
+// }
+//
+// Future<void> fetchRates(
+//     String productId, String unitId, String quantityId) async {
+//   String rate = '';
+//   try {
+//     final res = await http.get(
+//       Uri.parse(
+//         "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId",
+//       ),
+//       headers: {
+//         "Content-Type": "application/json",
+//         "X-API-KEY": "amritmayamilk050512",
+//       },
+//     );
+//     print(
+//         "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productrate?product_id=$productId&unit_id=$unitId&main_qnt=$quantityId");
+//     final response = json.decode(res.body) as Map<String, dynamic>;
+//     print('API Response - Fetch Rates: $response');
+//     if (res.statusCode == 200) {
+//       // rateList.clear();
+//
+//       final rateData = response["productrateList"];
+//       if (rateData is Map<String, dynamic>) {
+//         rate = ProductrateList.fromJson(rateData).rate;
+//       }
+//       // rateData.forEach((key, value) {
+//       //   final rateValue = value;
+//       //   // rateList.add(rateValue.toString());
+//       // });
+//
+//       // print('Fetched Rates: $rateList');
+//       // setSelectedRateId(rateList.first);
+//       rateDataMap[productCardId] = rateData;
+//       notifyListeners();
+//     } else {
+//       throw Exception('Failed to fetch rates');
+//     }
+//   } catch (e) {
+//     print('Error fetching rates: $e');
+//     throw Exception('Failed to fetch rates');
+//   }
+// }
+//
+// Future<void> submit2(
+//     BuildContext context,
+//     List selectedProductIdList,
+//     List selectedUnitIdList,
+//     List selectedQuantityNameList,
+//     List selectedRateList,
+//     List otherCharge,
+//     List otherId,
+//     String userId,
+//     String customerId) async {
+//   setLoading(true);
+//   try {
+//     Dio dio = Dio();
+//     Map<String, dynamic> listParam = {
+//       //list parameters add
+//       "product_id[]": '',
+//       "unit_id[]": '',
+//       "qnt[]": '',
+//       "rate[]": '',
+//       "other_charges[]": '',
+//       "other_id[]": '',
+//       "customer_id": '',
+//     };
+//     print("**********************************************************");
+//     // if(productNameIdLength==0){} else{
+//     //   for(int i=0;i<productNameIdLength!;i++){
+//     //     listParam ={
+//     //       "product_id[]": productNameIdList![i].toString(),
+//     //     };
+//     //   }
+//     // }
+//     if (selectedProductIdList == 0) {
+//     } else {
+//       for (int i = 0; i < selectedProductIdList.length; i++) {
+//         print("Adding product ID: ${productIdList[i]}");
+//         listParam = {
+//           "product_id[]": productIdList[i].toString(),
+//         };
+//       }
+//     }
+//     if (selectedUnitIdList == 0) {
+//     } else {
+//       for (int i = 0; i < selectedUnitIdList.length; i++) {
+//         print("Adding unit ID: ${unitIdList[i]}");
+//         listParam = {
+//           "unit_id[]": unitIdList[i].toString(),
+//         };
+//       }
+//     }
+//     if (selectedQuantityNameList == 0) {
+//     } else {
+//       for (int i = 0; i < selectedQuantityNameList.length; i++) {
+//         print("Adding quantity: ${quantityList[i]}");
+//         listParam = {
+//           "qnt[]": quantityList[i].toString(),
+//         };
+//       }
+//     }
+//     if (selectedRateList == 0) {
+//     } else {
+//       for (int i = 0; i < selectedRateList.length; i++) {
+//         print("Adding rate: ${rateList[i]}");
+//         listParam = {
+//           "rate[]": rateList[i].toString(),
+//         };
+//       }
+//     }
+//     if (otherCharge == 0) {
+//     } else {
+//       for (int i = 0; i < otherCharge.length; i++) {
+//         print("Adding other charges: ${amountList[i]}");
+//         listParam = {
+//           "other_charges[]": amountList[i].toString(),
+//         };
+//       }
+//     }
+//     if (otherId == 0) {
+//     } else {
+//       for (int i = 0; i < otherId.length; i++) {
+//         print("Adding other ID: ${idList[i]}");
+//         listParam = {
+//           "other_id[]": idList[i].toString(),
+//         };
+//       }
+//     }
+//     Map<String, dynamic> remainingParam = {
+//       // without list parametr
+//       "staff_id": userId,
+//     };
+//     Map<String, dynamic> allParams = {
+//       // all parameter
+//       "staff_id": userId,
+//       "product_id[]": selectedProductIdList,
+//       "unit_id[]": selectedUnitIdList,
+//       "qnt[]": selectedQuantityNameList,
+//       "rate[]": selectedRateList,
+//       "other_charges[]": otherCharge,
+//       "other_id[]": otherId,
+//       "customer_id": customerId,
+//     };
+//     allParams.addAll(remainingParam);
+//     allParams.addAll(listParam);
+//     FormData formData = FormData.fromMap(allParams);
+//     print("FormData Values : ${formData.fields}");
+//     final response = await dio.post(
+//       'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct',
+//       data: formData,
+//       options: Options(
+//         headers: {'X-API-KEY': 'amritmayamilk050512'},
+//       ),
+//     );
+//     Map<String, dynamic> res = json.decode(response.data);
+//     print("Response Success: ${res['Success']}");
+//     Fluttertoast.showToast(
+//         msg: 'Daily Need have been save Successfully',
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.BOTTOM,
+//         timeInSecForIosWeb: 2,
+//         backgroundColor: Colors.green,
+//         textColor: Colors.white);
+//   } catch (e) {
+//     print('Error during data submission 1: $e');
+//     Fluttertoast.showToast(
+//         msg: 'Failed to submit data',
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.BOTTOM,
+//         timeInSecForIosWeb: 2,
+//         backgroundColor: Colors.red,
+//         textColor: Colors.white);
+//   }
+// }
+/////////////////////////////////////////////////////////////////////////////////////////////////

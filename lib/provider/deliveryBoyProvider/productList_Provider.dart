@@ -1,10 +1,52 @@
 import 'dart:convert';
 
+import 'package:amritmaya_milk/data/deliverBoy_data_model/productUnit_data_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../data/deliverBoy_data_model/productList_data_model.dart';
+import '../../data/deliverBoy_data_model/productOtherCharges_data_model.dart';
+import '../../data/deliverBoy_data_model/productQuantity_data_model.dart';
+import '../../data/deliverBoy_data_model/productRate_data_model.dart';
+
+class ProductCard {
+  String? productId;
+  String? productName;
+  String? unitId;
+  String? unitName;
+  String? quantity;
+  String? rate;
+  int? id;
+  ProductCard(
+      {this.productId,
+      this.productName,
+      this.unitName,
+      this.unitId,
+      this.rate,
+      this.quantity,
+      this.id});
+  ProductCard copyWith(
+      {String? productId,
+      String? productName,
+      String? unitId,
+      String? unitName,
+      String? quantity,
+      String? rate,
+      int? id}) {
+    return ProductCard(
+      productId: productId ?? this.productId,
+      productName: productName ?? this.productName,
+      unitId: unitId ?? this.unitId,
+      unitName: unitName ?? this.unitName,
+      quantity: quantity ?? this.quantity,
+      rate: rate ?? this.rate,
+      id: id ?? this.id,
+    );
+  }
+}
 
 class ProductListProvider extends ChangeNotifier {
   String? selectedProductId;
@@ -13,7 +55,7 @@ class ProductListProvider extends ChangeNotifier {
   String? selectedRate;
   String userId = '';
   String customerId = '';
-
+  //
   List<String> productIdList = [];
   List<String> productNameList = [];
   List<String> unitIdList = [];
@@ -25,6 +67,109 @@ class ProductListProvider extends ChangeNotifier {
   List<String> amountList = [];
   List<String> otherCharge = [];
   List<String> otherId = [];
+
+  //id genrator
+  int productCardId = 0;
+  void nextProductCardId() {
+    productCardId = productCardId + 1;
+    notifyListeners();
+  }
+
+  // this is for product card
+  final List<ProductCard> productCards = [];
+
+  //this is for map of cards productIdMap
+  final Map<int, String> selectedProductIdMap = <int, String>{};
+  //this is for map of cards unitIdMap
+  final Map<int, String> selectedUnitIdMap = <int, String>{};
+  //this is for map of cards quantityMap
+  final Map<int, String> selectedQuantityMap = <int, String>{};
+  //this is for map of rateMap
+  final Map<int, String> selectedRateMap = <int, String>{};
+
+  //map to store unit list data
+  final Map<int, List<ProductunitList>> unitListDataMap =
+      <int, List<ProductunitList>>{};
+  // map to store quantity list data
+  final Map<int, List<ProductqntList>> quantityListDataMap =
+      <int, List<ProductqntList>>{};
+  // map to store rate list data
+  final Map<int, String> rateDataMap = <int, String>{};
+
+  void setSelectedProductId(int productCardId, String productId) {
+    selectedProductIdMap[productCardId] = productId;
+    notifyListeners();
+  }
+
+  void setSelectedUnitId(int productCardId, String unitId) {
+    selectedUnitIdMap[productCardId] = unitId;
+    notifyListeners();
+  }
+
+  void removeSelectedUnitId(int productCardId) {
+    selectedUnitIdMap.remove(productCardId);
+    notifyListeners();
+  }
+
+  void setSelectedQuantity(int productCardId, String quantity) {
+    selectedQuantityMap[productCardId] = quantity;
+    notifyListeners();
+  }
+
+  void removeSelectedQuantity(int productCardId) {
+    selectedQuantityMap.remove(productCardId);
+    notifyListeners();
+  }
+
+  void setSelectedRate(int productCardId, String rate) {
+    selectedRateMap[productCardId] = rate;
+    notifyListeners();
+  }
+
+  void removeSelectedRate(int productCardId) {
+    selectedRateMap.remove(productCardId);
+    notifyListeners();
+  }
+
+  //this is for product data list
+  final List<ProductListElement> products = [];
+
+  // for other charges list
+  List<Othercharge> otherCharges = [];
+
+  void addCard(ProductCard productCard) {
+    productCards.add(productCard);
+    notifyListeners();
+  }
+
+  void removeCard(int productCardId) {
+    final index =
+        productCards.indexWhere((element) => element.id == productCardId);
+    productCards.removeAt(index);
+    notifyListeners();
+  }
+
+  void updateCard(int productCardId, ProductCard productCard) {
+    final index =
+        productCards.indexWhere((element) => element.id == productCardId);
+    productCards[index] = productCard;
+    notifyListeners();
+  }
+
+  void resetState() async {
+    productCardId = 0;
+    productCards.clear();
+    selectedRateMap.clear();
+    selectedQuantityMap.clear();
+    selectedUnitIdMap.clear();
+    selectedProductIdMap.clear();
+    otherCharges.clear();
+    otherId.clear();
+    unitListDataMap.clear();
+    quantityListDataMap.clear();
+    rateDataMap.clear();
+    notifyListeners(); // Notify listeners to update the UI
+  }
 
   bool _loading = false;
 
@@ -47,15 +192,22 @@ class ProductListProvider extends ChangeNotifier {
       );
       final response = json.decode(res.body) as Map<String, dynamic>;
       if (res.statusCode == 200) {
-        productIdList.clear();
-        productNameList.clear();
+        // productIdList.clear();
+        // productNameList.clear();
 
         final productList = response["productList"];
-        productList.forEach((product) {
-          productIdList.add(product["id"]);
-          productNameList.add(product["name"]);
-        });
-
+        for (var product in productList) {
+          // productList.forEach((product) {
+          // productIdList.add(product["id"]);
+          // productNameList.add(product["name"]);
+          products.add(ProductListElement.fromJson(product));
+        }
+        removeSelectedUnitId(productCardId);
+        removeSelectedQuantity(productCardId);
+        removeSelectedRate(productCardId);
+        unitListDataMap.remove(productCardId);
+        quantityListDataMap.remove(productCardId);
+        rateDataMap.remove(productCardId);
         notifyListeners();
       } else {
         throw Exception('Failed to fetch product names');
@@ -65,7 +217,8 @@ class ProductListProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchUnitIds(String productId) async {
+  Future<void> fetchUnitIds(int productCardId, String productId) async {
+    final List<ProductunitList> unitList = [];
     try {
       final res = await http.get(
         Uri.parse(
@@ -79,19 +232,24 @@ class ProductListProvider extends ChangeNotifier {
           "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productunit?product_id=$productId");
       final response = json.decode(res.body) as Map<String, dynamic>;
       if (res.statusCode == 200) {
-        unitIdList.clear();
-        unitNameList.clear();
+        // unitIdList.clear();
+        // unitNameList.clear();
 
         final unitData = response["productunitList"];
-        unitData.forEach((unit) {
-          final unitId = unit["unit_id"];
-          final unitName = unit["name"];
-
-          if (!unitIdList.contains(unitId)) {
-            unitIdList.add(unitId);
-            unitNameList.add(unitName);
-          }
-        });
+        // unitData.forEach((unit) {
+        for (var unit in unitData) {
+          // final unitId = unit["unit_id"];
+          // final unitName = unit["name"];
+          unitList.add(ProductunitList.fromJson(unit));
+          // unitIdList.add(unitId);
+          // unitNameList.add(unitName);
+          // });
+        }
+        unitListDataMap[productCardId] = unitList;
+        removeSelectedQuantity(productCardId);
+        removeSelectedRate(productCardId);
+        quantityListDataMap.remove(productCardId);
+        rateDataMap.remove(productCardId);
         notifyListeners();
       } else {
         throw Exception('Failed to fetch unit IDs');
@@ -101,7 +259,9 @@ class ProductListProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchQuantityIds(String productId, String unitId) async {
+  Future<void> fetchQuantityIds(
+      int productCardId, String productId, String unitId) async {
+    final List<ProductqntList> quantityList = [];
     try {
       final res = await http.get(
         Uri.parse(
@@ -111,7 +271,6 @@ class ProductListProvider extends ChangeNotifier {
           "X-API-KEY": "amritmayamilk050512",
         },
       );
-      print("productId: ${productId}");
       print(unitId);
       print(
           "https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/productqnt?product_id=$productId&unit_id=$unitId");
@@ -119,18 +278,21 @@ class ProductListProvider extends ChangeNotifier {
       print('API Response: $response');
 
       if (res.statusCode == 200) {
-        quantityList.clear();
+        // quantityList.clear();
 
         final quantityData = response["productqntList"];
         print('Quantity Data: $quantityData');
-        quantityData.forEach((quantity) {
-          final quantityId = quantity["qnt"];
-          quantityList.add(quantityId);
-          // if (!quantityList.contains(quantityId)) {
-          //   quantityList.add(quantityId);
-          // }
-        });
+        for (var quantity in quantityData) {
+          quantityList.add(ProductqntList.fromJson(quantity));
+        }
 
+        // quantityData.forEach((quantity) {
+        //   final quantityId = quantity["qnt"];
+        //   // quantityList.add(quantityId);
+        // });
+        quantityListDataMap[productCardId] = quantityList;
+        removeSelectedRate(productCardId);
+        rateDataMap.remove(productCardId);
         notifyListeners();
       } else {
         throw Exception('Failed to fetch quantity IDs');
@@ -141,8 +303,9 @@ class ProductListProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchRates(
-      String productId, String unitId, String quantityId) async {
+  Future<void> fetchRates(int productCardId, String productId, String unitId,
+      String quantityId) async {
+    String rate = '';
     try {
       final res = await http.get(
         Uri.parse(
@@ -158,17 +321,13 @@ class ProductListProvider extends ChangeNotifier {
       final response = json.decode(res.body) as Map<String, dynamic>;
       print('API Response - Fetch Rates: $response');
       if (res.statusCode == 200) {
-        rateList.clear();
+        // rateList.clear();
 
         final rateData = response["productrateList"];
         if (rateData is Map<String, dynamic>) {
-          rateData.forEach((key, value) {
-            final rateValue = value;
-            rateList.add(rateValue.toString());
-          });
+          rate = ProductrateList.fromJson(rateData).rate;
         }
-        print('Fetched Rates: $rateList');
-        // setSelectedRateId(rateList.first);
+        rateDataMap[productCardId] = rate;
         notifyListeners();
       } else {
         throw Exception('Failed to fetch rates');
@@ -197,19 +356,12 @@ class ProductListProvider extends ChangeNotifier {
         amountList.clear();
         nameList.clear();
 
-        final otherCharges = response["othercharges"];
-        print('Other Charges: $otherCharges');
-        otherCharges.forEach((other) {
-          final otherChargesId = other['id'];
-          final otherChargesName = other['name'];
-          final otherChargesAmount = other['amount'];
-
-          // if (!idList.contains(otherChargesId)) {
-          idList.add(otherChargesId);
-          amountList.add(otherChargesAmount);
-          nameList.add(otherChargesName);
-          // }
-        });
+        final otherChargesData = response["othercharges"];
+        print('Other Charges: $otherChargesData');
+        otherCharges.clear();
+        for (var otherCharge in otherChargesData) {
+          otherCharges.add(Othercharge.fromJson(otherCharge));
+        }
         // Save lists to SharedPreferences
         SharedPreferences pref = await SharedPreferences.getInstance();
         pref.setStringList('otherChargesIds', idList);
@@ -229,91 +381,9 @@ class ProductListProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> submit(
-      BuildContext context,
-      List selectedProductIdList,
-      List selectedUnitIdList,
-      List selectedQuantityNameList,
-      List selectedRateList,
-      List otherCharge,
-      List otherId,
-      String userId,
-      String customerId) async {
-    setLoading(true);
+  Future<void> submit(String userId, String customerId) async {
     try {
       Dio dio = Dio();
-      Map<String, dynamic> listParam = {
-        //list parameters add
-        "product_id[]": '',
-        "unit_id[]": '',
-        "qnt[]": '',
-        "rate[]": '',
-        "other_charges[]": '',
-        "other_id[]": '',
-        "customer_id": '',
-      };
-      print("**********************************************************");
-      // if(productNameIdLength==0){} else{
-      //   for(int i=0;i<productNameIdLength!;i++){
-      //     listParam ={
-      //       "product_id[]": productNameIdList![i].toString(),
-      //     };
-      //   }
-      // }
-      if (selectedProductIdList == 0) {
-      } else {
-        for (int i = 0; i < selectedProductIdList.length; i++) {
-          print("Adding product ID: ${productIdList[i]}");
-          listParam = {
-            "product_id[]": productIdList[i].toString(),
-          };
-        }
-      }
-      if (selectedUnitIdList == 0) {
-      } else {
-        for (int i = 0; i < selectedUnitIdList.length; i++) {
-          print("Adding unit ID: ${unitIdList[i]}");
-          listParam = {
-            "unit_id[]": unitIdList[i].toString(),
-          };
-        }
-      }
-      if (selectedQuantityNameList == 0) {
-      } else {
-        for (int i = 0; i < selectedQuantityNameList.length; i++) {
-          print("Adding quantity: ${quantityList[i]}");
-          listParam = {
-            "qnt[]": quantityList[i].toString(),
-          };
-        }
-      }
-      if (selectedRateList == 0) {
-      } else {
-        for (int i = 0; i < selectedRateList.length; i++) {
-          print("Adding rate: ${rateList[i]}");
-          listParam = {
-            "rate[]": rateList[i].toString(),
-          };
-        }
-      }
-      if (otherCharge == 0) {
-      } else {
-        for (int i = 0; i < otherCharge.length; i++) {
-          print("Adding other charges: ${amountList[i]}");
-          listParam = {
-            "other_charges[]": amountList[i].toString(),
-          };
-        }
-      }
-      if (otherId == 0) {
-      } else {
-        for (int i = 0; i < otherId.length; i++) {
-          print("Adding other ID: ${idList[i]}");
-          listParam = {
-            "other_id[]": idList[i].toString(),
-          };
-        }
-      }
       Map<String, dynamic> remainingParam = {
         // without list parametr
         "staff_id": userId,
@@ -321,17 +391,20 @@ class ProductListProvider extends ChangeNotifier {
       Map<String, dynamic> allParams = {
         // all parameter
         "staff_id": userId,
-        "product_id[]": selectedProductIdList,
-        "unit_id[]": selectedUnitIdList,
-        "qnt[]": selectedQuantityNameList,
-        "rate[]": selectedRateList,
+        "product_id[]": productCards.map((e) => e.productId).toList(),
+        "unit_id[]": productCards.map((e) => e.unitId).toList(),
+        "qnt[]": productCards.map((e) => e.quantity).toList(),
+        "rate[]": productCards.map((e) => e.rate).toList(),
         "other_charges[]": otherCharge,
         "other_id[]": otherId,
         "customer_id": customerId,
       };
+
       allParams.addAll(remainingParam);
-      allParams.addAll(listParam);
+      // allParams.addAll(listParam);
       FormData formData = FormData.fromMap(allParams);
+      print("all params: ${allParams}");
+      // return;
       print("FormData Values : ${formData.fields}");
       final response = await dio.post(
         'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct',
@@ -340,12 +413,9 @@ class ProductListProvider extends ChangeNotifier {
           headers: {'X-API-KEY': 'amritmayamilk050512'},
         ),
       );
-      // final response = await post(
-      //     Uri.parse(
-      //         'https://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedProduct'),
-      //     headers: {'X-API-KEY': 'amritmayamilk050512'},
-      //     body: json.encode(allParams));
-      Map<String, dynamic> res = json.decode(response.data);
+      print("hello response");
+      print(response);
+      Map<String, dynamic> res = (response.data);
       print("Response Success: ${res['Success']}");
       Fluttertoast.showToast(
           msg: 'Daily Need have been save Successfully',

@@ -17,6 +17,7 @@ class ScanScreen extends StatefulWidget {
 }
 
 class _ScanScreenState extends State<ScanScreen> {
+  final scanFormKey = GlobalKey<FormState>();
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   String scanBarcode = "";
   int selectedOption = 0; // 0: Nothing selected, 1: mobile number, 2: QR code
@@ -147,10 +148,11 @@ class _ScanScreenState extends State<ScanScreen> {
         prefs.setInt('selected_option', selectedOption);
         prefs.setString('mobile_number', mobileNo);
 
-        Navigator.push(
+        await Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => FormScreen(customerId: customerId)));
+        mobileNoController.text = '';
         print('Selected Option: With Mobile Number');
         print('Mobile Number: $mobileNo');
       }
@@ -220,88 +222,92 @@ class _ScanScreenState extends State<ScanScreen> {
         title: const Text('QR Code Scanner'),
         // automaticallyImplyLeading: false,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Radio<int>(
-                  value: 1,
-                  groupValue: selectedOption,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedOption = value!;
-                    });
-                  },
-                ),
-                const Text("With Mobile Number"),
-                const SizedBox(
-                  width: 6,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Radio<int>(
-                        value: 2,
-                        groupValue: selectedOption,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedOption = value!;
-                          });
-                        },
-                      ),
-                      const Text("With QR Scanner"),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (selectedOption == 1)
+      body: Form(
+        key: scanFormKey,
+        child: Column(
+          children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: TextFormField(
-                controller: mobileNoController,
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                    hintText: 'Enter Mobile Number',
-                    prefixIcon: const Icon(Icons.phone),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    )),
-                validator: (value) {
-                  if (selectedOption == 1 && (value == null || value.isEmpty)) {
-                    return 'Please enter a valid mobile number';
-                  }
-                  return null;
-                },
+              child: Row(
+                children: [
+                  Radio<int>(
+                    value: 1,
+                    groupValue: selectedOption,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedOption = value!;
+                      });
+                    },
+                  ),
+                  const Text("With Mobile Number"),
+                  const SizedBox(
+                    width: 6,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Radio<int>(
+                          value: 2,
+                          groupValue: selectedOption,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedOption = value!;
+                            });
+                          },
+                        ),
+                        const Text("With QR Scanner"),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-          if (selectedOption == 2)
-            Expanded(
-              flex: 5,
-              child: buildQr(context),
-            ),
-          if (selectedOption == 2)
-            Expanded(
-              flex: 1,
-              child: Center(
-                child: Text('Scanned Barcode: ${scanBarcode}'),
+            if (selectedOption == 1)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextFormField(
+                  controller: mobileNoController,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                      hintText: 'Enter Mobile Number',
+                      prefixIcon: const Icon(Icons.phone),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      )),
+                  validator: (value) {
+                    if (selectedOption == 1 &&
+                        (value == null || value.isEmpty)) {
+                      return 'Please enter a valid mobile number';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            if (selectedOption == 2)
+              Expanded(
+                flex: 5,
+                child: buildQr(context),
+              ),
+            if (selectedOption == 2)
+              Expanded(
+                flex: 1,
+                child: Center(
+                  child: Text('Scanned Barcode: ${scanBarcode}'),
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: _submitData,
+                child: const Text(
+                  'Submit',
+                  style: TextStyle(fontSize: 17),
+                ),
               ),
             ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: _submitData,
-              child: const Text(
-                'Submit',
-                style: TextStyle(fontSize: 17),
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

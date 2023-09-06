@@ -1,21 +1,21 @@
-import 'package:amritmaya_milk/data/deliverBoy_data_model/dailyNeedList_data_model.dart';
 import 'package:flutter/material.dart';
 
-class ProductDetailScreen extends StatefulWidget {
+import '../data/userDataModel/user_DailyNeedDetails_data_model.dart';
+
+class DailyNeedDetailsScreen extends StatefulWidget {
   final DialNeedList dialNeed;
-  const ProductDetailScreen({required this.dialNeed, Key? key})
-      : super(key: key);
+  const DailyNeedDetailsScreen({super.key, required this.dialNeed});
 
   @override
-  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+  State<DailyNeedDetailsScreen> createState() => _DailyNeedDetailsScreenState();
 }
 
-class _ProductDetailScreenState extends State<ProductDetailScreen> {
+class _DailyNeedDetailsScreenState extends State<DailyNeedDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Product Details"),
+        title: Text("Daily Need Details"),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -47,30 +47,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // RichText(
-                        //   text: TextSpan(
-                        //     style: const TextStyle(
-                        //       fontSize: 16,
-                        //       color: Colors.black,
-                        //     ),
-                        //     children: [
-                        //       const TextSpan(
-                        //         text: 'Id: ',
-                        //         style: TextStyle(
-                        //           fontWeight: FontWeight.bold,
-                        //           color: Colors.black,
-                        //         ),
-                        //       ),
-                        //       TextSpan(
-                        //         text: widget.dialNeed.customerId ?? '',
-                        //         style: const TextStyle(color: Colors.black87),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
-                        // const SizedBox(
-                        //   height: 5.0,
-                        // ),
                         RichText(
                           text: TextSpan(
                             style: const TextStyle(
@@ -86,7 +62,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 ),
                               ),
                               TextSpan(
-                                text: widget.dialNeed.name ?? 'N/A',
+                                text: widget.dialNeed.name.toString() ?? '',
                                 style: const TextStyle(color: Colors.black87),
                               ),
                             ],
@@ -134,7 +110,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 ),
                               ),
                               TextSpan(
-                                text: widget.dialNeed.email ?? '',
+                                text: widget.dialNeed.email.toString() ?? '',
                                 style: const TextStyle(color: Colors.black87),
                               ),
                             ],
@@ -158,7 +134,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 ),
                               ),
                               TextSpan(
-                                text: widget.dialNeed.address ?? '',
+                                text: widget.dialNeed.address.toString() ?? '',
                                 style: const TextStyle(color: Colors.black87),
                               ),
                             ],
@@ -196,30 +172,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // RichText(
-                          //   text: TextSpan(
-                          //     style: const TextStyle(
-                          //       fontSize: 16,
-                          //       color: Colors.black,
-                          //     ),
-                          //     children: [
-                          //       const TextSpan(
-                          //         text: 'Id: ',
-                          //         style: TextStyle(
-                          //           fontWeight: FontWeight.bold,
-                          //           color: Colors.black,
-                          //         ),
-                          //       ),
-                          //       TextSpan(
-                          //         text: otherCharge.otherId ?? '',
-                          //         style: const TextStyle(color: Colors.black87),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                          // const SizedBox(
-                          //   height: 5.0,
-                          // ),
                           RichText(
                             text: TextSpan(
                               style: const TextStyle(
@@ -241,30 +193,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               ],
                             ),
                           ),
-                          // const SizedBox(
-                          //   height: 5.0,
-                          // ),
-                          // RichText(
-                          //   text: TextSpan(
-                          //     style: const TextStyle(
-                          //       fontSize: 16,
-                          //       color: Colors.black,
-                          //     ),
-                          //     children: [
-                          //       const TextSpan(
-                          //         text: 'Amount: ',
-                          //         style: TextStyle(
-                          //           fontWeight: FontWeight.bold,
-                          //           color: Colors.black,
-                          //         ),
-                          //       ),
-                          //       TextSpan(
-                          //         text: otherCharge.amount ?? '',
-                          //         style: const TextStyle(color: Colors.black87),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
@@ -335,7 +263,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 TableCellVerticalAlignment.middle,
                             child: Center(
                                 child: Text(
-                              productDetail.productName ?? 'N/A',
+                              '${productDetail['product_name'] ?? 'N/A'}',
                               style: const TextStyle(fontSize: 16),
                             ))),
                         TableCell(
@@ -343,7 +271,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 TableCellVerticalAlignment.middle,
                             child: Center(
                                 child: Text(
-                              productDetail.unitName ?? "",
+                              '${productDetail['unit_name'] ?? 'N/A'}',
                               style: const TextStyle(fontSize: 16),
                             ))),
                         TableCell(
@@ -351,14 +279,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 TableCellVerticalAlignment.middle,
                             child: Center(
                                 child: Text(
-                              productDetail.qnt ?? '',
+                              // productDetail.qnt ?? '',
+                              '${productDetail['qnt'] ?? 'N/A'}',
                               style: const TextStyle(fontSize: 16),
                             ))),
                         TableCell(
                           verticalAlignment: TableCellVerticalAlignment.middle,
                           child: Center(
                               child: Text(
-                            productDetail.rate ?? '',
+                            // productDetail.rate ?? '',
+                            '${productDetail['rate'] ?? 'N/A'}',
                             style: const TextStyle(fontSize: 16),
                           )),
                         ),

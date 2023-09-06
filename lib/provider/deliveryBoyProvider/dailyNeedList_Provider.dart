@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../data/dailyNeedList_data_model.dart';
+import '../../data/deliverBoy_data_model/dailyNeedList_data_model.dart';
 
 class DailyNeedProductProvider extends ChangeNotifier {
   List<DialNeedList> dialNeedList = [];
@@ -13,7 +13,7 @@ class DailyNeedProductProvider extends ChangeNotifier {
   Future<List<DialNeedList>> getPostDailyNeedProduct(String customerId) async {
     loading = true;
     dialNeedList = await getDailyNeedProductData(customerId);
-    loading = false;
+    loading = true;
     notifyListeners();
     return dialNeedList;
   }
@@ -26,10 +26,6 @@ class DailyNeedProductProvider extends ChangeNotifier {
             "http://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedlist?customer_id=$customerId"),
         headers: {'X-API-KEY': 'amritmayamilk050512'},
       );
-      print("API Response Status Code: ${response.statusCode}");
-      print("API Response Body: ${response.body}");
-      print(
-          "http://webiipl.in/amritmayamilk/api/DeliveryBoyApiController/dailyNeedlist?customer_id=$customerId");
       if (response.statusCode == 200) {
         final item = await json.decode(response.body);
         dialNeedList.clear();

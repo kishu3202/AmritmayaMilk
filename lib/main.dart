@@ -1,8 +1,15 @@
-import 'package:amritmaya_milk/provider/auth_Provider.dart';
-import 'package:amritmaya_milk/provider/customerList_Provider.dart';
-import 'package:amritmaya_milk/provider/dailyNeedList_Provider.dart';
-import 'package:amritmaya_milk/provider/productList_Provider.dart';
-import 'package:amritmaya_milk/provider/user_Provider.dart';
+import 'package:amritmaya_milk/provider/deliveryBoyProvider/auth_Provider.dart';
+import 'package:amritmaya_milk/provider/deliveryBoyProvider/customerList_Provider.dart';
+import 'package:amritmaya_milk/provider/deliveryBoyProvider/dailyNeedList_Provider.dart';
+import 'package:amritmaya_milk/provider/deliveryBoyProvider/productList_Provider.dart';
+import 'package:amritmaya_milk/provider/deliveryBoyProvider/user_Provider.dart';
+import 'package:amritmaya_milk/provider/userProvider/bill_Provider.dart';
+import 'package:amritmaya_milk/provider/userProvider/changePassword_Provider.dart';
+import 'package:amritmaya_milk/provider/userProvider/dailyNeedDetails_Provider.dart';
+import 'package:amritmaya_milk/provider/userProvider/initimation_Provider.dart';
+import 'package:amritmaya_milk/provider/userProvider/outstandingAmount_Provider.dart';
+import 'package:amritmaya_milk/provider/userProvider/support_Provider.dart';
+import 'package:amritmaya_milk/provider/userProvider/userProduct_Provider.dart';
 import 'package:amritmaya_milk/screens/dashboard_screen.dart';
 import 'package:amritmaya_milk/screens/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +30,7 @@ class AmritmayaMilk extends StatefulWidget {
 class _AmritmayaMilkState extends State<AmritmayaMilk> {
   var isLoggedIn = true;
   var isDeliveryBoy = false;
+  String customerId = '';
 
   void checkIsUserLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -37,6 +45,13 @@ class _AmritmayaMilkState extends State<AmritmayaMilk> {
       });
     }
   }
+
+  final Future<String> _getCustomerId = Future.delayed(Duration.zero, () async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var customerId = prefs.getString('id') ?? '';
+    print('customer id for user: ${customerId}');
+    return customerId;
+  });
 
   @override
   void initState() {
@@ -53,21 +68,39 @@ class _AmritmayaMilkState extends State<AmritmayaMilk> {
         ChangeNotifierProvider(create: (_) => CustomerProvider()),
         ChangeNotifierProvider(create: (_) => ProductListProvider()),
         ChangeNotifierProvider(create: (_) => DailyNeedProductProvider()),
+        ChangeNotifierProvider(create: (_) => ChangePasswordProvider()),
+        ChangeNotifierProvider(create: (_) => BillProvider()),
+        ChangeNotifierProvider(create: (_) => DailyNeedDetailsProvider()),
+        ChangeNotifierProvider(create: (_) => OutStandingAmountProvider()),
+        ChangeNotifierProvider(create: (_) => SupportProvider()),
+        ChangeNotifierProvider(create: (_) => UserProductProvider()),
+        ChangeNotifierProvider(create: (_) => IntimationProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        // home: isLoggedIn ? const DashboardScreen() : const LoginScreen(),
         home: Consumer<AuthProvider>(
           builder: (context, authProvider, _) {
             if (isLoggedIn) {
               // User is logged in, show DashboardScreen
-              return DashboardScreen(isDeliveryBoy: isDeliveryBoy);
+              return FutureBuilder<String?>(
+                  future: _getCustomerId,
+                  builder: (context, snapshot) {
+                    return snapshot.data != null
+                        ? DashboardScreen(
+                            isDeliveryBoy: isDeliveryBoy,
+                            customerId: snapshot.data!,
+                          )
+                        : Container();
+                  });
             } else {
               // User is not logged in, show LoginScreen
               return const LoginScreen();
             }
           },
         ),
+        // home: Material(
+        //   child: MainTestScreen(),
+        // ),
       ),
     );
   }

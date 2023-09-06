@@ -1,4 +1,4 @@
-import 'package:amritmaya_milk/provider/auth_Provider.dart';
+import 'package:amritmaya_milk/provider/deliveryBoyProvider/auth_Provider.dart';
 import 'package:amritmaya_milk/screens/forget_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,10 +25,16 @@ class _LoginScreenState extends State<LoginScreen> {
   AuthProvider? authProvider;
   int selectOption = 0; // 0: Nothing selected, 1: Delivery boy, 2: user
   bool termAccepted = false;
+  String customerId = "";
 
   Future<bool> exitApp(BuildContext context) async {
     SystemNavigator.pop();
     return true;
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -241,16 +247,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         } else if (!_formfield.currentState!.validate()) {
                           print('Login Failed.');
                         }
-                        // if (email.isNotEmpty && password.isNotEmpty) {
-                        //   if (selectOption == 1) {
-                        //     authProvider.DeliveryBoylogin(
-                        //         context, email, password);
-                        //   } else if (selectOption == 2) {
-                        //     authProvider.Userlogin(context, email, password);
-                        //   }
-                        // } else if (!_formfield.currentState!.validate()) {
-                        //   print('Login Failed.');
-                        // }
                       });
                     },
                     child: Container(
@@ -260,10 +256,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Center(
-                        // child: authProvider.loading
-                        //     ? const CircularProgressIndicator(
-                        //         color: Colors.white,
-                        //       )
                         child: Text(
                           "Log In",
                           style: TextStyle(
