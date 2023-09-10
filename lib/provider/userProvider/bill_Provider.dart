@@ -9,7 +9,7 @@ class BillProvider extends ChangeNotifier {
   String fromDate = "";
   String toDate = "";
   List<Map<String, String?>> monthlyBills = [];
-  int totalAmount = 0;
+  int? totalAmount = 0;
 
   Future<void> fetchBills(
       String fromDate, String toDate, String customerId) async {

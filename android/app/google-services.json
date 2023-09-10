@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "978539183245",
+    "project_id": "amritmayamilk-6e65b",
+    "storage_bucket": "amritmayamilk-6e65b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:978539183245:android:682e95803257fac007f6c4",
+        "android_client_info": {
+          "package_name": "com.example.amritmaya_milk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "978539183245-q44sj03tlohe90aa76meadv2286vo28v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrsV03sTk3s_el5soyA0uaOR72pk-XHNo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "978539183245-q44sj03tlohe90aa76meadv2286vo28v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -41,7 +41,7 @@ class DailyNeedDetailsProvider extends ChangeNotifier {
         final item = await json.decode(response.body);
         dialNeedList.clear();
         for (var product in item['dialNeedList']) {
-          print(" user Product: $product");
+          // print(" user Product: $product");
           dialNeedList.add(DialNeedList.fromJson(product));
         }
 
@@ -58,5 +58,38 @@ class DailyNeedDetailsProvider extends ChangeNotifier {
       print("Error: $e");
     }
     return dialNeedList;
+  }
+
+  Future<void> fetchSavedDialNeedList() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final savedData = prefs.getString('dialNeedList');
+      if (savedData != null) {
+        final List<dynamic> decodedData = json.decode(savedData);
+        dialNeedList.clear();
+        for (var product in decodedData) {
+          dialNeedList.add(DialNeedList.fromJson(product));
+          // print('user daily need list saved data: ${savedData}');
+        }
+        notifyListeners();
+      } else {
+        print("No saved data found in SharedPreferences.");
+      }
+    } catch (e) {
+      print("Error fetching saved data from SharedPreferences: $e");
+    }
+  }
+
+  Future<String?> fetchSavedOrderId(int index) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final savedData = prefs.getString('dialNeedList');
+    if (savedData != null) {
+      final List<dynamic> decodedData = json.decode(savedData);
+      if (index >= 0 && index < decodedData.length) {
+        final String orderId = decodedData[index]['order_id'];
+        return orderId;
+      }
+    }
+    return null; // Return null if the orderId couldn't be fetched
   }
 }

@@ -21,6 +21,12 @@ class _BillScreenState extends State<BillScreen> {
   @override
   void initState() {
     super.initState();
+    resetBillData();
+  }
+  void resetBillData() {
+    final billProvider = Provider.of<BillProvider>(context, listen: false);
+    billProvider.monthlyBills = [];
+    billProvider.totalAmount = null;
   }
 
   @override
@@ -35,91 +41,170 @@ class _BillScreenState extends State<BillScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 50),
           child: Form(
             key: _billFromKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                TextFormField(
-                    onChanged: (value) async {
-                      DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101));
-                      if (pickedDate != null) {
-                        print(pickedDate);
-                        String formattedDate =
-                            DateFormat('yyyy-MM-dd').format(pickedDate);
-                        print(formattedDate);
-                        setState(() {
-                          fromDateController.text = formattedDate;
-                        });
-                      } else {
-                        print("Date is not selected");
-                      }
-                    },
-                    keyboardType: TextInputType.datetime,
-                    controller: fromDateController,
-                    decoration: InputDecoration(
-                      hintText: "Enter From Date",
-                      labelText: 'From Date (YYYY-MM-DD)',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      prefixIcon: const Icon(Icons.calendar_today),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                          onChanged: (value) async {
+                            DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2101));
+                            if (pickedDate != null) {
+                              print(pickedDate);
+                              String formattedDate =
+                              DateFormat('yyyy-MM-dd').format(pickedDate);
+                              print(formattedDate);
+                              setState(() {
+                                fromDateController.text = formattedDate;
+                              });
+                            } else {
+                              print("Date is not selected");
+                            }
+                          },
+                          keyboardType: TextInputType.datetime,
+                          controller: fromDateController,
+                          decoration: InputDecoration(
+                            hintText: "Enter From Date",
+                            labelText: 'From Date',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            prefixIcon: const Icon(Icons.calendar_today),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty)
+                              return 'Please enter from Date';
+                            return null;
+                          }),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Please enter from Date';
-                      return null;
-                    }),
-                SizedBox(height: 30),
-                TextFormField(
-                    onChanged: (value) async {
-                      DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101));
-                      if (pickedDate != null) {
-                        print(pickedDate);
-                        String formattedDate =
-                            DateFormat('yyyy-MM-dd').format(pickedDate);
-                        print(formattedDate);
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: TextFormField(
+                          onChanged: (value) async {
+                            DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2101));
+                            if (pickedDate != null) {
+                              print(pickedDate);
+                              String formattedDate =
+                              DateFormat('yyyy-MM-dd').format(pickedDate);
+                              print(formattedDate);
 
-                        setState(() {
-                          toDateController.text = formattedDate;
-                        });
-                      } else {
-                        print("Date is not selected");
-                      }
-                    },
-                    keyboardType: TextInputType.datetime,
-                    controller: toDateController,
-                    decoration: InputDecoration(
-                      hintText: "Enter To Date",
-                      labelText: 'From Date (YYYY-MM-DD)',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      prefixIcon: const Icon(Icons.calendar_today),
+                              setState(() {
+                                toDateController.text = formattedDate;
+                              });
+                            } else {
+                              print("Date is not selected");
+                            }
+                          },
+                          keyboardType: TextInputType.datetime,
+                          controller: toDateController,
+                          decoration: InputDecoration(
+                            hintText: "Enter To Date",
+                            labelText: 'To Date',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            prefixIcon: const Icon(Icons.calendar_today),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty)
+                              return 'Please enter to Date';
+                            return null;
+                          }),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Please enter to Date';
-                      return null;
-                    }),
-                SizedBox(height: 50),
+                  ],
+                ),
+                // TextFormField(
+                //     onChanged: (value) async {
+                //       DateTime? pickedDate = await showDatePicker(
+                //           context: context,
+                //           initialDate: DateTime.now(),
+                //           firstDate: DateTime(2000),
+                //           lastDate: DateTime(2101));
+                //       if (pickedDate != null) {
+                //         print(pickedDate);
+                //         String formattedDate =
+                //             DateFormat('yyyy-MM-dd').format(pickedDate);
+                //         print(formattedDate);
+                //         setState(() {
+                //           fromDateController.text = formattedDate;
+                //         });
+                //       } else {
+                //         print("Date is not selected");
+                //       }
+                //     },
+                //     keyboardType: TextInputType.datetime,
+                //     controller: fromDateController,
+                //     decoration: InputDecoration(
+                //       hintText: "Enter From Date",
+                //       labelText: 'From Date (YYYY-MM-DD)',
+                //       border: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(10),
+                //       ),
+                //       prefixIcon: const Icon(Icons.calendar_today),
+                //     ),
+                //     validator: (value) {
+                //       if (value == null || value.isEmpty)
+                //         return 'Please enter from Date';
+                //       return null;
+                //     }),
+                // SizedBox(height: 30),
+                // TextFormField(
+                //     onChanged: (value) async {
+                //       DateTime? pickedDate = await showDatePicker(
+                //           context: context,
+                //           initialDate: DateTime.now(),
+                //           firstDate: DateTime(2000),
+                //           lastDate: DateTime(2101));
+                //       if (pickedDate != null) {
+                //         print(pickedDate);
+                //         String formattedDate =
+                //             DateFormat('yyyy-MM-dd').format(pickedDate);
+                //         print(formattedDate);
+                //
+                //         setState(() {
+                //           toDateController.text = formattedDate;
+                //         });
+                //       } else {
+                //         print("Date is not selected");
+                //       }
+                //     },
+                //     keyboardType: TextInputType.datetime,
+                //     controller: toDateController,
+                //     decoration: InputDecoration(
+                //       hintText: "Enter To Date",
+                //       labelText: 'To Date (YYYY-MM-DD)',
+                //       border: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(10),
+                //       ),
+                //       prefixIcon: const Icon(Icons.calendar_today),
+                //     ),
+                //     validator: (value) {
+                //       if (value == null || value.isEmpty)
+                //         return 'Please enter to Date';
+                //       return null;
+                //     }),
+                SizedBox(height: 30),
                 InkWell(
                   onTap: () async {
                     await billProvider.fetchBills(fromDateController.text,
                         toDateController.text, widget.customerId);
                   },
                   child: Container(
-                    height: 60,
+                    height: 50,
+                    width: 200,
                     decoration: BoxDecoration(
                       color: Colors.blue,
                       borderRadius: BorderRadius.circular(10),
@@ -129,7 +214,7 @@ class _BillScreenState extends State<BillScreen> {
                         "Search",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 25,
+                          fontSize: 17,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -143,7 +228,7 @@ class _BillScreenState extends State<BillScreen> {
                   height: 70,
                   width: 200,
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Colors.deepPurple.shade50,
                     borderRadius: BorderRadius.circular(15.0),
                   ),
                   child: Column(
@@ -157,7 +242,7 @@ class _BillScreenState extends State<BillScreen> {
                         child: Text(
                           "Total Amount",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontSize: 16,
                           ),
                         ),
@@ -167,9 +252,9 @@ class _BillScreenState extends State<BillScreen> {
                       ),
                       Center(
                         child: Text(
-                          "${billProvider.totalAmount ?? "N/A"}",
+                          "${billProvider.totalAmount ?? ""}",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -179,7 +264,7 @@ class _BillScreenState extends State<BillScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: 30,
+                  height: 10,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -201,7 +286,7 @@ class _BillScreenState extends State<BillScreen> {
                               itemBuilder: (context, index) {
                                 final billItem = bill[index];
                                 return Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
                                   child: Card(
                                     shape: RoundedRectangleBorder(
                                         borderRadius:

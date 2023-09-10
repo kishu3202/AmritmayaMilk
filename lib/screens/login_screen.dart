@@ -6,7 +6,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({
+    super.key,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -175,8 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ForgetPasswordScreen()),
+                                  builder: (context) => ForgetPasswordScreen()),
                             );
                           },
                           child: const Text(

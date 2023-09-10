@@ -26,7 +26,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loginUser() async {
+  Future<void> loginUser(String customerId, String token) async {
     _isLoggedIn = true;
     notifyListeners();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -35,11 +35,16 @@ class AuthProvider extends ChangeNotifier {
 
   void Userlogin(BuildContext context, String email, String password) async {
     setLoading(true);
+    String customerId = '';
+    String token = '';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString("token") ?? '';
+
     try {
       var map = new Map<String, dynamic>();
       map['email'] = email;
       map['password'] = password;
-      map['token'] = 'testing';
+      map['token'] = token;
       map['type'] = 'user';
       Response response = await post(
           Uri.parse(
@@ -53,13 +58,15 @@ class AuthProvider extends ChangeNotifier {
 
         // Save the login data using shared preferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString('token', loginResponse['token']);
+        prefs.setString('tokenFromApi', loginResponse['token']);
         prefs.setString('id', loginResponse['id']);
         prefs.setString('name', loginResponse['name']);
         prefs.setString('contact', loginResponse['contact']);
         prefs.setString('email', loginResponse['email']);
         prefs.setString('address', loginResponse['address']);
         prefs.setBool('isDeliveryBoy', false);
+
+        print("token from : ${prefs.getString("tokenFromApi") ?? ""}");
 
         Fluttertoast.showToast(
             msg: 'User Login Successfully',
@@ -70,15 +77,17 @@ class AuthProvider extends ChangeNotifier {
             textColor: Colors.white);
         print("Succssful");
 
-        loginUser();
+        customerId = loginResponse['id'];
+        token = loginResponse['token'];
+        loginUser(customerId, token);
 
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => DashboardScreen(
-                    isDeliveryBoy: false,
-                    customerId: '',
-                  )),
+                  isDeliveryBoy: false,
+                  customerId: customerId,
+                  userData: loginResponse)),
         );
         setLoading(false);
       } else {
@@ -96,18 +105,22 @@ class AuthProvider extends ChangeNotifier {
         print("Login Failed");
       }
     } catch (e) {
-      print(e.toString());
+      print("login response:${e.toString()}");
     }
   }
 
   void DeliveryBoylogin(
       BuildContext context, String email, String password) async {
     setLoading(true);
+    String customerId = '';
+    String? token = '';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString("token");
     try {
       var map = new Map<String, dynamic>();
       map['email'] = email;
       map['password'] = password;
-      map['token'] = 'testing';
+      map['token'] = token;
       map['type'] = 'delivery_boy';
       Response response = await post(
           Uri.parse(
@@ -121,13 +134,15 @@ class AuthProvider extends ChangeNotifier {
 
         // Save the login data using shared preferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString('token', loginResponse['token']);
+        prefs.setString('tokenFromApi', loginResponse['token']);
         prefs.setString('id', loginResponse['id']);
         prefs.setString('name', loginResponse['name']);
         prefs.setString('contact', loginResponse['contact']);
         prefs.setString('email', loginResponse['email']);
         prefs.setString('address', loginResponse['address']);
         prefs.setBool('isDeliveryBoy', true);
+
+        print("token from : ${prefs.getString("tokenFromApi") ?? ""}");
 
         Fluttertoast.showToast(
             msg: 'Delivery Boy Login Successfully',
@@ -137,13 +152,14 @@ class AuthProvider extends ChangeNotifier {
             backgroundColor: Colors.green,
             textColor: Colors.white);
         print("Succssful");
-        loginUser();
+        loginUser(customerId,token!);
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => DashboardScreen(
                     isDeliveryBoy: true,
-                    customerId: '',
+                    customerId: customerId,
+                    userData: loginResponse,
                   )),
         );
         setLoading(false);

@@ -27,6 +27,7 @@ class DashboardScreen extends StatefulWidget {
     super.key,
     required this.isDeliveryBoy,
     required this.customerId,
+    required userData,
   });
 
   @override
@@ -199,7 +200,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const NotificationScreen()));
+                          builder: (context) => NotificationScreen(
+                                customerId: widget.customerId,
+                              )));
                 },
                 icon: const Icon(Icons.notifications),
                 color: Colors.white,
@@ -488,19 +491,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
               if (isUser)
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  child: ScrollLoopAutoScroll(
-                      child: Text(
-                        "Payment of Milk should not be paid to the delivery staff (दूध का पैसा डिलीवरी स्टाफ को देना मना).",
-                        style: TextStyle(fontSize: 20, color: Colors.green),
-                      ),
-                      scrollDirection: Axis.horizontal,
-                      delay: Duration(seconds: 1),
-                      duration: Duration(seconds: 50),
-                      gap: 25,
-                      reverseScroll: false,
-                      duplicateChild: 25,
-                      enableScrollInput: true,
-                      delayAfterScrollInput: Duration(seconds: 1)),
+                  color: Colors.red.withOpacity(0.7),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ScrollLoopAutoScroll(
+                        child: Text(
+                          "Payment of Milk should not be paid to the delivery staff (दूध का पैसा डिलीवरी स्टाफ को देना मना).",
+                          style: TextStyle(fontSize: 17, color: Colors.white),
+                        ),
+                        scrollDirection: Axis.horizontal,
+                        delay: Duration(seconds: 1),
+                        duration: Duration(seconds: 50),
+                        gap: 25,
+                        reverseScroll: false,
+                        duplicateChild: 25,
+                        enableScrollInput: true,
+                        delayAfterScrollInput: Duration(seconds: 1)),
+                  ),
                 ),
               if (isUser)
                 SizedBox(
@@ -514,7 +521,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
-                    mainAxisExtent: 80,
+                    mainAxisExtent: 100,
                   ),
                   children: [
                     ElevatedButton(
@@ -711,7 +718,7 @@ void showMessage(BuildContext context, String message) {
               Provider.of<AuthProvider>(context, listen: false).logout(context);
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                MaterialPageRoute(builder: (context) => LoginScreen()),
               );
             },
             child: const Text('Yes'),

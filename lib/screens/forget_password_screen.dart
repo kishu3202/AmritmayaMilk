@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'login_screen.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
-  const ForgetPasswordScreen({super.key});
+  const ForgetPasswordScreen({
+    super.key,
+  });
 
   @override
   State<ForgetPasswordScreen> createState() => _ForgetPasswordScreenState();
@@ -62,8 +64,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                   } else {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginScreen()),
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
                     );
                   }
                 });

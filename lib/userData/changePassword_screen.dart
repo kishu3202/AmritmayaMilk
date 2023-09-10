@@ -1,5 +1,6 @@
 import 'package:amritmaya_milk/provider/userProvider/changePassword_Provider.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -38,13 +39,17 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 200, horizontal: 30),
+            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
             child: Form(
               key: _changePasswordFromKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Icon(Icons.lock, size: 120, color: Colors.blue,),
+                  SizedBox(height: 10),
+                  Text("Change Password", style: TextStyle(fontSize: 17,),),
+                  SizedBox(height: 50,),
                   TextFormField(
                       onChanged: (value) {
                         setState(() {
@@ -156,13 +161,28 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           final newPassword = newPasswordController.text;
                           final confirmPassword =
                               confirmPasswordController.text;
+
                           if (oldPassword.isNotEmpty &&
                               newPassword.isNotEmpty &&
                               confirmPassword.isNotEmpty) {
-                            changePasswordProvider.changePassword(context,
-                                widget.customerId, oldPassword, newPassword);
+                            if (newPassword == confirmPassword) {
+                              // Passwords match, proceed with changing the password
+                              changePasswordProvider.changePassword(context,
+                                  widget.customerId, oldPassword, newPassword);
+                            } else {
+                              // Passwords do not match, show a toast message
+                              Fluttertoast.showToast(
+                                msg: "Passwords do not match",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0,
+                              );
+                            }
                           } else if (_changePasswordFromKey.currentState!
                               .validate()) {
+                            // Handle other validation or actions here
                             Navigator.pop(context);
                             print('false');
                           }
@@ -179,12 +199,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             "Sumbit",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 30,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                      ))
+                      )),
                 ],
               ),
             ),
