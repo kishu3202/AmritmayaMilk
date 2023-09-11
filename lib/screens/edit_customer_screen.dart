@@ -143,7 +143,7 @@ class _EditCustomerState extends State<EditCustomer> {
                     child: ElevatedButton(
                       onPressed: submitCustomerData,
                       child: Container(
-                        height: 50,
+                        height: 45,
                         decoration: BoxDecoration(
                           color: Colors.blue,
                           borderRadius: BorderRadius.circular(5),
@@ -153,8 +153,8 @@ class _EditCustomerState extends State<EditCustomer> {
                             "Submit",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),

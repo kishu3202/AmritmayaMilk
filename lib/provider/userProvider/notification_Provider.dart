@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,39 +11,8 @@ class NotificationProvider extends ChangeNotifier {
   List<String> notificationDescriptionList = [];
   List<String> notificationStatusList = [];
 
-  // Future<void> fetchNotification(String customerId) async {
-  //   try {
-  //     final res = await http.get(
-  //       Uri.parse(
-  //           "https://webiipl.in/amritmayamilk/api/UserApiController/notification_list/$customerId"),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "X-API-KEY": "amritmayamilk050512",
-  //       },
-  //     );
-  //     final response = json.decode(res.body) as Map<String, dynamic>;
-  //     if (res.statusCode == 200) {
-  //       notificationIdList.clear();
-  //       notificationTitleList.clear();
-  //       notificationDescriptionList.clear();
-  //       notificationStatusList.clear();
-  //
-  //       final notifications = response["notification_list"];
-  //       notifications.forEach((notification) async {
-  //         notificationIdList.add(notification["id"]);
-  //         notificationTitleList.add(notification["title"]);
-  //         notificationDescriptionList.add(notification["description"]);
-  //         notificationStatusList.add(notification["status"]);
-  //       });
-  //
-  //       notifyListeners();
-  //     } else {
-  //       throw Exception('Failed to fetch product names');
-  //     }
-  //   } catch (e) {
-  //     throw Exception('Failed to fetch product names');
-  //   }
-  // }
+  int _notificationCount = 0;
+  int get notificationCount => _notificationCount;
 
   Future<void> fetchNotification(String customerId) async {
     try {
@@ -78,6 +48,9 @@ class NotificationProvider extends ChangeNotifier {
           /// Save the notification ID to SharedPreferences with a unique key
           // sharedPreferences.setString("notification_$notificationId", "read");
         });
+        _notificationCount = notificationIdList.length; /// Update notification count
+        FlutterAppBadger.updateBadgeCount(_notificationCount); /// Update the badge count
+
 
         notifyListeners();
       } else {
@@ -101,6 +74,11 @@ class NotificationProvider extends ChangeNotifier {
         headers: headers,
       );
       if (response.statusCode == 200) {
+
+        _notificationCount--; // Decrement notification count
+        FlutterAppBadger.updateBadgeCount(_notificationCount); // Update the badge count
+
+        notifyListeners(); // Notify listeners of the change
       } else {
         print(
             'Failed to mark notification as read. Status code: ${response.statusCode}');

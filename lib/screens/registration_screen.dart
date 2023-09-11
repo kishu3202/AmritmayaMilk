@@ -212,7 +212,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           });
                         },
                         child: Container(
-                          height: 60,
+                          height: 45,
                           decoration: BoxDecoration(
                             color: Colors.blue,
                             borderRadius: BorderRadius.circular(10),
@@ -222,8 +222,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               "Sign In",
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),

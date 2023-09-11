@@ -113,9 +113,9 @@ class AuthProvider extends ChangeNotifier {
       BuildContext context, String email, String password) async {
     setLoading(true);
     String customerId = '';
-    String? token = '';
+    String token = '';
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString("token");
+    token = prefs.getString("token") ?? '';
     try {
       var map = new Map<String, dynamic>();
       map['email'] = email;
@@ -152,7 +152,10 @@ class AuthProvider extends ChangeNotifier {
             backgroundColor: Colors.green,
             textColor: Colors.white);
         print("Succssful");
-        loginUser(customerId,token!);
+
+        token = loginResponse['token'];
+        loginUser(customerId, token);
+
         Navigator.push(
           context,
           MaterialPageRoute(

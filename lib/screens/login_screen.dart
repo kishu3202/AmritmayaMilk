@@ -251,7 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       });
                     },
                     child: Container(
-                      height: 60,
+                      height: 45,
                       decoration: BoxDecoration(
                         color: Colors.blue,
                         borderRadius: BorderRadius.circular(10),
@@ -261,8 +261,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           "Log In",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),

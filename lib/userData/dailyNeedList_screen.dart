@@ -184,7 +184,7 @@ class _DailyNeedListScreenState extends State<DailyNeedListScreen> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Expanded(
-                                        child: ElevatedButton(
+                                        child: TextButton(
                                             onPressed: () async {
                                               Navigator.push(
                                                   context,
@@ -225,7 +225,22 @@ class _DailyNeedListScreenState extends State<DailyNeedListScreen> {
                                         color: Colors.grey, // Set the color of the vertical divider
                                       ),
                                       Expanded(
-                                        child: ElevatedButton(
+          //                               child: TextButton(
+          //                                   child: Text('Request Raise'), onPressed: () async {
+          //                                     // _showRequestRaisePopup(context);
+          // final index = dailyNeedList
+          //     .indexOf(dialNeedList);
+          // if (index >= 0) {
+          //   final orderId =
+          //       await dailyNeedProvider
+          //           .fetchSavedOrderId(index);
+          //   _showRequestRaisePopup(
+          //       context, orderId);
+          // } else {
+          //   print(
+          //       'Failed to find index for the selected dialNeedList.');
+          // }}),
+                                        child: TextButton(
                                             onPressed: () async {
                                               // _showRequestRaisePopup(context);
                                               final index = dailyNeedList

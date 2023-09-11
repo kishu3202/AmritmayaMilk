@@ -25,7 +25,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   void getNotificationData() async {
     final notificationProvider =
-        Provider.of<NotificationProvider>(context, listen: false);
+    Provider.of<NotificationProvider>(context, listen: false);
     try {
       await notificationProvider.fetchNotification(widget.customerId);
       showNotificationAlert(payload: 'notification_data_here');
@@ -42,7 +42,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     final notificationProvider =
-        Provider.of<NotificationProvider>(context, listen: true);
+    Provider.of<NotificationProvider>(context, listen: true);
 
     return Scaffold(
         appBar: AppBar(
@@ -53,10 +53,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
             itemCount: notificationProvider.notificationIdList.length,
             itemBuilder: (context, index) {
               final notificationId =
-                  notificationProvider.notificationIdList[index];
+              notificationProvider.notificationIdList[index];
               final title = notificationProvider.notificationTitleList[index];
               final description =
-                  notificationProvider.notificationDescriptionList[index];
+              notificationProvider.notificationDescriptionList[index];
               final status = notificationProvider.notificationStatusList[index];
 
               return FutureBuilder<String?>(
@@ -66,7 +66,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   // final bool isRead = notificationStatus == "read";
 
                   // Check if the notification is read or unread
-                  final isRead = status == "read";
+                  final isRead = status == "1";
 
                   return NotificationCard(
                     title: title,
@@ -78,7 +78,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             .markNotificationAsRead(notificationId);
                         setState(() {
                           notificationProvider.notificationStatusList[index] =
-                              "read";
+                          "1";
                         });
                       }
                     },
@@ -122,9 +122,9 @@ class NotificationCard extends StatelessWidget {
         leading: isRead
             ? null
             : CircleAvatar(
-                radius: 4,
-                backgroundColor: Colors.green,
-              ),
+          radius: 4,
+          backgroundColor: Colors.green,
+        ),
       ),
     );
   }

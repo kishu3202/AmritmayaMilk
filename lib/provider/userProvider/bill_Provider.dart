@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
 import '../../data/userDataModel/userBills_data _model.dart';
@@ -44,8 +46,18 @@ class BillProvider extends ChangeNotifier {
       } else {
         print('Failed to fetch data. Status code: ${response.statusCode}');
       }
+
     } catch (error) {
       print("Error fetching in bill: ${error}");
+      Fluttertoast.showToast(
+        msg: "Please check internet connectivity",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
   }
 }

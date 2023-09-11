@@ -403,7 +403,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         height: 80,
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
-                          color: Colors.blue,
+                          // color: Colors.blue,
+                          gradient: LinearGradient(
+                            colors: [Colors.blue, Colors.indigo], // Define your two colors here
+                            begin: Alignment.topLeft, // Adjust the gradient's start and end points as needed
+                            end: Alignment.bottomRight,
+                          ),
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         child: Column(
@@ -447,7 +452,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         height: 80,
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
-                          color: Colors.blue,
+                          // color: Colors.blue,
+                          gradient: LinearGradient(
+                            colors: [Colors.blue, Colors.indigo], // Define your two colors here
+                            begin: Alignment.topLeft, // Adjust the gradient's start and end points as needed
+                            end: Alignment.bottomRight,
+                          ),
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         child: Column(

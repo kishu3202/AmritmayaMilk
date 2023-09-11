@@ -201,18 +201,19 @@ class _IntimationScreenState extends State<IntimationScreen> {
                             });
                           },
                           child: Container(
-                            height: 60,
+                            height: 45,
+                            width: 200,
                             decoration: BoxDecoration(
                               color: Colors.blue,
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(5),
                             ),
                             child: const Center(
                               child: Text(
                                 "Submit",
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
@@ -364,18 +365,19 @@ class _IntimationScreenState extends State<IntimationScreen> {
                             });
                           },
                           child: Container(
-                            height: 60,
+                            height: 50,
+                            width: 200,
                             decoration: BoxDecoration(
                               color: Colors.blue,
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(5),
                             ),
                             child: const Center(
                               child: Text(
                                 "Submit",
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),

@@ -23,6 +23,7 @@ class _BillScreenState extends State<BillScreen> {
     super.initState();
     resetBillData();
   }
+
   void resetBillData() {
     final billProvider = Provider.of<BillProvider>(context, listen: false);
     billProvider.monthlyBills = [];
@@ -41,7 +42,7 @@ class _BillScreenState extends State<BillScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 50),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 50),
           child: Form(
             key: _billFromKey,
             child: Column(
@@ -61,7 +62,7 @@ class _BillScreenState extends State<BillScreen> {
                             if (pickedDate != null) {
                               print(pickedDate);
                               String formattedDate =
-                              DateFormat('yyyy-MM-dd').format(pickedDate);
+                                  DateFormat('yyyy-MM-dd').format(pickedDate);
                               print(formattedDate);
                               setState(() {
                                 fromDateController.text = formattedDate;
@@ -73,7 +74,7 @@ class _BillScreenState extends State<BillScreen> {
                           keyboardType: TextInputType.datetime,
                           controller: fromDateController,
                           decoration: InputDecoration(
-                            hintText: "Enter From Date",
+                            hintText: "Select From Date",
                             labelText: 'From Date',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -82,7 +83,7 @@ class _BillScreenState extends State<BillScreen> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty)
-                              return 'Please enter from Date';
+                              return 'Please select from Date';
                             return null;
                           }),
                     ),
@@ -98,7 +99,7 @@ class _BillScreenState extends State<BillScreen> {
                             if (pickedDate != null) {
                               print(pickedDate);
                               String formattedDate =
-                              DateFormat('yyyy-MM-dd').format(pickedDate);
+                                  DateFormat('yyyy-MM-dd').format(pickedDate);
                               print(formattedDate);
 
                               setState(() {
@@ -111,7 +112,7 @@ class _BillScreenState extends State<BillScreen> {
                           keyboardType: TextInputType.datetime,
                           controller: toDateController,
                           decoration: InputDecoration(
-                            hintText: "Enter To Date",
+                            hintText: "Select To Date",
                             labelText: 'To Date',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -120,82 +121,31 @@ class _BillScreenState extends State<BillScreen> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty)
-                              return 'Please enter to Date';
+                              return 'Please select to Date';
                             return null;
                           }),
                     ),
+                    // SizedBox(width: 5,),
+                    // Container( decoration: BoxDecoration(
+                    //   shape: BoxShape.circle,
+                    //   color: Colors.blue, // Customize the background color
+                    //   boxShadow: [
+                    //     BoxShadow(
+                    //       color: Colors.grey.withOpacity(0.5),
+                    //       spreadRadius: 2,
+                    //       blurRadius: 4,
+                    //       offset: Offset(0, 2),
+                    //     ),
+                    //   ],
+                    // ),
+                    //   child: IconButton(onPressed: () async {
+                    //     await billProvider.fetchBills(fromDateController.text,
+                    //                 toDateController.text, widget.customerId);
+                    //   },
+                    //     icon: Icon(Icons.search, size: 30,color: Colors.white,),),
+                    // )
                   ],
                 ),
-                // TextFormField(
-                //     onChanged: (value) async {
-                //       DateTime? pickedDate = await showDatePicker(
-                //           context: context,
-                //           initialDate: DateTime.now(),
-                //           firstDate: DateTime(2000),
-                //           lastDate: DateTime(2101));
-                //       if (pickedDate != null) {
-                //         print(pickedDate);
-                //         String formattedDate =
-                //             DateFormat('yyyy-MM-dd').format(pickedDate);
-                //         print(formattedDate);
-                //         setState(() {
-                //           fromDateController.text = formattedDate;
-                //         });
-                //       } else {
-                //         print("Date is not selected");
-                //       }
-                //     },
-                //     keyboardType: TextInputType.datetime,
-                //     controller: fromDateController,
-                //     decoration: InputDecoration(
-                //       hintText: "Enter From Date",
-                //       labelText: 'From Date (YYYY-MM-DD)',
-                //       border: OutlineInputBorder(
-                //         borderRadius: BorderRadius.circular(10),
-                //       ),
-                //       prefixIcon: const Icon(Icons.calendar_today),
-                //     ),
-                //     validator: (value) {
-                //       if (value == null || value.isEmpty)
-                //         return 'Please enter from Date';
-                //       return null;
-                //     }),
-                // SizedBox(height: 30),
-                // TextFormField(
-                //     onChanged: (value) async {
-                //       DateTime? pickedDate = await showDatePicker(
-                //           context: context,
-                //           initialDate: DateTime.now(),
-                //           firstDate: DateTime(2000),
-                //           lastDate: DateTime(2101));
-                //       if (pickedDate != null) {
-                //         print(pickedDate);
-                //         String formattedDate =
-                //             DateFormat('yyyy-MM-dd').format(pickedDate);
-                //         print(formattedDate);
-                //
-                //         setState(() {
-                //           toDateController.text = formattedDate;
-                //         });
-                //       } else {
-                //         print("Date is not selected");
-                //       }
-                //     },
-                //     keyboardType: TextInputType.datetime,
-                //     controller: toDateController,
-                //     decoration: InputDecoration(
-                //       hintText: "Enter To Date",
-                //       labelText: 'To Date (YYYY-MM-DD)',
-                //       border: OutlineInputBorder(
-                //         borderRadius: BorderRadius.circular(10),
-                //       ),
-                //       prefixIcon: const Icon(Icons.calendar_today),
-                //     ),
-                //     validator: (value) {
-                //       if (value == null || value.isEmpty)
-                //         return 'Please enter to Date';
-                //       return null;
-                //     }),
                 SizedBox(height: 30),
                 InkWell(
                   onTap: () async {
@@ -203,33 +153,39 @@ class _BillScreenState extends State<BillScreen> {
                         toDateController.text, widget.customerId);
                   },
                   child: Container(
-                    height: 50,
-                    width: 200,
+                    height: 45,
+                    width: 180,
                     decoration: BoxDecoration(
                       color: Colors.blue,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(5),
                     ),
                     child: const Center(
                       child: Text(
                         "Search",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
                   ),
                 ),
                 SizedBox(
-                  height: 30,
+                  height: 20,
                 ),
                 Container(
                   height: 70,
                   width: 200,
                   decoration: BoxDecoration(
-                    color: Colors.deepPurple.shade50,
-                    borderRadius: BorderRadius.circular(15.0),
+                    /// double color use in container  for highlight
+                    gradient: LinearGradient(
+                      colors: [Colors.blue, Colors.deepPurple.shade200], // Define your two colors here
+                      begin: Alignment.topLeft, // Adjust the gradient's start and end points as needed
+                      end: Alignment.bottomRight,
+                    ),
+                    // color: Colors.blue,
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -242,7 +198,7 @@ class _BillScreenState extends State<BillScreen> {
                         child: Text(
                           "Total Amount",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontSize: 16,
                           ),
                         ),
@@ -254,7 +210,7 @@ class _BillScreenState extends State<BillScreen> {
                         child: Text(
                           "${billProvider.totalAmount ?? ""}",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -281,19 +237,21 @@ class _BillScreenState extends State<BillScreen> {
                             width: MediaQuery.of(context).size.width,
                             child: ListView.builder(
                               shrinkWrap: true,
-                              // physics: NeverScrollableScrollPhysics(),
+                              physics: NeverScrollableScrollPhysics(),
                               itemCount: bill.length,
                               itemBuilder: (context, index) {
                                 final billItem = bill[index];
                                 return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+                                  padding: const EdgeInsets.all(
+                                      2),
                                   child: Card(
+                                    // elevation: 3,
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(10.0)),
                                     color: Colors.deepPurple.shade50,
                                     child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                                      padding: const EdgeInsets.all(3.0),
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
@@ -318,8 +276,7 @@ class _BillScreenState extends State<BillScreen> {
                                                   ),
                                                 ),
                                                 TextSpan(
-                                                  text:
-                                                      '${billItem['order_id'] ?? ''}',
+                                                  text:'${billItem['order_id'] ?? ''}',
                                                   style: const TextStyle(
                                                       color: Colors.black87),
                                                 ),
@@ -344,9 +301,7 @@ class _BillScreenState extends State<BillScreen> {
                                                   ),
                                                 ),
                                                 TextSpan(
-                                                  text:
-                                                      '${billItem['created_at'] ?? ''}',
-                                                  // '${DateFormat('yyyy-MM-dd').format(bill.createdAt)}',
+                                                  text: '${billItem['created_at'] ?? ''}',
                                                   style: const TextStyle(
                                                       color: Colors.black87),
                                                 ),
@@ -397,8 +352,7 @@ class _BillScreenState extends State<BillScreen> {
                                                   ),
                                                 ),
                                                 TextSpan(
-                                                  text:
-                                                      '${billItem['qnt'] ?? ''}',
+                                                  text: '${billItem['qnt'] ?? ''}',
                                                   style: const TextStyle(
                                                       color: Colors.black87),
                                                 ),
@@ -423,8 +377,7 @@ class _BillScreenState extends State<BillScreen> {
                                                   ),
                                                 ),
                                                 TextSpan(
-                                                  text:
-                                                      '${billItem['rate'] ?? ''}',
+                                                  text: '${billItem['rate'] ?? ''}',
                                                   style: const TextStyle(
                                                       color: Colors.black87),
                                                 ),

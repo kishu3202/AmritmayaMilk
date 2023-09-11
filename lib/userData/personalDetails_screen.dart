@@ -171,8 +171,8 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                           'Submit',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),

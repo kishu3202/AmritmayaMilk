@@ -302,7 +302,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 onPressed: _submitData,
                 child: const Text(
                   'Submit',
-                  style: TextStyle(fontSize: 17),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
               ),
             ),

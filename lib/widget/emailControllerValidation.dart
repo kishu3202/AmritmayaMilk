@@ -31,6 +31,7 @@ class EmailValidator extends StatelessWidget {
       },
     );
   }
+
 }
 
 //// submit data api

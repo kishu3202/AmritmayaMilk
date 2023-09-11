@@ -70,7 +70,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                 });
               },
               child: Container(
-                height: 50,
+                height: 45,
                 decoration: BoxDecoration(
                   color: Colors.blue,
                   borderRadius: BorderRadius.circular(5),
@@ -80,7 +80,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     "Submit",
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 20,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500
                     ),
                   ),
                 ),

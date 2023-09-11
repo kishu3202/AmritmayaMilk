@@ -189,22 +189,26 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         });
                       },
                       child: Container(
-                        height: 60,
+                        height: 45,
+                        width: 250,
                         decoration: BoxDecoration(
                           color: Colors.blue,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Center(
                           child: Text(
                             "Sumbit",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
                       )),
+                  // InkWell(),
+                  // TextButton(onPressed: (){}, child: Text('submit')),
+                  // FilledButton(onPressed: (){}, child: Text('submit')),
                 ],
               ),
             ),
